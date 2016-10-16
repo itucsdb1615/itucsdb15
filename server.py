@@ -22,6 +22,14 @@ def lectures():
     now = datetime.datetime.now()
     return render_template('lectures.html', current_time=now.ctime())
 
+@app.route('/forgottenpassword')
+def forgotten_password():
+    return render_template('forgotten_password.html')
+    pass
+@app.route('/About')
+def about_page():
+    return render_template('about_page.html')
+
 if __name__ == '__main__':
     VCAP_APP_PORT = os.getenv('VCAP_APP_PORT')
     if VCAP_APP_PORT is not None:
