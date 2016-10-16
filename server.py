@@ -17,6 +17,11 @@ def home_page():
 def signup():
     return render_template('signup.html')
 
+@app.route('/lectures')
+def lectures():
+    now = datetime.datetime.now()
+    return render_template('lectures.html', current_time=now.ctime())
+
 if __name__ == '__main__':
     VCAP_APP_PORT = os.getenv('VCAP_APP_PORT')
     if VCAP_APP_PORT is not None:
