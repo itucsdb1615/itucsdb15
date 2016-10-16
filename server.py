@@ -29,6 +29,9 @@ def forgotten_password():
 @app.route('/About')
 def about_page():
     return render_template('about_page.html')
+@app.route('/departments')
+def departments():
+    return render_template('departments.html')
 
 if __name__ == '__main__':
     VCAP_APP_PORT = os.getenv('VCAP_APP_PORT')
