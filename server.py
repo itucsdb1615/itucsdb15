@@ -35,6 +35,9 @@ def about_page():
 @app.route('/departments')
 def departments():
     return render_template('departments.html')
+@app.route('/privacypolicy')
+def privacy_policy():
+    return render_template('privacy_policy.html')
 
 if __name__ == '__main__':
     VCAP_APP_PORT = os.getenv('VCAP_APP_PORT')

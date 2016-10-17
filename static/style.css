@@ -19,3 +19,8 @@ div#datetime {
   font-size: 80%;
   text-align: right;
 }
+
+.container{
+	margin:0 auto;
+	width:960px;
+}
