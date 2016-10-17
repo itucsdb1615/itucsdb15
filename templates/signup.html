@@ -18,16 +18,26 @@
       <div class="container">
 
       <form class="form-signin">
-        <h2 class="form-signin-heading">Please sign up</h2>
+        <h2 class="form-signin-heading">Join BeeHive today!</h2>
+
+        <label for="inputNameSurname" class="sr-only">Name and surname</label>
+        <input type="text" id="inputNameSurname" class="form-control" placeholder="Name and surname" required autofocus>
+
+		<label for="inputUsername" class="sr-only">Username</label>
+        <input type="text" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
+
         <label for="inputEmail" class="sr-only">Email address</label>
-        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required>
+
         <label for="inputPassword" class="sr-only">Password</label>
         <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+
         <div class="checkbox">
           <label>
-            <input type="checkbox" value="remember-me"> Remember me
+            <input type="checkbox" value="agreement" required> You agree to BeeHive's <a href="#">Terms of Service and Privacy Policy</a> by signing up.
           </label>
         </div>
+
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
       </form>
 
