@@ -1,16 +1,40 @@
+{% extends "layout.html" %}
+{% block title %}Faculties/Departments{% endblock %}
+{% block navbarlogin %}
+      <div id="navbar" class="navbar-collapse collapse">
+          <form class="navbar-form navbar-right">
+            <div class="form-group">
+              <input type="text" placeholder="Email" class="form-control">
+            </div>
+            <div class="form-group">
+              <input type="password" placeholder="Password" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-success">Sign in</button>
+            <a class="btn btn-primary" href="{{ url_for('signup') }}">Sign up</a>
+          	<a class="btn btn-primary" href="{{ url_for('forgotten_password') }}">Forgotten password ?</a>
+          </form>
+        </div>
+{% endblock %}
 
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Faculties and Departments</title>
-</head>
-<body>
-<div align="center"><h1>This area is reserved for departmental information</h1>
+{% block content %}
 
-		<p>Enter your Department:</p>
-		<input type="text" placeholder="" class="form-control">
-		<button type="submit" class="btn btn-success">Check!</button>
+      <div class="container">
+      <div align="center" >
+<br>
+<br>
+<br>
+
+
+       <h2> Select your Department:</h2>
+<br>
+
+ <form class="form-signin">
+     <input type="text" id="department" class="form-control" placeholder="Your Department"   >
+
+<br>
+		<a class="btn btn-primary" >Check!</a>
+</form>
 </div>
-</body>
-</html>
+</div>
+
+{% endblock %}
