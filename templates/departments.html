@@ -18,23 +18,39 @@
 
 {% block content %}
 
-      <div class="container">
+
       <div align="center" >
 <br>
 <br>
 <br>
 
 
-       <h2> Select your Department:</h2>
+       <h2> Select your Faculty:</h2>
 <br>
+</div>
 
- <form class="form-signin">
-     <input type="text" id="department" class="form-control" placeholder="Your Department"   >
+ <form class="form-signin" >
+   <label  >  <input type="radio" name="department" value="in"    >Civil Engineering <br>
+    <input type="radio" name="department" value="mm"    >Architecture <br>
+     <input type="radio" name="department" value="mk"    >Mechanical Engineering<br>
+     <input type="radio" name="department" value="ee"    >Electrical-Electronics Engineering <br>
+     <input type="radio" name="department" value="md"    >Mining<br>
+     <input type="radio" name="department" value="km"    >Chemical and Metallurgical Engineering  <br>
+     <input type="radio" name="department" value="is"    >Management <br>
+     <input type="radio" name="department" value="gd"    >Naval Architecture and Ocean Eng.<br>
+     <input type="radio" name="department" value="fe"    >Science and Letters <br>
+     <input type="radio" name="department" value="uu"    >Aeronautics an Astronautics Engineering <br>
+     <input type="radio" name="department" value="ko"    >Turkish Music State Conservator <br>
+     <input type="radio" name="department" value="dz"    >Maritime Faculty <br>
+     <input type="radio" name="department" value="tk"    >Textile Technologies and Design <br>
+     <input type="radio" name="department" value="bb"    >Computer and Informatics <br>
+</label>
 
 <br>
 		<a class="btn btn-primary" >Check!</a>
 </form>
-</div>
-</div>
+
+
+
 
 {% endblock %}
