@@ -17,10 +17,13 @@ def home_page():
 def signup():
     return render_template('signup.html')
 
+@app.route('/signin')
+def signin():
+    return render_template('signin.html')
+
 @app.route('/lectures')
 def lectures():
-    now = datetime.datetime.now()
-    return render_template('lectures.html', current_time=now.ctime())
+    return render_template('lectures.html')
 
 @app.route('/forgottenpassword')
 def forgotten_password():
