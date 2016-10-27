@@ -24,3 +24,20 @@ div#datetime {
 	margin:0 auto;
 	width:960px;
 }
+
+/* hover animation ***/
+img:hover{
+	transition:0.8s linear;
+	transform:scale(1.5);
+}
+/* used for profile page */
+#profile-col{
+	display: block;
+	position: relative;
+	width: relative;
+	margin: 10px 10px 10px 10px;
+	background-color: white;
+	border-radius: 10%;
+	border: 1px solid #FF7F00;
+	z-index: 10;
+}
