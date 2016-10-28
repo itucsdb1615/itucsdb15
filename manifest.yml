@@ -1,6 +1,6 @@
 applications:
 - services:
-  - ElephantSQL-87
+  - ElephantSQL-ff
   disk_quota: 1024M
   host: itucsdb1615
   name: itucsdb1615
