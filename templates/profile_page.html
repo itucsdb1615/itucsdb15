@@ -27,13 +27,31 @@
 			border: 1px solid #FF7F00;
 			z-index: 10;
 		}
+		/* This is for increasing the icon size*/
+		.glyphicon {
+    		font-size: 20px;
+		}
 	</style>
 </head>
 <body style="background-image: url('https://static.vecteezy.com/system/resources/premium_previews/000/057/904/non_2x/cartoon-bee-vector-pack.jpg')">
-	<!-- Need a bar which will be placed top of the page and will contain
-	icons such as home and settings-->
-	<br>
-	<br>
+	<!-- nav-bar icons need to connect with urls -->
+	<nav class="navbar navbar-inverse">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	    	<a class="navbar-brand" href="{{ url_for('about_page') }}">beeHive</a>
+	    </div>
+	    <ul class="nav navbar-nav">
+	    	<li><a href="#"><span class="glyphicon glyphicon-home"></span></a></li>
+	    	<li><a href="#"><span class="glyphicon glyphicon-envelope"></span></a></li>
+	    	<li><a href="#"><span class="glyphicon glyphicon-search"></span></a></li>
+	    </ul>
+	    <ul class="nav navbar-nav navbar-right">
+	    	<li><a href="#"><span class="glyphicon glyphicon-cog"></span></a></li>
+	    	<li><a href="#"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+	    	<li><a href="#"><span class="glyphicon glyphicon-off"></span> Log out</a></li>
+	    </ul>
+	  </div>
+	</nav>
 	<br>
 	<div class="container">
 		<div class="row" >
@@ -82,9 +100,9 @@
 
 		    			</div>
 
-		    			<div>
-							<button class="pull-right btn-success btn" onclick="#">Send a post</button>
-		    			</div>
+		    			<a href="#" class="pull-right btn btn-info btn">
+          					<span class="glyphicon glyphicon-pencil"></span> Send a post
+        				</a>
 		    			<br>
 					</div>
 				</div>
@@ -92,7 +110,7 @@
 				<br>
     			<!-- This is one post -->
     			<div id="profile-col">
-    				<div style="margin: 10px 10px 30px 10px">
+    				<div style="margin: 10px 30px 40px 10px">
     					<br>
 						<div style=display:inline-block>
 							<img src="V668FhCe.jpeg" class=" img-responsive img-rounded" height="50px" width= "50px"/>
@@ -106,8 +124,10 @@
 		    				<p>Lorem ipsum </p>
 		    			</div>
 
-		    			<div>
+		    			<div class="pull-right">
 		    				<!-- This part will have icons in it such as like icon -->
+		    				<a href="#" style="margin-right: 10px"><span class="glyphicon glyphicon-star-empty"></span></a>
+		    				<a href="#"><span class="glyphicon glyphicon-comment"></span></a>
 		    			</div>
 		    			<br>
     				</div>
@@ -116,7 +136,7 @@
 
 				 <!-- This is one post -->
     			<div id="profile-col">
-    				<div style="margin: 10px 10px 30px 10px">
+    				<div style="margin: 10px 30px 40px 10px">
     					<br>
 						<div style=display:inline-block>
 							<img src="V668FhCe.jpeg" class=" img-responsive img-rounded" height="50px" width= "50px"/>
@@ -131,10 +151,11 @@
 		    				asfasfasdasdfasfasfasdasfasfasf
 		    				asdfafsasfasfasfsafasfasfasf </p>
 		    			</div>
-		    			<div>
+		    			<div class="pull-right">
 		    				<!-- This part will have icons in it such as like icon -->
+		    				<a href="#" style="margin-right: 10px"><span class="glyphicon glyphicon-star-empty"></span></a>
+		    				<a href="#"><span class="glyphicon glyphicon-comment"></span></a>
 		    			</div>
-		    			<br>
     				</div>
     			 </div>
 				 <!-- end of the post -->
