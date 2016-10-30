@@ -9,6 +9,11 @@ from flask import redirect
 from flask import render_template
 from flask.helpers import url_for
 
+from flask import Blueprint, redirect, render_template, url_for
+from flask import current_app, request
+
+from passlib.apps import custom_app_context as pwd_context
+
 
 app = Flask(__name__)
 
@@ -26,6 +31,23 @@ def get_elephantsql_dsn(vcap_services):
 def home_page():
     now = datetime.datetime.now()
     return render_template('homepage.html', current_time=now.ctime())
+
+@app.route('/inituserdb')                                       #kullanici bilgileri icin tablo olustur / olusturulmussa sifirla
+def initialize_userDatabase():
+    with dbapi2.connect(app.config['dsn']) as connection:
+        cursor = connection.cursor()
+
+        query = """DROP TABLE IF EXISTS USERS"""
+        cursor.execute(query)
+
+        query = """CREATE TABLE USERS (NAME VARCHAR(80) NOT NULL, USERNAME VARCHAR(20) PRIMARY KEY, MAIL VARCHAR(80) NOT NULL, PASSWORD VARCHAR(20) NOT NULL)"""
+        cursor.execute(query)
+
+        query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr', 'leblebi')"""
+        cursor.execute(query)
+
+        connection.commit()
+    return redirect(url_for('home_page'))
 
 @app.route('/initdb')
 def initialize_database():
@@ -59,9 +81,17 @@ def counter_page():
         count = cursor.fetchone()[0]
     return "This page was accessed %d times." % count
 
-@app.route('/signup')
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    return render_template('signup.html')
+    if request.method == 'POST':
+        nameSurname=request.form['inputNameSurname']
+        username=request.form['inputUsername']
+        email=request.form['inputEmail']
+        password=request.form['inputPassword']
+
+        return redirect(url_for('about_page'))                  #kullanicinin bilgilerini aldiktan sonra olusturup profil sayfasina yonlendirme eklenecek
+    else:
+        return render_template('signup.html')
 
 @app.route('/signin')
 def signin():
