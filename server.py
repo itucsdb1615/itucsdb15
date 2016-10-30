@@ -63,6 +63,32 @@ def initialize_database():
         query = """INSERT INTO COUNTER (N) VALUES (0)"""
         cursor.execute(query)
 
+        ##POST TABLE Creatýon
+        query = """DROP TABLE IF EXISTS POST"""
+        cursor.execute(query)
+
+        query = """CREATE TABLE POST (
+                    POSTID SERIAL PRIMARY KEY,
+                    FOREIGN KEY USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
+                    CONTENT VARCHAR(500) NOT NULL,
+                    LIKES INT DEFAULT 0)"""
+        cursor.execute(query)
+
+        ##CASTING POSTS
+        query = """DROP TABLE IF EXISTS POSTLIST"""
+        cursor.execute(query)
+
+        query = """CREATE TABLE POSTLIST (
+                    USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
+                    POSTID INTEGER REFERENCES POST(POSTID),
+                    PRIMARY KEY(USERNAME, POSTID))"""
+        cursor.execute(query)
+
+        query = """INSERT INTO POST (POSTID, USERNAME, CONTENT, LIKES) VALUES (25, 'mcanyasakci', 'Lorem ipsum', 0 )"""
+        cursor.execute(query)
+        query = """INSERT INTO POSTLIST (USERNAME, POSTID) VALUES ('mcanyasakci', 25)"""
+        cursor.execute(query)
+
         connection.commit()
     return redirect(url_for('home_page'))
 
