@@ -67,7 +67,7 @@ def initialize_database():
 
         query = """CREATE TABLE POST (
                     POSTID SERIAL PRIMARY KEY,
-                    FOREIGN KEY USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
+                    USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
                     CONTENT VARCHAR(500) NOT NULL,
                     LIKES INT DEFAULT 0)"""
         cursor.execute(query)
@@ -89,6 +89,40 @@ def initialize_database():
         connection.commit()
     return redirect(url_for('home_page'))
 
+@app.route('/initlecturesdb')
+def initialize_lecturesDatabase():
+    with dbapi2.connect(app.config['dsn']) as connection:
+        cursor = connection.cursor()
+
+        query = """DROP TABLE IF EXISTS CRNS"""
+        cursor.execute(query)
+
+        query = """CREATE TABLE CRNS (
+                    CRN SERIAL PRIMARY KEY NOT NULL,
+                    USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
+                    LECTURENAME VARCHAR(500),
+                    DAY VARCHAR(10),
+                    BEGINNINGTIME REAL DEFAULT 0.0,
+                    ENDINGTIME REAL DEFAULT 0.00)"""
+        cursor.execute(query)
+
+        query = """DROP TABLE IF EXISTS CRNLIST"""
+        cursor.execute(query)
+
+        query = """CREATE TABLE CRNLIST (
+                    USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
+                    CRN INTEGER REFERENCES CRNS(CRN),
+                    PRIMARY KEY(USERNAME, CRN))"""
+        cursor.execute(query)
+
+        query = """INSERT INTO CRNS (CRN, USERNAME, LECTURENAME, DAY, BEGINNINGTIME, ENDINGTIME) VALUES (11909, 'mcanyasakci', 'microprocessor systems', 'monday', 9.30, 12.30 )"""
+        cursor.execute(query)
+        query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES ('mcanyasakci', 11909)"""
+        cursor.execute(query)
+
+        connection.commit()
+
+    return redirect(url_for('lectures'))
 
 @app.route('/count')
 def counter_page():
