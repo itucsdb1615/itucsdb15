@@ -14,7 +14,6 @@ from flask import current_app, request
 
 from passlib.apps import custom_app_context as pwd_context
 
-
 app = Flask(__name__)
 
 def get_elephantsql_dsn(vcap_services):
@@ -63,7 +62,6 @@ def initialize_database():
         query = """INSERT INTO COUNTER (N) VALUES (0)"""
         cursor.execute(query)
 
-        ##POST TABLE Creatýon
         query = """DROP TABLE IF EXISTS POST"""
         cursor.execute(query)
 
@@ -74,7 +72,6 @@ def initialize_database():
                     LIKES INT DEFAULT 0)"""
         cursor.execute(query)
 
-        ##CASTING POSTS
         query = """DROP TABLE IF EXISTS POSTLIST"""
         cursor.execute(query)
 
