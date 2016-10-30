@@ -35,28 +35,38 @@ def home_page():
 def initialize_database():
     with dbapi2.connect(app.config['dsn']) as connection:
         cursor = connection.cursor()
-                                                                            #COUNTER TABLE
-        query = """DROP TABLE IF EXISTS COUNTER"""
+
+        query = """DROP TABLE IF EXISTS COUNTER"""        #DROP TABLE COMMANDS
+        cursor.execute(query)
+        query = """DROP TABLE IF EXISTS CRNLIST"""
+        cursor.execute(query)
+        query = """DROP TABLE IF EXISTS CRNS"""
+        cursor.execute(query)
+        query = """DROP TABLE IF EXISTS POSTLIST"""
+        cursor.execute(query)
+        query = """DROP TABLE IF EXISTS POST"""
+        cursor.execute(query)
+        query = """DROP TABLE IF EXISTS USERS"""
+        cursor.execute(query)
+        query = """DROP TABLE IF EXISTS DEPARTMENTS"""
         cursor.execute(query)
 
-        query = """CREATE TABLE COUNTER (N INTEGER)"""
+        query = """CREATE TABLE COUNTER (N INTEGER)"""            #COUNTER TABLE
         cursor.execute(query)
 
         query = """INSERT INTO COUNTER (N) VALUES (0)"""
         cursor.execute(query)
-                                                                            #USERS TABLE
-        query = """DROP TABLE IF EXISTS USERS"""
-        cursor.execute(query)
 
+
+                                            #USERS TABLE
         query = """CREATE TABLE USERS (NAME VARCHAR(80) NOT NULL, USERNAME VARCHAR(20) PRIMARY KEY, MAIL VARCHAR(80) NOT NULL, PASSWORD VARCHAR(20) NOT NULL)"""
         cursor.execute(query)
 
         query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr', 'leblebi')"""
         cursor.execute(query)
-                                                                            #POST TABLE
-        query = """DROP TABLE IF EXISTS POST"""
-        cursor.execute(query)
 
+
+                                            #POST TABLE
         query = """CREATE TABLE POST (
                     POSTID SERIAL PRIMARY KEY,
                     USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
@@ -66,10 +76,9 @@ def initialize_database():
 
         query = """INSERT INTO POST (POSTID, USERNAME, CONTENT, LIKES) VALUES (25, 'mcanyasakci', 'Lorem ipsum', 0 )"""
         cursor.execute(query)
-                                                                            #POSTLIST TABLE
-        query = """DROP TABLE IF EXISTS POSTLIST"""
-        cursor.execute(query)
 
+
+                                            #POSTLIST TABLE
         query = """CREATE TABLE POSTLIST (
                     USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
                     POSTID INTEGER REFERENCES POST(POSTID),
@@ -78,10 +87,9 @@ def initialize_database():
 
         query = """INSERT INTO POSTLIST (USERNAME, POSTID) VALUES ('mcanyasakci', 25)"""
         cursor.execute(query)
-                                                                            #CRNS TABLE
-        query = """DROP TABLE IF EXISTS CRNS"""
-        cursor.execute(query)
 
+
+                                            #CRNS TABLE
         query = """CREATE TABLE CRNS (
                     CRN INTEGER PRIMARY KEY NOT NULL,
                     USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
@@ -93,10 +101,9 @@ def initialize_database():
 
         query = """INSERT INTO CRNS (CRN, USERNAME, LECTURENAME, DAY, BEGINNINGTIME, ENDINGTIME) VALUES (11909, 'mcanyasakci', 'microprocessor systems', 'monday', 9.30, 12.30 )"""
         cursor.execute(query)
-                                                                            #CRNLIST TABLE
-        query = """DROP TABLE IF EXISTS CRNLIST"""
-        cursor.execute(query)
 
+
+                                            #CRNLIST TABLE
         query = """CREATE TABLE CRNLIST (
                     USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
                     CRN INTEGER REFERENCES CRNS(CRN),
@@ -106,6 +113,15 @@ def initialize_database():
         query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES ('mcanyasakci', 11909)"""
         cursor.execute(query)
 
+
+        query = """CREATE TABLE DEPARTMENTS (FACULTYNO INTEGER, NAME VARCHAR(40))"""   #DEPARTMENTS TABLE
+        cursor.execute(query)
+
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (01, 'Faculty of Civil Engineering')"""
+        cursor.execute(query)
+
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (15, 'Faculty of Computer and Informatics')"""
+        cursor.execute(query)
         connection.commit()
     return redirect(url_for('home_page'))
 
@@ -122,24 +138,7 @@ def counter_page():
         cursor.execute(query)
         count = cursor.fetchone()[0]
     return "This page was accessed %d times." % count
-@app.route('/departmentsrecord')
-def departments_record():
-    with dbapi2.connect(app.config['dsn']) as connection:
-        cursor = connection.cursor()
-        query = """DROP TABLE IF EXISTS DEPARTMENTS"""
-        cursor.execute(query)
 
-        query = """CREATE TABLE DEPARTMENTS (FACULTYNO INTEGER, NAME VARCHAR(40))"""
-        cursor.execute(query)
-
-        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (01, 'Faculty of Civil Engineering')"""
-        cursor.execute(query)
-
-        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (15, 'Faculty of Computer and Informatics')"""
-        cursor.execute(query)
-
-
-        return "Departments table created and  2 faculty are inserted by using insert into command "
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
