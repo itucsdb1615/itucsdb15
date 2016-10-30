@@ -122,7 +122,24 @@ def counter_page():
         cursor.execute(query)
         count = cursor.fetchone()[0]
     return "This page was accessed %d times." % count
+@app.route('/departmentsrecord')
+def departments_record():
+    with dbapi2.connect(app.config['dsn']) as connection:
+        cursor = connection.cursor()
+        query = """DROP TABLE IF EXISTS DEPARTMENTS"""
+        cursor.execute(query)
 
+        query = """CREATE TABLE DEPARTMENTS (FACULTYNO INTEGER, NAME VARCHAR(40))"""
+        cursor.execute(query)
+
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (01, 'Faculty of Civil Engineering')"""
+        cursor.execute(query)
+
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (15, 'Faculty of Computer and Informatics')"""
+        cursor.execute(query)
+
+
+        return "Departments table created and  2 faculty are inserted by using insert into command "
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
