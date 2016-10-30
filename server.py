@@ -98,7 +98,7 @@ def initialize_lecturesDatabase():
         cursor.execute(query)
 
         query = """CREATE TABLE CRNS (
-                    CRN SERIAL PRIMARY KEY NOT NULL,
+                    CRN PRIMARY KEY NOT NULL,
                     USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
                     LECTURENAME VARCHAR(500),
                     DAY VARCHAR(10),
