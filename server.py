@@ -31,28 +31,11 @@ def home_page():
     now = datetime.datetime.now()
     return render_template('homepage.html', current_time=now.ctime())
 
-@app.route('/inituserdb')                                       #kullanici bilgileri icin tablo olustur / olusturulmussa sifirla
-def initialize_userDatabase():
-    with dbapi2.connect(app.config['dsn']) as connection:
-        cursor = connection.cursor()
-
-        query = """DROP TABLE IF EXISTS USERS"""
-        cursor.execute(query)
-
-        query = """CREATE TABLE USERS (NAME VARCHAR(80) NOT NULL, USERNAME VARCHAR(20) PRIMARY KEY, MAIL VARCHAR(80) NOT NULL, PASSWORD VARCHAR(20) NOT NULL)"""
-        cursor.execute(query)
-
-        query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr', 'leblebi')"""
-        cursor.execute(query)
-
-        connection.commit()
-    return redirect(url_for('home_page'))
-
 @app.route('/initdb')
 def initialize_database():
     with dbapi2.connect(app.config['dsn']) as connection:
         cursor = connection.cursor()
-
+                                                                            #COUNTER TABLE
         query = """DROP TABLE IF EXISTS COUNTER"""
         cursor.execute(query)
 
@@ -61,7 +44,16 @@ def initialize_database():
 
         query = """INSERT INTO COUNTER (N) VALUES (0)"""
         cursor.execute(query)
+                                                                            #USERS TABLE
+        query = """DROP TABLE IF EXISTS USERS"""
+        cursor.execute(query)
 
+        query = """CREATE TABLE USERS (NAME VARCHAR(80) NOT NULL, USERNAME VARCHAR(20) PRIMARY KEY, MAIL VARCHAR(80) NOT NULL, PASSWORD VARCHAR(20) NOT NULL)"""
+        cursor.execute(query)
+
+        query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr', 'leblebi')"""
+        cursor.execute(query)
+                                                                            #POST TABLE
         query = """DROP TABLE IF EXISTS POST"""
         cursor.execute(query)
 
@@ -72,6 +64,9 @@ def initialize_database():
                     LIKES INT DEFAULT 0)"""
         cursor.execute(query)
 
+        query = """INSERT INTO POST (POSTID, USERNAME, CONTENT, LIKES) VALUES (25, 'mcanyasakci', 'Lorem ipsum', 0 )"""
+        cursor.execute(query)
+                                                                            #POSTLIST TABLE
         query = """DROP TABLE IF EXISTS POSTLIST"""
         cursor.execute(query)
 
@@ -81,24 +76,14 @@ def initialize_database():
                     PRIMARY KEY(USERNAME, POSTID))"""
         cursor.execute(query)
 
-        query = """INSERT INTO POST (POSTID, USERNAME, CONTENT, LIKES) VALUES (25, 'mcanyasakci', 'Lorem ipsum', 0 )"""
-        cursor.execute(query)
         query = """INSERT INTO POSTLIST (USERNAME, POSTID) VALUES ('mcanyasakci', 25)"""
         cursor.execute(query)
-
-        connection.commit()
-    return redirect(url_for('home_page'))
-
-@app.route('/initlecturesdb')
-def initialize_lecturesDatabase():
-    with dbapi2.connect(app.config['dsn']) as connection:
-        cursor = connection.cursor()
-
+                                                                            #CRNS TABLE
         query = """DROP TABLE IF EXISTS CRNS"""
         cursor.execute(query)
 
         query = """CREATE TABLE CRNS (
-                    CRN PRIMARY KEY NOT NULL,
+                    CRN INTEGER PRIMARY KEY NOT NULL,
                     USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
                     LECTURENAME VARCHAR(500),
                     DAY VARCHAR(10),
@@ -106,6 +91,9 @@ def initialize_lecturesDatabase():
                     ENDINGTIME REAL DEFAULT 0.00)"""
         cursor.execute(query)
 
+        query = """INSERT INTO CRNS (CRN, USERNAME, LECTURENAME, DAY, BEGINNINGTIME, ENDINGTIME) VALUES (11909, 'mcanyasakci', 'microprocessor systems', 'monday', 9.30, 12.30 )"""
+        cursor.execute(query)
+                                                                            #CRNLIST TABLE
         query = """DROP TABLE IF EXISTS CRNLIST"""
         cursor.execute(query)
 
@@ -115,14 +103,11 @@ def initialize_lecturesDatabase():
                     PRIMARY KEY(USERNAME, CRN))"""
         cursor.execute(query)
 
-        query = """INSERT INTO CRNS (CRN, USERNAME, LECTURENAME, DAY, BEGINNINGTIME, ENDINGTIME) VALUES (11909, 'mcanyasakci', 'microprocessor systems', 'monday', 9.30, 12.30 )"""
-        cursor.execute(query)
         query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES ('mcanyasakci', 11909)"""
         cursor.execute(query)
 
         connection.commit()
-
-    return redirect(url_for('lectures'))
+    return redirect(url_for('home_page'))
 
 @app.route('/count')
 def counter_page():
