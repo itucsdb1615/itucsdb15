@@ -36,19 +36,19 @@ def initialize_database():
     with dbapi2.connect(app.config['dsn']) as connection:
         cursor = connection.cursor()
 
-        query = """DROP TABLE IF EXISTS COUNTER"""        #DROP TABLE COMMANDS
+        query = """DROP TABLE IF EXISTS COUNTER CASCADE"""        #DROP TABLE COMMANDS
         cursor.execute(query)
-        query = """DROP TABLE IF EXISTS CRNLIST"""
+        query = """DROP TABLE IF EXISTS USERS CASCADE"""
         cursor.execute(query)
-        query = """DROP TABLE IF EXISTS CRNS"""
+        query = """DROP TABLE IF EXISTS CRNLIST CASCADE"""
         cursor.execute(query)
-        query = """DROP TABLE IF EXISTS POSTLIST"""
+        query = """DROP TABLE IF EXISTS CRNS CASCADE"""
         cursor.execute(query)
-        query = """DROP TABLE IF EXISTS POST"""
+        query = """DROP TABLE IF EXISTS POSTLIST CASCADE"""
         cursor.execute(query)
-        query = """DROP TABLE IF EXISTS USERS"""
+        query = """DROP TABLE IF EXISTS POST CASCADE"""
         cursor.execute(query)
-        query = """DROP TABLE IF EXISTS DEPARTMENTS"""
+        query = """DROP TABLE IF EXISTS DEPARTMENTS CASCADE"""
         cursor.execute(query)
 
         query = """CREATE TABLE COUNTER (N INTEGER)"""            #COUNTER TABLE
