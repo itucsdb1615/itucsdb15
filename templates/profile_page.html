@@ -1,57 +1,26 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>
-		Profile
-	</title>
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
+{% block style %}<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">{% endblock %}
+{% block navbarlogin %}
+<!-- nav-bar icons need to connect with urls -->
 
-	<!-- to do: Those needs to be added locally -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-	<!-- to do: Needs to get from style.css -->
-	<style>
-		/* hover animation ***/
-		img:hover{
-			transition:0.8s linear;
-			transform:scale(1.5);
-		}
-		/* used for profile page */
-		#profile-col{
-			display: block;
-			position: relative;
-			width: relative;
-			margin: 10px 10px 10px 10px;
-			background-color: white;
-			border-radius: 10%;
-			border: 1px solid #FF7F00;
-			z-index: 10;
-		}
-		/* This is for increasing the icon size*/
-		.glyphicon {
-    		font-size: 20px;
-		}
-	</style>
-</head>
-<body style="background-image: url('https://static.vecteezy.com/system/resources/premium_previews/000/057/904/non_2x/cartoon-bee-vector-pack.jpg')">
-	<!-- nav-bar icons need to connect with urls -->
-	<nav class="navbar navbar-inverse">
-	  <div class="container-fluid">
-	    <div class="navbar-header">
-	    	<a class="navbar-brand" href="{{ url_for('about_page') }}">beeHive</a>
+	  <div class="container">
+	    <div class="navbar-left">
+	    	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-home"></span></a>
+	    	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-envelope"></span></a>
+	    	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-search"></span></a>
 	    </div>
-	    <ul class="nav navbar-nav">
-	    	<li><a href="#"><span class="glyphicon glyphicon-home"></span></a></li>
-	    	<li><a href="#"><span class="glyphicon glyphicon-envelope"></span></a></li>
-	    	<li><a href="#"><span class="glyphicon glyphicon-search"></span></a></li>
-	    </ul>
-	    <ul class="nav navbar-nav navbar-right">
-	    	<li><a href="#"><span class="glyphicon glyphicon-cog"></span></a></li>
-	    	<li><a href="#"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-	    	<li><a href="#"><span class="glyphicon glyphicon-off"></span> Log out</a></li>
-	    </ul>
+	    <div class="navbar-right">
+	    	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-cog"></span></a>
+	    	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-user"></span> Profile</a>
+	    	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-off"></span> Log out</a>
+	    </div>
 	  </div>
-	</nav>
+
+{% endblock %}
+{% block content %}
+<!-- <body style="background-image: url('https://static.vecteezy.com/system/resources/premium_previews/000/057/904/non_2x/cartoon-bee-vector-pack.jpg')"> -->
+
 	<br>
 	<div class="container">
 		<div class="row" >
@@ -214,5 +183,5 @@
 		</div>
 	</div>
 	<br>
-</body>
-</html>
+
+{% endblock %}

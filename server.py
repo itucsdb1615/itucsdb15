@@ -141,6 +141,10 @@ def counter_page():
         count = cursor.fetchone()[0]
     return "This page was accessed %d times." % count
 
+@app.route('/profile')
+def profile_page():
+    return render_template('profile_page.html')
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -149,7 +153,15 @@ def signup():
         email=request.form['inputEmail']
         password=request.form['inputPassword']
 
-        return redirect(url_for('about_page'))                  #kullanicinin bilgilerini aldiktan sonra olusturup profil sayfasina yonlendirme eklenecek
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+
+            query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('%s', '%s', '%s', '%s')""" %(nameSurname,username,email,password)
+            cursor.execute(query)
+
+            connection.commit()
+        return redirect(url_for('profile_page'))
+
     else:
         return render_template('signup.html')
 
