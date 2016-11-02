@@ -66,7 +66,7 @@ def initialize_database():
 
                                             #CRNS TABLE
         query = """CREATE TABLE CRNS (
-                    CRNID SERIAL PRIMARY KEY NOT NULL,
+                    CRNID SERIAL PRIMARY KEY,
                     CRN INTEGER NOT NULL,
                     LECTURENAME VARCHAR(150),
                     LECTURERNAME VARCHAR(50))"""
@@ -75,29 +75,26 @@ def initialize_database():
         query = """INSERT INTO CRNS (CRNID, CRN, LECTURENAME, LECTURERNAME) VALUES (1, 11909, 'Database Managament Systems', 'Hayri Turgut Uyar')"""
         cursor.execute(query)
 
-
-                                            #CRNLIST TABLE
-        query = """CREATE TABLE CRNLIST (
-                    CRNLISTID SERIAL PRIMARY KEY NOT NULL,
-                    CRNID INTEGER REFERENCES CRNS(CRNID),
-                    UNIQUE(CRNLISTID, CRNID))"""
-        cursor.execute(query)
-
-        query = """INSERT INTO CRNLIST (CRNLISTID, CRNID) VALUES (30, 1)"""
-        cursor.execute(query)
-
                                             #USERS TABLE
         query = """CREATE TABLE USERS (
                     NAME VARCHAR(80) NOT NULL,
                     USERNAME VARCHAR(20) PRIMARY KEY,
                     MAIL VARCHAR(80) NOT NULL,
-                    PASSWORD VARCHAR(20) NOT NULL,
-                    CRNLISTID INTEGER REFERENCES CRNLIST(CRNLISTID))"""
+                    PASSWORD VARCHAR(20) NOT NULL)"""
         cursor.execute(query)
 
-        query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD, CRNLISTID) VALUES ('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr', 'leblebi', 30)"""
+        query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr', 'leblebi')"""
         cursor.execute(query)
 
+                                            #CRNLIST TABLE
+        query = """CREATE TABLE CRNLIST (
+                    USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
+                    CRNID INTEGER REFERENCES CRNS(CRNID),
+                    PRIMARY KEY(USERNAME, CRNID))"""
+        cursor.execute(query)
+
+        query = """INSERT INTO CRNLIST (USERNAME, CRNID) VALUES ('mcanyasakci', 1)"""
+        cursor.execute(query)
 
                                             #POST TABLE
         query = """CREATE TABLE POST (
