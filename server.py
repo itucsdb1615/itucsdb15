@@ -88,8 +88,8 @@ def initialize_database():
 
                                             #CRNLIST TABLE
         query = """CREATE TABLE CRNLIST (
-                    USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
-                    CRNID INTEGER REFERENCES CRNS(CRNID),
+                    USERNAME VARCHAR(20) REFERENCES USERS ON DELETE CASCADE,
+                    CRNID INTEGER,
                     PRIMARY KEY(USERNAME, CRNID))"""
         cursor.execute(query)
 
@@ -99,7 +99,7 @@ def initialize_database():
                                             #POST TABLE
         query = """CREATE TABLE POST (
                     POSTID SERIAL PRIMARY KEY,
-                    USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
+                    USERNAME VARCHAR(20) REFERENCES USERS ON DELETE CASCADE,
                     CONTENT VARCHAR(500) NOT NULL,
                     LIKES INT DEFAULT 0)"""
         cursor.execute(query)
@@ -110,8 +110,8 @@ def initialize_database():
 
                                             #POSTLIST TABLE
         query = """CREATE TABLE POSTLIST (
-                    USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
-                    POSTID INTEGER REFERENCES POST(POSTID),
+                    USERNAME VARCHAR(20) REFERENCES USERS ON DELETE CASCADE,
+                    POSTID INTEGER,
                     PRIMARY KEY(USERNAME, POSTID))"""
         cursor.execute(query)
 
@@ -140,15 +140,15 @@ def initialize_database():
         query = """INSERT INTO STUDENTBRANCHES(NAME, DESCRIPTION) VALUES ('COMPUTER SOCIETY','lorem ipsum lorem ipsum') """
         cursor.execute(query)
         query = """CREATE TABLE STUDENTBRANCHES_CASTING(
-                    STUDENTBRANCH_ID INTEGER REFERENCES STUDENTBRANCHES(ID),
-                    PERSON_NAME VARCHAR(20) REFERENCES USERS(USERNAME),
+                    STUDENTBRANCH_ID INTEGER,
+                    PERSON_NAME VARCHAR(20),
                     UNIQUE(STUDENTBRANCH_ID, PERSON_NAME)
 
         ) """
         cursor.execute(query)
         query= """CREATE TABLE DEPARTMENTLIST (
-                    USERNAME VARCHAR(20) PRIMARY KEY REFERENCES USERS(USERNAME),
-                    FACULTYNO INTEGER REFERENCES DEPARTMENTS(FACULTYNO),
+                    USERNAME VARCHAR(20) PRIMARY KEY REFERENCES USERS ON DELETE CASCADE,
+                    FACULTYNO INTEGER,
                     UNIQUE (USERNAME , FACULTYNO) )"""
         cursor.execute(query)
         query = """INSERT INTO DEPARTMENTLIST (USERNAME, FACULTYNO ) VALUES ('mcanyasakci', 15)"""
@@ -220,6 +220,48 @@ def departments():
 @app.route('/privacypolicy')
 def privacy_policy():
     return render_template('privacy_policy.html')
+
+@app.route('/settings', methods=['GET', 'POST'])
+def settings_page():
+    if request.method == 'POST':
+        if request.form['action'] == 'deleteUser':
+            username=request.form['inputUsername']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """DELETE FROM USERS WHERE ( USERNAME='%s' )""" %(username)
+                cursor.execute(query)
+
+                connection.commit()
+            return render_template('settings_page.html')
+        elif request.form['action'] == 'updateUser':
+            nameSurname=request.form['inputNameSurname']
+            username=request.form['inputUsername']
+            email=request.form['inputEmail']
+            password=request.form['inputPassword']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """UPDATE USERS SET NAME='%s', MAIL='%s', PASSWORD='%s' WHERE (USERNAME='%s')""" %(nameSurname, email, password, username)
+                cursor.execute(query)
+
+                connection.commit()
+            return render_template('settings_page.html', messageU="Updated user %s" %(username))
+        elif request.form['action'] == 'searchUser':
+            username=request.form['inputUsername']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """SELECT * FROM USERS WHERE ( USERNAME='%s' )""" %(username)
+                cursor.execute(query)
+
+                datas=cursor.fetchall()
+
+                connection.commit()
+            return render_template('settings_page.html', result=datas)
+
+    else:
+        return render_template('settings_page.html')
 
 if __name__ == '__main__':
     VCAP_APP_PORT = os.getenv('VCAP_APP_PORT')

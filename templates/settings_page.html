@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+{% block title %}Settings{% endblock %}
+{% block style %}{% endblock %}
+{% block navbarlogin %}{% endblock %}
+{% block content %}
+<div class="container">
+	<div class="row">
+		<div class="col-md-4">
+
+			<form class="" action="" method="post">
+				<h2>Delete User</h2>
+				<label for="inputUsername" class="sr-only">Username</label>
+				<input type="text" name="inputUsername" class="form-control" placeholder="Username" required autofocus>
+				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="deleteUser">Delete user</button>
+			</form>
+
+		</div>
+		<div class="col-md-4">
+
+          <form class="" action="" method="post">
+				<h2>Update User</h2>
+				<label for="inputNameSurname" class="sr-only">Name and surname</label>
+				<input type="text" name="inputNameSurname" class="form-control" placeholder="Name and surname" required autofocus>
+
+				<label for="inputUsername" class="sr-only">Username</label>
+				<input type="text" name="inputUsername" class="form-control" placeholder="Username" required autofocus>
+
+				<label for="inputEmail" class="sr-only">Email address</label>
+				<input type="email" name="inputEmail" class="form-control" placeholder="Email address" required>
+
+				<label for="inputPassword" class="sr-only">Password</label>
+				<input type="password" name="inputPassword" class="form-control" placeholder="Password" required>
+
+				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="updateUser">Update user</button>
+			</form>
+
+		</div>
+		<div class="col-md-4">
+
+			<form class="" action="" method="post">
+				<h2>Search User</h2>
+				<label for="inputUsername" class="sr-only">Username</label>
+				<input type="text" name="inputUsername" class="form-control" placeholder="Username" required autofocus>
+				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="searchUser">Search user</button>
+			</form>
+
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-4">
+			{% if messageD %}
+			<p>{{ messageD }}</p>
+			{% endif %}
+		</div>
+		<div class="col-md-4">
+			{% if messageU %}
+			<p>{{ messageU }}</p>
+			{% endif %}
+		</div>
+		<div class="col-md-4">
+			{% if result %}
+			<p>For user: {{ result[0][1] }}</p>
+			<p>Name and surname: {{ result[0][0] }}</p>
+			<p>E-mail: {{ result[0][2] }}</p>
+			{% endif %}
+		</div>
+	</div>
+
+</div> <!-- /container -->
+{% endblock %}
