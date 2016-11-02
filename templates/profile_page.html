@@ -3,17 +3,22 @@
 {% block style %}<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">{% endblock %}
 {% block navbarlogin %}
 <!-- nav-bar icons need to connect with urls -->
-
 	  <div class="container">
 	    <div class="navbar-left">
-	    	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-home"></span></a>
-	    	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-envelope"></span></a>
-	    	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-search"></span></a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Home</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Message</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Search</a>
+
+	    </div>
+	    <div class="navbar-default">
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Lectures</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Groups</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Department(s)</a>
 	    </div>
 	    <div class="navbar-right">
-	    	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-cog"></span></a>
-	    	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-user"></span> Profile</a>
-	    	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-off"></span> Log out</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Settings</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span> Profile</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span> Log out</a>
 	    </div>
 	  </div>
 
@@ -21,167 +26,144 @@
 {% block content %}
 <!-- <body style="background-image: url('https://static.vecteezy.com/system/resources/premium_previews/000/057/904/non_2x/cartoon-bee-vector-pack.jpg')"> -->
 
-	<br>
-	<div class="container">
-		<div class="row" >
-			<div class="col-md-3" >
-				<div id="profile-col" >
-					<div style="margin: 10px 10px 30px 10px" align="center">
-						<br>
-						<img src="V668FhCe.jpeg" class=" img-responsive img-rounded"
-						height="150px" width= "150px"/>
+<br>
+<div class="container">
+	<div class="row" >
+		<div class="col-md-3" >
+			<div id="profile-col" >
+				<div style="margin: 10px 10px 30px 10px" align="center">
+					<br>
+					<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded"
+					height="150px" width= "150px"/>
+					<font size="5"><b>Full name</b></font>
+					<p><em>@</em><em>Username</em></p>
+					<p>Description of the user</p>
+				</div>
+			</div>
+
+			<div id="profile-col" >
+				<div style="margin: 10px 10px 30px 10px">
+					<h1 align="center">Hot Titles</h1>
+					<ol>
+						<!-- Those needs to be clickable -->
+						<li>beeHive is coming soon</li>
+						<li>garbage title</li>
+						<li>troll title</li>
+					</ol>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="col-md-6">
+
+			<!-- This is for sending post -->
+			<div id="profile-col">
+				<div style="margin: 10px 10px 30px 10px">
+					<br>
+					<div style=display:inline-block>
+						<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+					</div>
+					<div style=display:inline-block>
+						<font size="5"><b>Full name</b></font>
+						<p><em>@</em><em>username</em></p>
+					</div>
+					<br>
+					<div class="form-group" align="center">
+	    				<input type="text" placeholder="What to write today hmm..." class="form-control">
+
+	    			</div>
+
+	    			<a href="#" class="pull-right btn btn-success btn">
+         					<span class="glyphicon glyphicon-pencil"></span> Send a post
+       				</a>
+	    			<br>
+				</div>
+			</div>
+   			<!-- end of the sending post part-->
+			<br>
+   			<!-- This is one post -->
+   			<div id="profile-col">
+   				<div style="margin: 10px 30px 40px 10px">
+   					<br>
+					<div style=display:inline-block>
+						<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+					</div>
+					<div style=display:inline-block>
 						<font size="5"><b>Full name</b></font>
 						<p><em>@</em><em>Username</em></p>
-						<p>Description of the user</p>
 					</div>
-				</div>
 
-				<div id="profile-col" >
-					<div style="margin: 10px 10px 30px 10px">
-						<h1 align="center">Hot Titles</h1>
+					<div>
+	    				<p>Lorem ipsum </p>
+	    			</div>
+
+	    			<div class="pull-right">
+	    				<!-- This part will have icons in it such as like icon -->
+	    				<a href="#" class="btn-danger btn" style="margin-right: 30px">
+         						<span class="glyphicons glyphicons-bin"></span>Delete
+       					</a>
+       					<a href="#" class="btn-info btn" style="margin-right: 30px">
+         						<span class="glyphicons glyphicons-arrow-up"></span>Update
+       					</a>
+	    				<a href="#" style="margin-right: 10px"><span class="glyphicon glyphicon-star-empty"></span></a>
+	    				<a href="#"><span class="glyphicon glyphicon-comment"></span></a>
+	    			</div>
+	    			<br>
+   				</div>
+   			 </div>
+			 <!-- end of the post -->
+
+		</div>
+
+		<div class="col-md-3">
+			<div id="profile-col">
+   				<div style="margin: 10px 10px 30px 10px">
+   					<h1 align="center">Lectures</h1>
 						<ol>
 							<!-- Those needs to be clickable -->
-							<li>beeHive is coming soon</li>
-							<li>garbage title</li>
-							<li>troll title</li>
+							<li>10078</li>
+							<li>10932</li>
+							<li>20321</li>
+							<li>10311</li>
 						</ol>
+   				</div>
+   			 </div>
+   			 <div id="profile-col">
+   				<div style="margin: 10px 10px 30px 10px">
+   					<h1 align="center">Groups</h1>
+
+					<!-- This is one gruop -->
+					<!-- Needs to be clickable -->
+					<div style=display:inline-block>
+						<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
 					</div>
-				</div>
-
-			</div>
-
-			<div class="col-md-6">
-
-				<!-- This is for sending post -->
-				<div id="profile-col">
-					<div style="margin: 10px 10px 30px 10px">
-						<br>
-						<div style=display:inline-block>
-							<img src="V668FhCe.jpeg" class=" img-responsive img-rounded" height="50px" width= "50px"/>
-						</div>
-						<div style=display:inline-block>
-							<font size="5"><b>Full name</b></font>
-							<p><em>@</em><em>username</em></p>
-						</div>
-						<br>
-						<div class="form-group" align="center">
-		    				<input type="text" placeholder="What to write today hmm..." class="form-control">
-
-		    			</div>
-
-		    			<a href="#" class="pull-right btn btn-info btn">
-          					<span class="glyphicon glyphicon-pencil"></span> Send a post
-        				</a>
-		    			<br>
+					<div style=display:inline-block>
+						<font size="3"><b>Group name</b></font>
+						<p><em>@</em><em>admin</em></p>
 					</div>
-				</div>
-    			<!-- end of the sending post part-->
-				<br>
-    			<!-- This is one post -->
-    			<div id="profile-col">
-    				<div style="margin: 10px 30px 40px 10px">
-    					<br>
-						<div style=display:inline-block>
-							<img src="V668FhCe.jpeg" class=" img-responsive img-rounded" height="50px" width= "50px"/>
-						</div>
-						<div style=display:inline-block>
-							<font size="5"><b>Full name</b></font>
-							<p><em>@</em><em>Username</em></p>
-						</div>
+					<div>
+	    				<p>Description of the group </p>
+	    			</div>
+	    			<!-- end of one gruop -->
 
-						<div>
-		    				<p>Lorem ipsum </p>
-		    			</div>
-
-		    			<div class="pull-right">
-		    				<!-- This part will have icons in it such as like icon -->
-		    				<a href="#" style="margin-right: 10px"><span class="glyphicon glyphicon-star-empty"></span></a>
-		    				<a href="#"><span class="glyphicon glyphicon-comment"></span></a>
-		    			</div>
-		    			<br>
-    				</div>
-    			 </div>
-				 <!-- end of the post -->
-
-				 <!-- This is one post -->
-    			<div id="profile-col">
-    				<div style="margin: 10px 30px 40px 10px">
-    					<br>
-						<div style=display:inline-block>
-							<img src="V668FhCe.jpeg" class=" img-responsive img-rounded" height="50px" width= "50px"/>
-						</div>
-						<div style=display:inline-block>
-							<font size="5"><b>Full name</b></font>
-							<p><em>@</em><em>Username</em></p>
-						</div>
-
-						<div>
-		    				<p>Garbage post asdasfasdaasfasdaasdasdfasdfasd
-		    				asfasfasdasdfasfasfasdasfasfasf
-		    				asdfafsasfasfasfsafasfasfasf </p>
-		    			</div>
-		    			<div class="pull-right">
-		    				<!-- This part will have icons in it such as like icon -->
-		    				<a href="#" style="margin-right: 10px"><span class="glyphicon glyphicon-star-empty"></span></a>
-		    				<a href="#"><span class="glyphicon glyphicon-comment"></span></a>
-		    			</div>
-    				</div>
-    			 </div>
-				 <!-- end of the post -->
-
-
-
-			</div>
-
-			<div class="col-md-3">
-				<div id="profile-col">
-    				<div style="margin: 10px 10px 30px 10px">
-    					<h1 align="center">Lectures</h1>
-							<ol>
-								<!-- Those needs to be clickable -->
-								<li>10078</li>
-								<li>10932</li>
-								<li>20321</li>
-								<li>10311</li>
-							</ol>
-    				</div>
-    			 </div>
-    			 <div id="profile-col">
-    				<div style="margin: 10px 10px 30px 10px">
-    					<h1 align="center">Groups</h1>
-
-						<!-- This is one gruop -->
-						<!-- Needs to be clickable -->
-						<div style=display:inline-block>
-							<img src="V668FhCe.jpeg" class=" img-responsive img-rounded" height="50px" width= "50px"/>
-						</div>
-						<div style=display:inline-block>
-							<font size="3"><b>Group name</b></font>
-							<p><em>@</em><em>admin</em></p>
-						</div>
-						<div>
-		    				<p>Description of the group </p>
-		    			</div>
-		    			<!-- end of one gruop -->
-
-		    			<!-- This is one gruop -->
-		    			<!-- Needs to be clickable -->
-						<div style=display:inline-block>
-							<img src="V668FhCe.jpeg" class=" img-responsive img-rounded" height="50px" width= "50px"/>
-						</div>
-						<div style=display:inline-block>
-							<font size="3"><b>Group name</b></font>
-							<p><em>@</em><em>admin</em></p>
-						</div>
-						<div>
-		    				<p>Garbage text asfasfas </p>
-		    			</div>
-		    			<!-- end of one gruop -->
-    				</div>
-    			 </div>
-			</div>
+	    			<!-- This is one gruop -->
+	    			<!-- Needs to be clickable -->
+					<div style=display:inline-block>
+						<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+					</div>
+					<div style=display:inline-block>
+						<font size="3"><b>Group name</b></font>
+						<p><em>@</em><em>admin</em></p>
+					</div>
+					<div>
+	    				<p>Garbage text asfasfas </p>
+	    			</div>
+	    			<!-- end of one gruop -->
+   				</div>
+   			 </div>
 		</div>
 	</div>
-	<br>
-
+</div>
+<br>
 {% endblock %}
