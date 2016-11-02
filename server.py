@@ -58,11 +58,38 @@ def initialize_database():
         cursor.execute(query)
 
 
-                                            #USERS TABLE
-        query = """CREATE TABLE USERS (NAME VARCHAR(80) NOT NULL, USERNAME VARCHAR(20) PRIMARY KEY, MAIL VARCHAR(80) NOT NULL, PASSWORD VARCHAR(20) NOT NULL)"""
+                                            #CRNS TABLE
+        query = """CREATE TABLE CRNS (
+                    CRNID SERIAL PRIMARY KEY NOT NULL,
+                    CRN INTEGER NOT NULL,
+                    LECTURENAME VARCHAR(150),
+                    LECTURERNAME VARCHAR(50))"""
         cursor.execute(query)
 
-        query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr', 'leblebi')"""
+        query = """INSERT INTO CRNS (CRNID, CRN, LECTURENAME, LECTURERNAME) VALUES (1, 11909, 'Database Managament Systems', 'Hayri Turgut Uyar')"""
+        cursor.execute(query)
+
+
+                                            #CRNLIST TABLE
+        query = """CREATE TABLE CRNLIST (
+                    CRNLISTID SERIAL PRIMARY KEY NOT NULL,
+                    CRNID INTEGER REFERENCES CRNS(CRNID),
+                    UNIQUE(CRNLISTID, CRNID))"""
+        cursor.execute(query)
+
+        query = """INSERT INTO CRNLIST (CRNLISTID, CRNID) VALUES (30, 1)"""
+        cursor.execute(query)
+
+                                            #USERS TABLE
+        query = """CREATE TABLE USERS (
+                    NAME VARCHAR(80) NOT NULL,
+                    USERNAME VARCHAR(20) PRIMARY KEY,
+                    MAIL VARCHAR(80) NOT NULL,
+                    PASSWORD VARCHAR(20) NOT NULL,
+                    CRNLISTID INTEGER REFERENCES CRNLIST(CRNLISTID))"""
+        cursor.execute(query)
+
+        query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD, CRNLISTID) VALUES ('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr', 'leblebi', 30)"""
         cursor.execute(query)
 
 
@@ -86,31 +113,6 @@ def initialize_database():
         cursor.execute(query)
 
         query = """INSERT INTO POSTLIST (USERNAME, POSTID) VALUES ('mcanyasakci', 25)"""
-        cursor.execute(query)
-
-
-                                            #CRNS TABLE
-        query = """CREATE TABLE CRNS (
-                    CRN INTEGER PRIMARY KEY NOT NULL,
-                    USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
-                    LECTURENAME VARCHAR(500),
-                    DAY VARCHAR(10),
-                    BEGINNINGTIME REAL DEFAULT 0.0,
-                    ENDINGTIME REAL DEFAULT 0.00)"""
-        cursor.execute(query)
-
-        query = """INSERT INTO CRNS (CRN, USERNAME, LECTURENAME, DAY, BEGINNINGTIME, ENDINGTIME) VALUES (11909, 'mcanyasakci', 'microprocessor systems', 'monday', 9.30, 12.30 )"""
-        cursor.execute(query)
-
-
-                                            #CRNLIST TABLE
-        query = """CREATE TABLE CRNLIST (
-                    USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
-                    CRN INTEGER REFERENCES CRNS(CRN),
-                    PRIMARY KEY(USERNAME, CRN))"""
-        cursor.execute(query)
-
-        query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES ('mcanyasakci', 11909)"""
         cursor.execute(query)
 
 
