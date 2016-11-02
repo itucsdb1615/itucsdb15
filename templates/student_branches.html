@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
+{% block style %}<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">{% endblock %}
+{% block navbarlogin %}
+<!-- nav-bar icons need to connect with urls -->
+	  <div class="container">
+	    <div class="navbar-left">
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Home</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Message</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Search</a>
+
+	    </div>
+	    <div class="navbar-default">
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Lectures</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Groups</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Department(s)</a>
+	    </div>
+	    <div class="navbar-right">
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Settings</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span> Profile</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span> Log out</a>
+	    </div>
+	  </div>
+
+{% endblock %}
+{% block content %}
+<br>
+<br>
+<br>
+<div class="container">
+	<div class="row">
+		<div class="col-md-4" >
+			<div style="margin: 20px 20px 20px 20px" align="center">
+
+				<font size="5">Update Student Branch</font>
+				<br>
+				<br>
+				<label for="branch-name" class="sr-only">Branch Name</label>
+	        	<input type="text" name="branch-name" class="form-control"
+	        	placeholder="Enter the branch name that you want to update" required autofocus>
+				<br>
+	        	<label for="new-branch-name" class="sr-only">New Branch Name</label>
+	        	<input type="text" name="new-branch-name" class="form-control"
+	        	placeholder="Enter the new branch name" required autofocus>
+				<br>
+	        	<label for="branch-desc" class="sr-only">New Description</label>
+	        	<input type="text" name="branch-desc" class="form-control"
+	        	placeholder="Enter the new description" required autofocus>
+				<br>
+	        	<a href="#" class="pull-right btn-info btn">
+	      			<span class="#"></span>Update
+	    		</a>
+			</div>
+		</div>
+
+		<div class="col-md-4">
+			<div style="margin: 20px 20px 20px 20px" align="center">
+				<font size="5">Delete Student Branch</font>
+				<br>
+				<br>
+				<label for="branch-name" class="sr-only">Branch Name</label>
+	        	<input type="text" name="branch-name" class="form-control"
+	        	placeholder="Enter the branch name that you want to delete" required autofocus>
+				<br>
+	        	<a href="#" class=" pull-right btn-danger btn">
+	      			<span class="#"></span>Delete
+	    		</a>
+			</div>
+
+		</div>
+
+		<div class="col-md-4">
+			<div style="margin: 20px 20px 20px 20px" align="center">
+				<font size="5">Add Student Branch</font>
+				<br>
+				<br>
+				<label for="branch-name" class="sr-only">Branch Name</label>
+	        	<input type="text" name="branch-name" class="form-control"
+	        	placeholder="Enter the branch name that you want to add" required autofocus>
+				<br>
+	        	<label for="branch-desc" class="sr-only">New Description</label>
+	        	<input type="text" name="branch-desc" class="form-control"
+	        	placeholder="Enter the description" required autofocus>
+				<br>
+	        	<a href="#" class="pull-right btn-success btn">
+	      			<span class="#"></span>Add
+	    		</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-2" >
+
+		</div>
+		<div class="col-md-8">
+		<div align="center">
+			<h1 align="center">Student Branches</h1>
+				<ol>
+					<!-- Those needs to be clickable -->
+					<li><font size="5">IEEE</font></li>
+					<li><font size="5">IEEE2</font></li>
+					<li><font size="5">IEEE3</font></li>
+					<li><font size="5">IEEE4</font></li>
+				</ol>
+		</div>
+		</div>
+		<div class="col-md-2">
+
+		</div>
+	</div>
+</div>
+
+{% endblock %}

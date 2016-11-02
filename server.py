@@ -178,6 +178,10 @@ def counter_page():
 def profile_page():
     return render_template('profile_page.html')
 
+@app.route('/branches')
+def student_branches():
+    return render_template('student_branches.html')
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
