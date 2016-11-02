@@ -42,6 +42,8 @@ def initialize_database():
         cursor.execute(query)
         query=  """DROP TABLE IF EXISTS  STUDENTBRANCHES CASCADE"""
         cursor.execute(query)
+        query = """DROP TABLE IF EXISTS DEPARTMENTLIST CASCADE"""
+        cursor.execute(query)
         query = """DROP TABLE IF EXISTS USERS CASCADE"""
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS CRNLIST CASCADE"""
@@ -120,7 +122,9 @@ def initialize_database():
         cursor.execute(query)
 
 
-        query = """CREATE TABLE DEPARTMENTS (FACULTYNO INTEGER, NAME VARCHAR(40))"""   #DEPARTMENTS TABLE
+        query = """CREATE TABLE DEPARTMENTS (
+                    FACULTYNO INTEGER PRIMARY KEY,
+                    NAME VARCHAR(40))"""   #DEPARTMENTS TABLE
         cursor.execute(query)
 
         query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (01, 'Faculty of Civil Engineering')"""
@@ -128,25 +132,31 @@ def initialize_database():
 
         query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (15, 'Faculty of Computer and Informatics')"""
         cursor.execute(query)
-        
+
         query = """CREATE TABLE STUDENTBRANCHES(
                     ID SERIAL PRIMARY KEY,
                     NAME VARCHAR(20),
                     DESCRIPTION VARCHAR(50)
         ) """
         cursor.execute(query)
-        
+
         query = """INSERT INTO STUDENTBRANCHES(NAME, DESCRIPTION) VALUES ('COMPUTER SOCIETY','lorem ipsum lorem ipsum') """
         cursor.execute(query)
         query = """CREATE TABLE STUDENTBRANCHES_CASTING(
                     STUDENTBRANCH_ID INTEGER REFERENCES STUDENTBRANCHES(ID),
                     PERSON_NAME VARCHAR(20) REFERENCES USERS(USERNAME),
                     UNIQUE(STUDENTBRANCH_ID, PERSON_NAME)
-                    
+
         ) """
         cursor.execute(query)
-        
-        
+        query= """CREATE TABLE DEPARTMENTLIST (
+                    USERNAME VARCHAR(20) PRIMARY KEY REFERENCES USERS(USERNAME),
+                    FACULTYNO INTEGER REFERENCES DEPARTMENTS(FACULTYNO),
+                    UNIQUE (USERNAME , FACULTYNO) )"""
+        cursor.execute(query)
+        query = """INSERT INTO DEPARTMENTLIST (USERNAME, FACULTYNO ) VALUES ('mcanyasakci', 15)"""
+        cursor.execute(query)
+
         connection.commit()
     return redirect(url_for('home_page'))
 
