@@ -319,61 +319,46 @@ def signin():
 @app.route('/lectures', methods=['GET', 'POST'])
 def lectures():
     if request.method == 'POST':
-        if request.form['action'] == 'addtoUser':
-            userName=request.form['username']
-            adding=request.form['addCRN']
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            if request.form['action'] == 'addtoUser':
+                userName=request.form['username']
+                adding=request.form['addCRN']
                 query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES ('%s', '%s')""" %(userName, adding)
-                cursor.execute(query)
-                connection.commit()
-            return redirect(url_for('profile_page'))
 
-        elif request.form['action'] == 'addtoLectures':
-            adding=request.form['addCRN']
-            lecturesName=request.form['LecturesName']
-            lecturersName=request.form['LecturerSName']
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
+            elif request.form['action'] == 'addtoLectures':
+                adding=request.form['addCRN']
+                lecturesName=request.form['LecturesName']
+                lecturersName=request.form['LecturerSName']
                 query = """INSERT INTO CRNS (CRN, LECTURENAME, LECTURERNAME) VALUES ('%s', '%s', '%s')""" %(adding, lecturesName, lecturersName)
-                cursor.execute(query)
-                connection.commit()
-            return redirect(url_for('profile_page'))
 
-        elif request.form['action'] == 'delete':
-            userName=request.form['username']
-            deleted=request.form['deleteCRN']
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
+            elif request.form['action'] == 'delete':
+                userName=request.form['username']
+                deleted=request.form['deleteCRN']
                 query = """DELETE FROM CRNLIST WHERE ((USERNAME = '%s') AND (CRN='%s'))""" %(userName, deleted)
                 cursor.execute(query)
                 connection.commit()
-            return render_template('crn_edit.html')
 
-        elif request.form['action'] == 'update':
-            userName=request.form['username']
-            oldcrn=request.form['oldCRN']
-            newcrn=request.form['newCRN']
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
+            elif request.form['action'] == 'update':
+                userName=request.form['username']
+                oldcrn=request.form['oldCRN']
+                newcrn=request.form['newCRN']
                 query = """UPDATE CRNLIST SET CRN='%s' WHERE ((USERNAME='%s') AND (CRN='%s'))""" %(newcrn, userName, oldcrn)
-                cursor.execute(query)
-                connection.commit()
-            return render_template('crn_edit.html', messageU="Updated user %s" %(userName))
 
-        elif request.form['action'] == 'select':
-            selected=request.form['selectCRN']
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
+
+            elif request.form['action'] == 'select':
+                selected=request.form['selectCRN']
                 query = """SELECT * FROM CRNS WHERE ( CRN='%s' )""" %(selected)
                 cursor.execute(query)
-                datas=cursor.fetchall()
-                print(datas)
+                result=cursor.fetchall()
+                print(result)
                 connection.commit()
-            return render_template('crn_edit.html', result=datas)
+                return render_template('crn_edit.html', result=result)
 
-        else:
-            return render_template('crn_edit.html')
+        cursor.execute(query)
+        connection.commit()
+        return redirect(url_for('profile_page'))
+
     else:
         return render_template('crn_edit.html')
 
