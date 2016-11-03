@@ -368,6 +368,7 @@ def lectures():
                 query = """SELECT * FROM CRNS WHERE ( CRN='%s' )""" %(selected)
                 cursor.execute(query)
                 datas=cursor.fetchall()
+                print(datas)
                 connection.commit()
             return render_template('crn_edit.html', result=datas)
 
