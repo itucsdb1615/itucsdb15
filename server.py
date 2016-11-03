@@ -16,6 +16,32 @@ from passlib.apps import custom_app_context as pwd_context
 
 app = Flask(__name__)
 
+# User and Post classes, static for now
+class User:
+   fullName = "Unknown"
+   userName = "noname"
+   email = "nomail@nomail.com"
+
+   def __init__(self, fullName, userName, eMail):
+      self.fullName = fullName
+      self.userName = userName
+      self.email = eMail
+
+class Post:
+   id = -1
+   userName = ""
+   content = ""
+   likes = 0
+
+   def __init__(self, id, userName, content, likes):
+      self.id = id
+      self.userName = userName
+      self.content = content
+      self.likes = likes
+
+currentUser = User("Mertcan","mcanyasakci","yasakci@itu.edu.tr")
+post_01 = Post(25,"mcanyasakci","Lorem ipsum",0)
+
 def get_elephantsql_dsn(vcap_services):
     """Returns the data source name for ElephantSQL."""
     parsed = json.loads(vcap_services)
@@ -105,6 +131,8 @@ def initialize_database():
 
         query = """INSERT INTO POST (POSTID, USERNAME, CONTENT, LIKES) VALUES (25, 'mcanyasakci', 'Lorem ipsum', 0 )"""
         cursor.execute(query)
+        query = """INSERT INTO POST (POSTID, USERNAME, CONTENT, LIKES) VALUES (10, 'mcanyasakci', 'Lorem ipsum', 0 )"""
+        cursor.execute(query)
 
 
                                             #POSTLIST TABLE
@@ -114,7 +142,7 @@ def initialize_database():
                     PRIMARY KEY(USERNAME, POSTID))"""
         cursor.execute(query)
 
-        query = """INSERT INTO POSTLIST (USERNAME, POSTID) VALUES ('mcanyasakci', 25)"""
+        query = """INSERT INTO POSTLIST (USERNAME, POSTID) VALUES ('mcanyasakci', 10)"""
         cursor.execute(query)
 
 
@@ -170,9 +198,62 @@ def counter_page():
         count = cursor.fetchone()[0]
     return "This page was accessed %d times." % count
 
-@app.route('/profile')
+@app.route('/profile', methods=['GET', 'POST'])
 def profile_page():
-    return render_template('profile_page.html')
+    if request.method == 'POST':
+        if request.form['action'] == 'sendPost':
+            postContent = request.form['postContent']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """INSERT INTO POST(USERNAME, CONTENT) VALUES('%s', '%s')""" %(currentUser.userName, postContent)
+                cursor.execute(query)
+
+                connection.commit()
+            return render_template('post_cfg.html')
+        else:
+            return render_template('post_cfg.html')
+    else:
+        return render_template('profile_page.html')
+
+@app.route('/post_cfg', methods=['GET', 'POST'])
+def post_cfg():
+    if request.method == 'POST':
+        if request.form['action'] == 'updatePost':
+            postContent = request.form['postContent']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """UPDATE POST SET CONTENT='%s' WHERE (POSTID='%s')""" %(postContent, post_01.id)
+
+                cursor.execute(query)
+
+                connection.commit()
+            return render_template('post_cfg.html', messageU="Updated post to %s" %(postContent))
+        elif request.form['action'] == 'deletePost':
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """DELETE FROM POST WHERE ( POSTID='%d' )""" %(post_01.id)
+                cursor.execute(query)
+
+                connection.commit()
+            return render_template('post_cfg.html')
+        elif request.form['action'] == 'searchPost':
+            postContent=request.form['search-content']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """SELECT * FROM POST WHERE ( CONTENT='%s' )""" %(postContent)
+                cursor.execute(query)
+
+                datas=cursor.fetchall()
+                connection.commit()
+            return render_template('post_cfg.html', result=datas)
+        else:
+            return render_template('post_cfg.html')
+    else:
+        return render_template('post_cfg.html')
 
 @app.route('/branches')
 def student_branches():

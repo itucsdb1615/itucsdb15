@@ -69,14 +69,13 @@
 						<p><em>@</em><em>username</em></p>
 					</div>
 					<br>
-					<div class="form-group" align="center">
-	    				<input type="text" placeholder="What to write today hmm..." class="form-control">
-
-	    			</div>
-
-	    			<a href="#" class="pull-right btn btn-success btn">
-         					<span class="glyphicon glyphicon-pencil"></span> Send a post
-       				</a>
+					<form action="" method="post">
+						<div class="form-group" align="center">
+		    				<input type="text" name="postContent" placeholder="What to write today hmm..." class="form-control">
+		    			</div>
+						<button class="glyphicon glyphicon-pencil pull-right btn btn-success btn"
+						type="submit" name="action" value="sendPost">Send a post</button>
+					</form>
 	    			<br>
 				</div>
 			</div>
@@ -100,14 +99,9 @@
 
 	    			<div class="pull-right">
 	    				<!-- This part will have icons in it such as like icon -->
-	    				<a href="#" class="btn-danger btn" style="margin-right: 30px">
-         						<span class="glyphicons glyphicons-bin"></span>Delete
+	    				<a href="{{url_for('post_cfg')}}" class="btn-info btn" >
+         						<span class="glyphicons glyphicons-bin"></span>Post Settings
        					</a>
-       					<a href="#" class="btn-info btn" style="margin-right: 30px">
-         						<span class="glyphicons glyphicons-arrow-up"></span>Update
-       					</a>
-	    				<a href="#" style="margin-right: 10px"><span class="glyphicon glyphicon-star-empty"></span></a>
-	    				<a href="#"><span class="glyphicon glyphicon-comment"></span></a>
 	    			</div>
 	    			<br>
    				</div>
