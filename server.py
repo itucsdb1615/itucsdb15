@@ -452,7 +452,7 @@ def department_page():
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """UPDATE DEPARTMENTLIST SET USERNAME='%s', FACULTYNO='%s'""" %(userName,faculty)
+                query = """UPDATE DEPARTMENTLIST SET FACULTYNO='%s' WHERE (USERNAME='%s')""" %(faculty,userName)
                 cursor.execute(query)
                 test='test'
                 connection.commit()
