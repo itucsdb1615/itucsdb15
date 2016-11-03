@@ -2,26 +2,23 @@
 {% block title %}Profile{% endblock %}
 {% block style %}<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">{% endblock %}
 {% block navbarlogin %}
-<!-- nav-bar icons need to connect with urls -->
-	  <div class="container">
-	    <div class="navbar-left">
-	    	<a class="navbar-brand" href="{{url_for('profile_page')}}"><span class="#"></span>Home</a>
-	    	<a class="navbar-brand" href="#"><span class="#"></span>Message</a>
-	    	<a class="navbar-brand" href="#"><span class="#"></span>Search</a>
-
-	    </div>
-	    <div class="navbar-default">
-	    	<a class="navbar-brand" href="#"><span class="#"></span>Lectures</a>
-	    	<a class="navbar-brand" href="#"><span class="#"></span>Student Branch(es)</a>
-	    	<a class="navbar-brand" href="#"><span class="#"></span>Department(s)</a>
-	    </div>
-	    <div class="navbar-right">
-	    	<a class="navbar-brand" href="#"><span class="#"></span>Settings</a>
-	    	<a class="navbar-brand" href="#"><span class="#"></span> Profile</a>
-	    	<a class="navbar-brand" href="#"><span class="#"></span> Log out</a>
-	    </div>
-	  </div>
-
+<div class="container">
+    <div class="navbar-left">
+	   	<a class="navbar-brand" href="{{url_for('profile_page')}}"><span class="glyphicon glyphicon-home"></span></a>
+	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-envelope"></span></a>
+	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-search"></span></a>
+    </div>
+    <div class="navbar-default">
+	   	<a class="navbar-brand" href="{{url_for('lectures')}}" style="margin-left: 50px"><span class="glyphicon glyphicon-book"></span> Lectures</a>
+	   	<a class="navbar-brand" href="{{url_for('student_branches')}}"><span class="glyphicon glyphicon-send"></span> Student Branch(es)</a>
+	   	<a class="navbar-brand" href="{{url_for('department_page')}}"><span class="glyphicon glyphicon-briefcase"></span> Department(s)</a>
+    </div>
+   	<div class="navbar-right">
+	   	<a class="navbar-brand" href="{{url_for('settings_page')}}"><span class="glyphicon glyphicon-cog"></span> Settings</a>
+	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-user"></span> Profile</a>
+	   	<a class="navbar-brand" href="{{url_for('home_page')}}"><span class="glyphicon glyphicon-off"></span> Log out</a>
+	</div>
+</div>
 {% endblock %}
 {% block content %}
 <br>
@@ -29,11 +26,11 @@
 <br>
 <div class="container">
 	<div class="row">
-		
-		
+
+
 		<div class="col-md-4" >
 			<div style="margin: 20px 20px 20px 20px" align="center">
-	
+
 					<font size="5">Update Student Branch</font>
 					<br>
 					<br>
@@ -50,11 +47,11 @@
 		        	<input type="text" name="branch-desc" class="form-control"
 		        	placeholder="Enter the new description" required autofocus>
 					<br>
-		        	<button type="submit" name="action" class="pull-right btn btn-info" value = "update">Update</button>	
+		        	<button type="submit" name="action" class="pull-right btn btn-info" value = "update">Update</button>
 				</form>
 			</div>
 		</div>
-	
+
 			<div class="col-md-4">
 				<div style="margin: 20px 20px 20px 20px" align="center">
 				<form method='post'>
@@ -95,7 +92,7 @@
 		</div>
 		<div class="col-md-8">
 			<h1 align="center">Search</h1>
-			
+
 			<div style="margin: 20px 20px 20px 20px" align="center">
 				<form method='post'>
 					<font size="5">Search Student Branch</font>
