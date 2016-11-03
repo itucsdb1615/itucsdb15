@@ -255,9 +255,44 @@ def post_cfg():
     else:
         return render_template('post_cfg.html')
 
-@app.route('/branches')
+@app.route('/branches', methods=['GET', 'POST'])
 def student_branches():
-    return render_template('student_branches.html')
+    if request.method =='POST':
+        
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            if request.form['action'] == 'update':
+                branch_name = request.form['branch-name']
+                new_branch_name = request.form['new-branch-name']
+                branch_desc = request.form['branch-desc']
+                query = """ UPDATE STUDENTBRANCHES SET NAME = '%s' , DESCRIPTION='%s' WHERE (NAME = '%s')"""%(new_branch_name, branch_desc, branch_name)
+        
+            elif request.form['action'] == 'delete':
+                branch_name = request.form['delete-branch-name']
+                query = """DELETE FROM STUDENTBRANCHES WHERE (NAME = '%s')"""%(branch_name)
+                #query = """DELETE FROM USERS WHERE ( USERNAME='%s' )""" %(username)
+                
+            elif request.form['action'] == 'add':
+                branch_name = request.form['add-branch-name']
+                new_branch_desc = request.form['add-branch-desc']
+                query = """INSERT INTO STUDENTBRANCHES(NAME, DESCRIPTION) VALUES ('%s','%s') """%(branch_name, new_branch_desc)
+            elif request.form['action'] == 'search':
+                 branch_name = request.form['search-branch-name']
+                 # query = """SELECT * FROM USERS WHERE ( USERNAME='%s' )""" %(username)
+                 query = """SELECT * FROM STUDENTBRANCHES WHERE (NAME = '%s')""" %(branch_name)
+                 cursor.execute(query)
+                 result = cursor.fetchall()
+                 print(result)
+                 connection.commit()
+                 return render_template('student_branches.html', result=result)
+                 
+                 
+            cursor.execute(query)
+            connection.commit()
+            
+            
+    return render_template('student_branches.html') 
+
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
