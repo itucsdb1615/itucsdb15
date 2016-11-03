@@ -270,7 +270,6 @@ def student_branches():
             elif request.form['action'] == 'delete':
                 branch_name = request.form['delete-branch-name']
                 query = """DELETE FROM STUDENTBRANCHES WHERE (NAME = '%s')"""%(branch_name)
-                #query = """DELETE FROM USERS WHERE ( USERNAME='%s' )""" %(username)
                 
             elif request.form['action'] == 'add':
                 branch_name = request.form['add-branch-name']
@@ -278,7 +277,6 @@ def student_branches():
                 query = """INSERT INTO STUDENTBRANCHES(NAME, DESCRIPTION) VALUES ('%s','%s') """%(branch_name, new_branch_desc)
             elif request.form['action'] == 'search':
                  branch_name = request.form['search-branch-name']
-                 # query = """SELECT * FROM USERS WHERE ( USERNAME='%s' )""" %(username)
                  query = """SELECT * FROM STUDENTBRANCHES WHERE (NAME = '%s')""" %(branch_name)
                  cursor.execute(query)
                  result = cursor.fetchall()
