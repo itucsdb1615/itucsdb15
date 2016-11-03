@@ -131,7 +131,7 @@ def initialize_database():
 
         query = """INSERT INTO POST (POSTID, USERNAME, CONTENT, LIKES) VALUES (25, 'mcanyasakci', 'Lorem ipsum', 0 )"""
         cursor.execute(query)
-        query = """INSERT INTO POST (POSTID, USERNAME, CONTENT, LIKES) VALUES (10, 'mcanyasakci', 'Lorem ipsum', 0 )"""
+        query = """INSERT INTO POST (POSTID, USERNAME, CONTENT, LIKES) VALUES (10, 'mcanyasakci', 'deneme', 0 )"""
         cursor.execute(query)
 
 
@@ -210,9 +210,9 @@ def profile_page():
                 cursor.execute(query)
 
                 connection.commit()
-            return render_template('post_cfg.html')
+            return render_template('profile_page.html')
         else:
-            return render_template('post_cfg.html')
+            return render_template('profile_page.html')
     else:
         return render_template('profile_page.html')
 
@@ -234,7 +234,7 @@ def post_cfg():
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """DELETE FROM POST WHERE ( POSTID='%d' )""" %(post_01.id)
+                query = """DELETE FROM POST WHERE ( POSTID='%s' )""" %(post_01.id)
                 cursor.execute(query)
 
                 connection.commit()
