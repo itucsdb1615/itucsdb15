@@ -16,6 +16,32 @@ from passlib.apps import custom_app_context as pwd_context
 
 app = Flask(__name__)
 
+# User and Post classes, static for now
+class User:
+   fullName = "Unknown"
+   userName = "noname"
+   email = "nomail@nomail.com"
+
+   def __init__(self, fullName, userName, eMail):
+      self.fullName = fullName
+      self.userName = userName
+      self.email = eMail
+
+class Post:
+   id = -1
+   userName = ""
+   content = ""
+   likes = 0
+
+   def __init__(self, id, userName, content, likes):
+      self.id = id
+      self.userName = userName
+      self.content = content
+      self.likes = likes
+
+currentUser = User("Mertcan","mcanyasakci","yasakci@itu.edu.tr")
+post_01 = Post(25,"mcanyasakci","Lorem ipsum",0)
+
 def get_elephantsql_dsn(vcap_services):
     """Returns the data source name for ElephantSQL."""
     parsed = json.loads(vcap_services)
@@ -66,13 +92,12 @@ def initialize_database():
 
                                             #CRNS TABLE
         query = """CREATE TABLE CRNS (
-                    CRNID SERIAL PRIMARY KEY,
-                    CRN INTEGER NOT NULL,
+                    CRN INTEGER PRIMARY KEY NOT NULL,
                     LECTURENAME VARCHAR(150),
                     LECTURERNAME VARCHAR(50))"""
         cursor.execute(query)
 
-        query = """INSERT INTO CRNS (CRNID, CRN, LECTURENAME, LECTURERNAME) VALUES (1, 11909, 'Database Managament Systems', 'Hayri Turgut Uyar')"""
+        query = """INSERT INTO CRNS (CRN, LECTURENAME, LECTURERNAME) VALUES (11909, 'Database Managament Systems', 'Hayri Turgut Uyar')"""
         cursor.execute(query)
 
                                             #USERS TABLE
@@ -89,11 +114,11 @@ def initialize_database():
                                             #CRNLIST TABLE
         query = """CREATE TABLE CRNLIST (
                     USERNAME VARCHAR(20) REFERENCES USERS ON DELETE CASCADE,
-                    CRNID INTEGER,
-                    PRIMARY KEY(USERNAME, CRNID))"""
+                    CRN INTEGER REFERENCES CRNS(CRN),
+                    PRIMARY KEY(USERNAME, CRN))"""
         cursor.execute(query)
 
-        query = """INSERT INTO CRNLIST (USERNAME, CRNID) VALUES ('mcanyasakci', 1)"""
+        query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES ('mcanyasakci', 11909)"""
         cursor.execute(query)
 
                                             #POST TABLE
@@ -106,6 +131,8 @@ def initialize_database():
 
         query = """INSERT INTO POST (POSTID, USERNAME, CONTENT, LIKES) VALUES (25, 'mcanyasakci', 'Lorem ipsum', 0 )"""
         cursor.execute(query)
+        query = """INSERT INTO POST (POSTID, USERNAME, CONTENT, LIKES) VALUES (10, 'mcanyasakci', 'Lorem ipsum', 0 )"""
+        cursor.execute(query)
 
 
                                             #POSTLIST TABLE
@@ -115,7 +142,7 @@ def initialize_database():
                     PRIMARY KEY(USERNAME, POSTID))"""
         cursor.execute(query)
 
-        query = """INSERT INTO POSTLIST (USERNAME, POSTID) VALUES ('mcanyasakci', 25)"""
+        query = """INSERT INTO POSTLIST (USERNAME, POSTID) VALUES ('mcanyasakci', 10)"""
         cursor.execute(query)
 
 
@@ -171,9 +198,62 @@ def counter_page():
         count = cursor.fetchone()[0]
     return "This page was accessed %d times." % count
 
-@app.route('/profile')
+@app.route('/profile', methods=['GET', 'POST'])
 def profile_page():
-    return render_template('profile_page.html')
+    if request.method == 'POST':
+        if request.form['action'] == 'sendPost':
+            postContent = request.form['postContent']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """INSERT INTO POST(USERNAME, CONTENT) VALUES('%s', '%s')""" %(currentUser.userName, postContent)
+                cursor.execute(query)
+
+                connection.commit()
+            return render_template('post_cfg.html')
+        else:
+            return render_template('post_cfg.html')
+    else:
+        return render_template('profile_page.html')
+
+@app.route('/post_cfg', methods=['GET', 'POST'])
+def post_cfg():
+    if request.method == 'POST':
+        if request.form['action'] == 'updatePost':
+            postContent = request.form['postContent']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """UPDATE POST SET CONTENT='%s' WHERE (POSTID='%s')""" %(postContent, post_01.id)
+
+                cursor.execute(query)
+
+                connection.commit()
+            return render_template('post_cfg.html', messageU="Updated post to %s" %(postContent))
+        elif request.form['action'] == 'deletePost':
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """DELETE FROM POST WHERE ( POSTID='%d' )""" %(post_01.id)
+                cursor.execute(query)
+
+                connection.commit()
+            return render_template('post_cfg.html')
+        elif request.form['action'] == 'searchPost':
+            postContent=request.form['search-content']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """SELECT * FROM POST WHERE ( CONTENT='%s' )""" %(postContent)
+                cursor.execute(query)
+
+                datas=cursor.fetchall()
+                connection.commit()
+            return render_template('post_cfg.html', result=datas)
+        else:
+            return render_template('post_cfg.html')
+    else:
+        return render_template('post_cfg.html')
 
 @app.route('/branches')
 def student_branches():
@@ -203,9 +283,63 @@ def signup():
 def signin():
     return render_template('signin.html')
 
-@app.route('/lectures')
+@app.route('/lectures', methods=['GET', 'POST'])
 def lectures():
-    return render_template('lectures.html')
+    if request.method == 'POST':
+        if request.form['action'] == 'addtoUser':
+            userName=request.form['username']
+            adding=request.form['addCRN']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES ('%s', '%s')""" %(userName, adding)
+                cursor.execute(query)
+                connection.commit()
+            return redirect(url_for('profile_page'))
+
+        elif request.form['action'] == 'addtoLectures':
+            adding=request.form['addCRN']
+            lecturesName=request.form['LecturesName']
+            lecturersName=request.form['LecturerSName']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                query = """INSERT INTO CRNS (CRN, LECTURENAME, LECTURERNAME) VALUES ('%s', '%s', '%s')""" %(adding, lecturesName, lecturersName)
+                cursor.execute(query)
+                connection.commit()
+            return redirect(url_for('profile_page'))
+
+        elif request.form['action'] == 'delete':
+            userName=request.form['username']
+            deleted=request.form['deleteCRN']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                query = """DELETE FROM CRNLIST WHERE ((USERNAME = '%s') AND (CRN='%s'))""" %(userName, deleted)
+                cursor.execute(query)
+                connection.commit()
+            return render_template('crn_edit.html')
+
+        elif request.form['action'] == 'update':
+            userName=request.form['username']
+            oldcrn=request.form['oldCRN']
+            newcrn=request.form['newCRN']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                query = """UPDATE CRNLIST SET CRN='%s' WHERE ((USERNAME='%s') AND (CRN='%s'))""" %(newcrn, userName, oldcrn)
+                cursor.execute(query)
+                connection.commit()
+            return render_template('crn_edit.html', messageU="Updated user %s" %(userName))
+
+        elif request.form['action'] == 'select':
+            selected=request.form['selectCRN']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                query = """SELECT * FROM CRNS WHERE ( CRN='%s' )""" %(selected)
+                cursor.execute(query)
+                datas=cursor.fetchall()
+                connection.commit()
+            return render_template('crn_edit.html', result=datas)
+
+    else:
+        return render_template('crn_edit.html')
 
 @app.route('/forgottenpassword')
 def forgotten_password():

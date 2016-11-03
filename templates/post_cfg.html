@@ -1,0 +1,205 @@
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
+{% block style %}<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">{% endblock %}
+{% block navbarlogin %}
+<!-- nav-bar icons need to connect with urls -->
+	  <div class="container">
+	    <div class="navbar-left">
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Home</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Message</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Search</a>
+
+	    </div>
+	    <div class="navbar-default">
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Lectures</a>
+	    	<a class="navbar-brand" href="{{url_for('student_branches')}}"><span class="#"></span>Student Branch(es)</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Department(s)</a>
+	    </div>
+	    <div class="navbar-right">
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Settings</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Profile</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Log out</a>
+	    </div>
+	  </div>
+
+{% endblock %}
+{% block content %}
+<br>
+<div class="container">
+	<div class="row" >
+		<div class="col-md-3" >
+			<div id="profile-col" >
+				<div style="margin: 10px 10px 30px 10px" align="center">
+					<br>
+					<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded"
+					height="150px" width= "150px"/>
+					<font size="5"><b>Full name</b></font>
+					<p><em>@</em><em>Username</em></p>
+					<p>Description of the user</p>
+				</div>
+			</div>
+
+			<div id="profile-col" >
+				<div style="margin: 10px 10px 30px 10px">
+					<h1 align="center">Hot Titles</h1>
+					<ol>
+						<!-- Those needs to be clickable -->
+						<li>beeHive is coming soon</li>
+						<li>garbage title</li>
+						<li>troll title</li>
+					</ol>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="col-md-6">
+			<br>
+   			<!-- This is one post -->
+   			<div id="profile-col">
+   				<div style="margin: 10px 30px 40px 10px">
+   					<br>
+					<div style=display:inline-block>
+						<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+					</div>
+					<div style=display:inline-block>
+						<font size="5"><b>Full name</b></font>
+						<p><em>@</em><em>Username</em></p>
+					</div>
+					<div>
+	    				<p>Lorem ipsum </p>
+	    			</div>
+	    			<br>
+   				</div>
+   				<div id="profile-col"></div>
+   				<div style="margin: 10px 30px 40px 10px">
+   					<br>
+					<div style=display:inline-block>
+						<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+					</div>
+					<div style=display:inline-block>
+						<font size="5"><b>Full name</b></font>
+						<p><em>@</em><em>Username</em></p>
+					</div>
+					<form action="" method="post">
+						<div class="form-group" align="center">
+		    				<input type="text" name="postContent" placeholder="Enter the new content..." class="form-control">
+		    			</div>
+						<div class="pull-right">
+		    				<!-- This part will have icons in it such as like icon -->
+	       					<button class="pull-right btn btn-info btn"
+							type="submit" name="action" value="updatePost">Update</button>
+		    			</div>
+	    			</form>
+	    			{% if messageU %}
+					<p>{{ messageU }}</p>
+					{% endif %}
+	    			<br>
+   				</div>
+   				<div id="profile-col"></div>
+   				<div style="margin: 10px 30px 40px 10px">
+   					<br>
+					<div style=display:inline-block>
+						<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+					</div>
+					<div style=display:inline-block>
+						<font size="5"><b>Full name</b></font>
+						<p><em>@</em><em>Username</em></p>
+					</div>
+					<div>
+	    				<p>Lorem ipsum </p>
+	    			</div>
+	    			<form action="" method="post">
+					<div class="pull-right">
+	    				<!-- This part will have icons in it such as like icon -->
+	    				<button class="glyphicon glyphicon-pencil pull-right btn btn-success btn"
+						type="submit" name="action" value="deletePost">Delete</button>
+	    			</div>
+	    			</form>
+	    			<br>
+   				</div>
+   				<div id="profile-col"></div>
+   				<div style="margin: 10px 30px 40px 10px">
+   					<br>
+					<div style=display:inline-block>
+						<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+					</div>
+					<div style=display:inline-block>
+						<font size="5"><b>Full name</b></font>
+						<p><em>@</em><em>Username</em></p>
+					</div>
+	    			<form action="" method="post">
+	    				<div class="form-group" align="center">
+		    				<input type="text" name="search-content" placeholder="Enter the content that you want to search..." class="form-control">
+		    			</div>
+						<div class="pull-right">
+		    				<!-- This part will have icons in it such as like icon -->
+		    				<button class="glyphicon glyphicon-pencil pull-right btn btn-success btn"
+							type="submit" name="action" value="searchPost">Search Post</button>
+		    			</div>
+	    			</form>
+
+					{% if result %}
+					<p>Username: @{{ result[0][1] }}</p>
+					<p>Content: {{ result[0][2] }}</p>
+					<p>Likes: {{ result[0][3] }}</p>
+					{% endif %}
+					</div>
+	    			<br>
+
+   			 </div>
+			 <!-- end of the post -->
+		</div>
+
+		<div class="col-md-3">
+			<div id="profile-col">
+   				<div style="margin: 10px 10px 30px 10px">
+	   					<h1 align="center">Lectures</h1>
+							<ol>
+								<!-- Those needs to be clickable -->
+								<li>10078</li>
+								<li>10932</li>
+								<li>20321</li>
+								<li>10311</li>
+							</ol>
+   				</div>
+   			 </div>
+   			 <div id="profile-col">
+   				<div style="margin: 10px 10px 30px 10px">
+   					<h1 align="center">Student Branches</h1>
+
+					<!-- This is one gruop -->
+					<!-- Needs to be clickable -->
+					<div style=display:inline-block>
+						<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+					</div>
+					<div style=display:inline-block>
+						<font size="3"><b>Student branch name</b></font>
+						<p><em>@</em><em>admin</em></p>
+					</div>
+					<div>
+	    				<p>Description of the group </p>
+	    			</div>
+	    			<!-- end of one gruop -->
+
+	    			<!-- This is one gruop -->
+	    			<!-- Needs to be clickable -->
+					<div style=display:inline-block>
+						<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+					</div>
+					<div style=display:inline-block>
+						<font size="3"><b>Student branch name</b></font>
+						<p><em>@</em><em>admin</em></p>
+					</div>
+					<div>
+	    				<p>Garbage text asfasfas </p>
+	    			</div>
+	    			<!-- end of one gruop -->
+   				</div>
+   			 </div>
+		</div>
+	</div>
+</div>
+<br>
+
+{% endblock %}
