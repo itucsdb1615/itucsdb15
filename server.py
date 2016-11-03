@@ -371,6 +371,8 @@ def lectures():
                 connection.commit()
             return render_template('crn_edit.html', result=datas)
 
+        else:
+            return render_template('crn_edit.html')
     else:
         return render_template('crn_edit.html')
 
