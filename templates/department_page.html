@@ -1,0 +1,126 @@
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
+{% block style %}<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">{% endblock %}
+{% block navbarlogin %}
+<!-- nav-bar icons need to connect with urls -->
+	  <div class="container">
+	    <div class="navbar-left">
+	    	<a class="navbar-brand" href="{{url_for('profile_page')}}"><span class="#"></span>Home</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Message</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Search</a>
+
+	    </div>
+	    <div class="navbar-default">
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Lectures</a>
+	    	<a class="navbar-brand" href="{{url_for('student_branches')}}"><span class="#"></span>Student Branch(es)</a>
+	    	<a class="navbar-brand" href="{{url_for('department_page')}}"><span class="#"></span>Department(s)</a>
+	    </div>
+	    <div class="navbar-right">
+	    	<a class="navbar-brand" href="#"><span class="#"></span>Settings</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span> Profile</a>
+	    	<a class="navbar-brand" href="#"><span class="#"></span> Log out</a>
+	    </div>
+	  </div>
+
+{% endblock %}
+{% block content %}
+
+<div class="container">
+<div class="row">
+		<div style="margin-top: 100px" align="center">
+		<div class="col-md-4">
+
+			<form class="" action="" method="post">
+				<h1>Add Faculty to User</h1>
+				<label for="inputUsername" class="sr-only">Username</label>
+				<input type="text" name="inputUsername" class="form-control" placeholder="Enter Username" required autofocus>
+				<label for="selectFaculty" class="sr-only">SelectFaculty</label>
+				<select name ="selectFaculty" class="form-control" >
+				<option selected disabled>Choose your Faculty</option>
+				<option value ="15" >Faculty of Computer and Informatics</option>
+				<option value ="01" > Faculty of Civil Engineering </option>
+				</select>
+				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="addFaculty">Save</button>
+			</form>
+			<br>
+			{% if resultInsert %}
+			<p>You added your faculty succesfully </p>
+			{% endif %}
+
+		</div>
+		<div class="col-md-4">
+
+         			<form class="" action="" method="post">
+				<h1>Update My Faculty</h1>
+				<label for="inputUsername" class="sr-only">Username</label>
+				<input type="text" name="inputUsername" class="form-control" placeholder="Enter Username" required autofocus>
+				<label for="selectFaculty" class="sr-only">SelectFaculty</label>
+				<select name ="selectFaculty" class="form-control" >
+				<option selected disabled>Select your new Faculty</option>
+				<option value ="15" >Faculty of Computer and Informatics</option>
+				<option value ="01" > Faculty of Civil Engineering </option>
+				</select>
+				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="updateFaculty">Change</button>
+			</form>
+			<br>
+			{% if resultUpdate %}
+			<p>Your faculty has been Updated Succesfully </p>
+			{% endif %}
+
+		</div>
+		<div class="col-md-4">
+
+			<form class="" action="" method="post">
+				<h1>Search Faculty</h1>
+				<label for="inputUsername" class="sr-only">Username</label>
+				<input type="text" name="inputUsername" class="form-control" placeholder="Enter Username" required autofocus>
+				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="searchFaculty">Search</button>
+			</form>
+
+<br>
+</div>	<div class="col-md-4">
+
+			{% if resultSearch %}
+			<p>Username: {{ resultSearch[0][0] }}</p>
+				{% if resultSearch[0][1]==1 %}
+			<p>Faculty : Faculty of Civil Engineering</p>
+				{% elif resultSearch[0][1]==15 %}
+			<p>Faculty : Faculty of Computer and Informatics</p>
+				{% endif %}
+			{% endif %}
+
+
+
+		</div>
+	</div>
+		</div>
+	</div>
+<br>
+<br>
+<br>
+
+	<div style="margin-left: 500px ;margin-right: 500px" align= "center" >
+			<form class="" action="" method="post">
+				<h1>Delete Faculty</h1>
+				<label for="inputUsername" class="sr-only">Username</label>
+				<input type="text" name="inputUsername" class="form-control" placeholder="Enter Username" required autofocus>
+				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="deleteFaculty">Delete</button>
+			</form>
+
+<br>
+			{% if resultDelete %}
+			<p>Delete Operation Completed Succesfully </p>
+			{% endif %}
+
+
+
+
+	</div>
+
+
+
+
+
+
+
+{% endblock %}

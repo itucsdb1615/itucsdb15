@@ -258,7 +258,7 @@ def post_cfg():
 @app.route('/branches', methods=['GET', 'POST'])
 def student_branches():
     if request.method =='POST':
-        
+
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
             if request.form['action'] == 'update':
@@ -266,11 +266,11 @@ def student_branches():
                 new_branch_name = request.form['new-branch-name']
                 branch_desc = request.form['branch-desc']
                 query = """ UPDATE STUDENTBRANCHES SET NAME = '%s' , DESCRIPTION='%s' WHERE (NAME = '%s')"""%(new_branch_name, branch_desc, branch_name)
-        
+
             elif request.form['action'] == 'delete':
                 branch_name = request.form['delete-branch-name']
                 query = """DELETE FROM STUDENTBRANCHES WHERE (NAME = '%s')"""%(branch_name)
-                
+
             elif request.form['action'] == 'add':
                 branch_name = request.form['add-branch-name']
                 new_branch_desc = request.form['add-branch-desc']
@@ -283,13 +283,13 @@ def student_branches():
                  print(result)
                  connection.commit()
                  return render_template('student_branches.html', result=result)
-                 
-                 
+
+
             cursor.execute(query)
             connection.commit()
-            
-            
-    return render_template('student_branches.html') 
+
+
+    return render_template('student_branches.html')
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -429,6 +429,63 @@ def settings_page():
 
     else:
         return render_template('settings_page.html')
+
+@app.route('/department_page', methods=['GET', 'POST'])
+def department_page():
+    if request.method == 'POST':
+        if request.form['action'] == 'addFaculty':
+            userName= request.form['inputUsername']
+            faculty = request.form['selectFaculty']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """INSERT INTO DEPARTMENTLIST (USERNAME, FACULTYNO ) VALUES ('%s', '%s')""" %(userName,faculty)
+                cursor.execute(query)
+                test = 'test'
+                connection.commit()
+
+            return render_template('department_page.html', resultInsert=test)
+
+        elif request.form['action'] == 'updateFaculty':
+            userName= request.form['inputUsername']
+            faculty = request.form['selectFaculty']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """UPDATE DEPARTMENTLIST SET USERNAME='%s', FACULTYNO='%s'""" %(userName,faculty)
+                cursor.execute(query)
+                test='test'
+                connection.commit()
+
+            return render_template('department_page.html', resultUpdate=test)
+
+        elif request.form['action'] == 'deleteFaculty':
+            userName= request.form['inputUsername']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """DELETE FROM DEPARTMENTLIST WHERE ( USERNAME='%s' )""" %(userName)
+                cursor.execute(query)
+                test='test'
+                connection.commit()
+
+            return render_template('department_page.html', resultDelete=test)
+
+        elif request.form['action'] == 'searchFaculty':
+            userName= request.form['inputUsername']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """SELECT * FROM DEPARTMENTLIST WHERE ( USERNAME='%s' )""" %(userName)
+                cursor.execute(query)
+                datas=cursor.fetchall()
+
+                connection.commit()
+            return render_template('department_page.html', resultSearch=datas)
+
+    else:
+
+        return render_template('department_page.html')
 
 if __name__ == '__main__':
     VCAP_APP_PORT = os.getenv('VCAP_APP_PORT')
