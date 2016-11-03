@@ -13,33 +13,51 @@
 
 <div class="container">
 <div style="text-align:center">
-      <div class="row">
 
-
-<div class="col-md-2">
+<div class="row">
+<div class="col-md-3">
 <form class="form-signin" action="" method="post">
-       	<h2 class="form-signin-heading">Add a CRN</h2>
-     	<label for="addCRN" class="sr-only">Add</label>
-     	<input type="number" name="addCRN" class="form-control" placeholder="Add" required autofocus>
-     	<div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" value="add" type="submit">Submit</button></div>
+       	<h2 class="form-signin-heading">Add a CRN to your lectures</h2>
+     	<label for="username" class="sr-only">Username</label>
+     	<input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
+     	<label for="addCRN" class="sr-only">CRN</label>
+     	<input type="number" name="addCRN" class="form-control" placeholder="CRN" required autofocus>
+     	<div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" name="action" value="addtoUser" type="submit">Submit</button></div>
 </form></div>
 
+<div class="col-md-3">
+<form class="form-signin" action="" method="post">
+       	<h2 class="form-signin-heading">Add a CRN to Lectures List</h2>
+       	<label for="addCRN" class="sr-only">CRN</label>
+     	<input type="number" name="addCRN" class="form-control" placeholder="CRN" required autofocus>
+     	<label for="LecturesName" class="sr-only">Lecture's Name</label>
+     	<input type="text" name="LecturesName" class="form-control" placeholder="Lecture's Name" required autofocus>
+     	<label for="LecturerSName" class="sr-only">Lecturer's Name</label>
+     	<input type="text" name="LecturerSName" class="form-control" placeholder="Lecturer's Name" required autofocus>
+     	<div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" name="action" value="addtoLectures" type="submit">Submit</button></div>
+</form></div>
 
 <div class="col-md-2">
 <form class="form-signin" action="" method="post">
        	<h2 class="form-signin-heading">Delete a CRN</h2>
+     	<label for="username" class="sr-only">Username</label>
+     	<input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
         <label for="deleteCRN" class="sr-only">Delete</label>
         <input type="number" name="deleteCRN" class="form-control" placeholder="Delete" required autofocus>
-        <div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" value="delete" type="submit">Submit</button></div>
+        <div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" name="action" value="delete" type="submit">Submit</button></div>
 </form></div>
 
 
 <div class="col-md-2">
 <form class="form-signin" action="" method="post">
 		<h2 class="form-signin-heading">Update a CRN</h2>
-        <label for="updateCRN" class="sr-only">Update</label>
-        <input type="number" name="updateCRN" class="form-control" placeholder="Update" required autofocus>
-        <div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" value="update" type="submit">Submit</button></div>
+     	<label for="username" class="sr-only">Username</label>
+     	<input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
+        <label for="oldCRN" class="sr-only">Update</label>
+        <input type="number" name="oldCRN" class="form-control" placeholder="Old CRN" required autofocus>
+        <label for="newCRN" class="sr-only">Update</label>
+        <input type="number" name="newCRN" class="form-control" placeholder="New CRN" required autofocus>
+        <div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" name="action" value="update" type="submit">Submit</button></div>
 </form></div>
 
 
@@ -48,7 +66,7 @@
 		<h2 class="form-signin-heading">Select a CRN</h2>
         <label for="selectCRN" class="sr-only">Select</label>
         <input type="number" name="selectCRN" class="form-control" placeholder="Select" required autofocus>
-        <div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" value="select" type="submit">Submit</button></div>
+        <div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" name="action" value="select" type="submit">Submit</button></div>
 </form>
 </div>
 				</div>
