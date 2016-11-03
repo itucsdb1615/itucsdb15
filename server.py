@@ -345,7 +345,6 @@ def lectures():
                 newcrn=request.form['newCRN']
                 query = """UPDATE CRNLIST SET CRN='%s' WHERE ((USERNAME='%s') AND (CRN='%s'))""" %(newcrn, userName, oldcrn)
 
-
             elif request.form['action'] == 'select':
                 selected=request.form['selectCRN']
                 query = """SELECT * FROM CRNS WHERE ( CRN='%s' )""" %(selected)
