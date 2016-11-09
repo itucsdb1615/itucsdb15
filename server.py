@@ -284,7 +284,7 @@ def student_branches():
                  result = cursor.fetchall()
                  print(result)
                  connection.commit()
-                 return render_template('student_branches.html', result=result)
+                 return render_template('student_branches.html', results=result)
 
 
            # cursor.execute(query)
