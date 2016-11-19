@@ -195,7 +195,15 @@ def profile_page():
         else:
             return render_template('profile_page.html')
     else:
-        return render_template('profile_page.html')
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            username = currentUser.userName
+            query = """SELECT * FROM POST WHERE USERNAME= %s"""
+            cursor.execute(query, [username])
+            posts = cursor.fetchall()
+
+            connection.commit()
+        return render_template('profile_page.html', results = posts)
 
 @app.route('/post_cfg', methods=['GET', 'POST'])
 def post_cfg():

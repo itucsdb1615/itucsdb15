@@ -78,7 +78,36 @@
 			</div>
    			<!-- end of the sending post part-->
 			<br>
+
    			<!-- This is one post -->
+   			{% if results %}
+   			{% for post in results %}
+   				<div id="profile-col">
+	   				<div style="margin: 10px 30px 40px 10px">
+	   					<br>
+						<div style=display:inline-block>
+							<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+						</div>
+						<div style=display:inline-block>
+							<font size="5"><b>Full name</b></font>
+							<p><em>@</em><em>@ {{ post[1] }}</em></p>
+						</div>
+
+						<div>
+		    				<p>{{ post[2] }} </p>
+		    			</div>
+
+		    			<div class="pull-right">
+		    				<!-- This part will have icons in it such as like icon -->
+		    				<a href="{{url_for('post_cfg')}}" class="btn-info btn" >
+	         						<span class="glyphicons glyphicons-bin"></span>Post Settings
+	       					</a>
+		    			</div>
+		    			<br>
+	   				</div>
+	   			 </div>
+   			{% endfor %}
+   			{% endif %}
    			<div id="profile-col">
    				<div style="margin: 10px 30px 40px 10px">
    					<br>
