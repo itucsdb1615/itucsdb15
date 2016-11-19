@@ -104,11 +104,12 @@
 					<br>
 		        	<button type="submit" name="action" class="pull-right btn btn-danger" value = "search">Search</button>
 				</form>
-				{% if result %}
-				<ul>
-				 <li><b>  {{result[0][1]}}</b></li>
-				 <li><b> {{result[0][2]}}</b></li>
-				 </ul>
+				{% if results %}
+				<ol>
+					{% for result in results %}
+					<li>{{ result[1] }}&nbsp;&nbsp;&nbsp;&nbsp; {{ result[2] }}</li>
+					{% endfor %}
+				 </ol>
 				{% endif %}
 				</div>
 		</div>

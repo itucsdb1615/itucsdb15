@@ -265,27 +265,29 @@ def student_branches():
                 branch_name = request.form['branch-name']
                 new_branch_name = request.form['new-branch-name']
                 branch_desc = request.form['branch-desc']
-                query = """ UPDATE STUDENTBRANCHES SET NAME = '%s' , DESCRIPTION='%s' WHERE (NAME = '%s')"""%(new_branch_name, branch_desc, branch_name)
+                query = """ UPDATE STUDENTBRANCHES SET NAME = %s , DESCRIPTION='%s' WHERE (NAME = %s)"""#,(new_branch_name, branch_desc, branch_name,)
+                cursor.execute(query,(new_branch_name, branch_desc, branch_name,))
 
             elif request.form['action'] == 'delete':
                 branch_name = request.form['delete-branch-name']
-                query = """DELETE FROM STUDENTBRANCHES WHERE (NAME = '%s')"""%(branch_name)
-
+                query = """DELETE FROM STUDENTBRANCHES WHERE (NAME = %s)"""#,(branch_name,)
+                cursor.execute(query,(branch_name,))
             elif request.form['action'] == 'add':
                 branch_name = request.form['add-branch-name']
                 new_branch_desc = request.form['add-branch-desc']
-                query = """INSERT INTO STUDENTBRANCHES(NAME, DESCRIPTION) VALUES ('%s','%s') """%(branch_name, new_branch_desc)
+                query = """INSERT INTO STUDENTBRANCHES(NAME, DESCRIPTION) VALUES (%s,%s) """#,(branch_name, new_branch_desc,)
+                cursor.execute(query,(branch_name, new_branch_desc,))
             elif request.form['action'] == 'search':
                  branch_name = request.form['search-branch-name']
-                 query = """SELECT * FROM STUDENTBRANCHES WHERE (NAME = '%s')""" %(branch_name)
-                 cursor.execute(query)
+                 query = """SELECT * FROM STUDENTBRANCHES WHERE (NAME = %s)""" #,(branch_name)
+                 cursor.execute(query,(branch_name,) )
                  result = cursor.fetchall()
                  print(result)
                  connection.commit()
-                 return render_template('student_branches.html', result=result)
+                 return render_template('student_branches.html', results=result)
 
 
-            cursor.execute(query)
+           # cursor.execute(query)
             connection.commit()
 
 
@@ -486,6 +488,6 @@ if __name__ == '__main__':
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
         app.config['dsn'] = """user='vagrant' password='vagrant'
-                               host='localhost' port=5432 dbname='itucsdb'"""
+                               host='localhost' port=9993 dbname='itucsdb'"""
 
     app.run(host='0.0.0.0', port=port, debug=debug)
