@@ -16,28 +16,8 @@ from passlib.apps import custom_app_context as pwd_context
 
 app = Flask(__name__)
 
-# User and Post classes, static for now
-class User:
-   fullName = "Unknown"
-   userName = "noname"
-   email = "nomail@nomail.com"
-
-   def __init__(self, fullName, userName, eMail):
-      self.fullName = fullName
-      self.userName = userName
-      self.email = eMail
-
-class Post:
-   id = -1
-   userName = ""
-   content = ""
-   likes = 0
-
-   def __init__(self, id, userName, content, likes):
-      self.id = id
-      self.userName = userName
-      self.content = content
-      self.likes = likes
+from user import User #user model
+from post import Post #post model
 
 currentUser = User("Mertcan","mcanyasakci","yasakci@itu.edu.tr")
 post_01 = Post(25,"mcanyasakci","Lorem ipsum",0)
@@ -203,11 +183,12 @@ def profile_page():
     if request.method == 'POST':
         if request.form['action'] == 'sendPost':
             postContent = request.form['postContent']
+            username = currentUser.userName
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """INSERT INTO POST(USERNAME, CONTENT) VALUES('%s', '%s')""" %(currentUser.userName, postContent)
-                cursor.execute(query)
+                query = """INSERT INTO POST(USERNAME, CONTENT) VALUES(%s, %s)"""
+                cursor.execute(query,(username, postContent))
 
                 connection.commit()
             return render_template('profile_page.html')
@@ -224,18 +205,18 @@ def post_cfg():
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """UPDATE POST SET CONTENT='%s' WHERE (POSTID='%s')""" %(postContent, post_01.id)
+                query = """UPDATE POST SET CONTENT= %s WHERE (POSTID= %s)"""
 
-                cursor.execute(query)
+                cursor.execute(query, (postContent, post_01.id))
 
                 connection.commit()
-            return render_template('post_cfg.html', messageU="Updated post to %s" %(postContent))
+            return render_template('post_cfg.html', messageU="Post Updated" )
         elif request.form['action'] == 'deletePost':
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """DELETE FROM POST WHERE ( POSTID='%s' )""" %(post_01.id)
-                cursor.execute(query)
+                query = """DELETE FROM POST WHERE (POSTID= %s)"""
+                cursor.execute(query, [post_01.id])
 
                 connection.commit()
             return render_template('post_cfg.html')
@@ -244,8 +225,8 @@ def post_cfg():
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """SELECT * FROM POST WHERE ( CONTENT='%s' )""" %(postContent)
-                cursor.execute(query)
+                query = """SELECT * FROM POST WHERE CONTENT= %s """
+                cursor.execute(query, [postContent])
 
                 datas=cursor.fetchall()
                 connection.commit()
@@ -488,6 +469,6 @@ if __name__ == '__main__':
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
         app.config['dsn'] = """user='vagrant' password='vagrant'
-                               host='localhost' port=9993 dbname='itucsdb'"""
+                               host='localhost' port=5432 dbname='itucsdb'"""
 
     app.run(host='0.0.0.0', port=port, debug=debug)
