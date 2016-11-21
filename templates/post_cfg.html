@@ -80,12 +80,12 @@
 					</div>
 					<form action="" method="post">
 						<div class="form-group" align="center">
-		    				<input type="text" name="postContent" placeholder="Enter the new content..." class="form-control">
+		    				<input type="text" name="postContent" placeholder="Enter the new content..." class="form-control" required autofocus>
 		    			</div>
 						<div class="pull-right">
 		    				<!-- This part will have icons in it such as like icon -->
-	       					<button class="pull-right btn btn-info btn"
-							type="submit" name="action" value="updatePost">Update</button>
+	       					<button class="glyphicon glyphicon-upload pull-right btn btn-info btn"
+							type="submit" name="action" value="updatePost"> Update</button>
 		    			</div>
 	    			</form>
 	    			{% if messageU %}
@@ -109,8 +109,8 @@
 	    			<form action="" method="post">
 					<div class="pull-right">
 	    				<!-- This part will have icons in it such as like icon -->
-	    				<button class="glyphicon glyphicon-pencil pull-right btn btn-success btn"
-						type="submit" name="action" value="deletePost">Delete</button>
+	    				<button class="glyphicon glyphicon-trash pull-right btn btn-success"
+						type="submit" name="action" value="deletePost"> Delete</button>
 	    			</div>
 	    			</form>
 	    			<br>
@@ -127,12 +127,12 @@
 					</div>
 	    			<form action="" method="post">
 	    				<div class="form-group" align="center">
-		    				<input type="text" name="search-content" placeholder="Enter the content that you want to search..." class="form-control">
+		    				<input type="text" name="search-content" placeholder="Enter the content that you want to search..." class="form-control" required autofocus>
 		    			</div>
 						<div class="pull-right">
 		    				<!-- This part will have icons in it such as like icon -->
-		    				<button class="glyphicon glyphicon-pencil pull-right btn btn-success btn"
-							type="submit" name="action" value="searchPost">Search Post</button>
+		    				<button class="glyphicon glyphicon-search pull-right btn btn-success"
+							type="submit" name="action" value="searchPost"> Search Post</button>
 		    			</div>
 	    			</form>
 

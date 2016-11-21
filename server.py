@@ -190,15 +190,19 @@ def profile_page():
                 query = """INSERT INTO POST(USERNAME, CONTENT) VALUES(%s, %s)"""
                 cursor.execute(query,(username, postContent))
 
+                query = """SELECT * FROM POST WHERE USERNAME = %s"""
+                cursor.execute(query, [username])
+                posts = cursor.fetchall()
+
                 connection.commit()
-            return render_template('profile_page.html')
+            return render_template('profile_page.html', results = posts)
         else:
             return render_template('profile_page.html')
     else:
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
             username = currentUser.userName
-            query = """SELECT * FROM POST WHERE USERNAME= %s"""
+            query = """SELECT * FROM POST WHERE USERNAME = %s"""
             cursor.execute(query, [username])
             posts = cursor.fetchall()
 
@@ -233,7 +237,7 @@ def post_cfg():
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """SELECT * FROM POST WHERE CONTENT= %s """
+                query = """SELECT * FROM POST WHERE CONTENT = %s"""
                 cursor.execute(query, [postContent])
 
                 datas=cursor.fetchall()
@@ -242,6 +246,7 @@ def post_cfg():
         else:
             return render_template('post_cfg.html')
     else:
+
         return render_template('post_cfg.html')
 
 @app.route('/branches', methods=['GET', 'POST'])

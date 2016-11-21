@@ -32,7 +32,7 @@
 					<br>
 					<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded"
 					height="150px" width= "150px"/>
-					<font size="5"><b>Full name</b></font>
+					<font size="5"><b></b></font>
 					<p><em>@</em><em>Username</em></p>
 					<p>Description of the user</p>
 				</div>
@@ -63,12 +63,12 @@
 					</div>
 					<div style=display:inline-block>
 						<font size="5"><b>Full name</b></font>
-						<p><em>@</em><em>username</em></p>
+						<p><em>@username</em></p>
 					</div>
 					<br>
 					<form action="" method="post">
 						<div class="form-group" align="center">
-		    				<input type="text" name="postContent" placeholder="What to write today hmm..." class="form-control">
+		    				<input type="text" name="postContent" placeholder="What to write today hmm..." class="form-control" required autofocus>
 		    			</div>
 						<button class="glyphicon glyphicon-pencil pull-right btn btn-success btn"
 						type="submit" name="action" value="sendPost">Send a post</button>
@@ -80,58 +80,39 @@
 			<br>
 
    			<!-- This is one post -->
+   			<div id="profile-col">
+	   				<div style="margin: 30px 30px 40px 10px">
    			{% if results %}
    			{% for post in results %}
-   				<div id="profile-col">
-	   				<div style="margin: 10px 30px 40px 10px">
 	   					<br>
 						<div style=display:inline-block>
 							<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
 						</div>
 						<div style=display:inline-block>
-							<font size="5"><b>Full name</b></font>
-							<p><em>@</em><em>@ {{ post[1] }}</em></p>
+							<font size="5"><b>Full Name</b></font>
+							<p><em>@{{ post[1] }}</em></p>
 						</div>
 
 						<div>
-		    				<p>{{ post[2] }} </p>
+		    				<pre>{{ post[2] }} </pre>
 		    			</div>
 
 		    			<div class="pull-right">
 		    				<!-- This part will have icons in it such as like icon -->
-		    				<a href="{{url_for('post_cfg')}}" class="btn-info btn" >
-	         						<span class="glyphicons glyphicons-bin"></span>Post Settings
+		    				<button class="glyphicon glyphicon-heart btn"
+							type="submit" name="action" value="likePressed" style= "margin-right: 10px"> {{ post[3] }}</button>
+
+		    				<a href="{{url_for('post_cfg')}}" class="btn-info btn" style= "font-size: 0px">
+	         						<span class="glyphicon glyphicon-tasks"></span>
 	       					</a>
+
 		    			</div>
 		    			<br>
-	   				</div>
-	   			 </div>
+
    			{% endfor %}
    			{% endif %}
-   			<div id="profile-col">
-   				<div style="margin: 10px 30px 40px 10px">
-   					<br>
-					<div style=display:inline-block>
-						<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
-					</div>
-					<div style=display:inline-block>
-						<font size="5"><b>Full name</b></font>
-						<p><em>@</em><em>Username</em></p>
-					</div>
-
-					<div>
-	    				<p>Lorem ipsum </p>
-	    			</div>
-
-	    			<div class="pull-right">
-	    				<!-- This part will have icons in it such as like icon -->
-	    				<a href="{{url_for('post_cfg')}}" class="btn-info btn" >
-         						<span class="glyphicons glyphicons-bin"></span>Post Settings
-       					</a>
-	    			</div>
-	    			<br>
    				</div>
-   			 </div>
+	   		</div>
 			 <!-- end of the post -->
 
 		</div>
