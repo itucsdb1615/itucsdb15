@@ -33,7 +33,8 @@
 					<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded"
 					height="150px" width= "150px"/>
 					<font size="5"><b></b></font>
-					<p><em>@</em><em>Username</em></p>
+					<p>{{ user.fullName}}</p>
+					<p><em>@{{ user.userName}}</em></p>
 					<p>Description of the user</p>
 				</div>
 			</div>
@@ -62,8 +63,8 @@
 						<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
 					</div>
 					<div style=display:inline-block>
-						<font size="5"><b>Full name</b></font>
-						<p><em>@username</em></p>
+						<font size="5"><b>{{ user.fullName }}</b></font>
+						<p><em>@{{ user.userName}}</em></p>
 					</div>
 					<br>
 					<form action="" method="post">
@@ -89,7 +90,7 @@
 							<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
 						</div>
 						<div style=display:inline-block>
-							<font size="5"><b>Full Name</b></font>
+							<font size="5"><b>{{ user.fullName }}</b></font>
 							<p><em>@{{ post[1] }}</em></p>
 						</div>
 

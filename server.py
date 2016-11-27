@@ -19,7 +19,7 @@ app = Flask(__name__)
 from user import User #user model
 from post import Post #post model
 
-currentUser = User("Mertcan","mcanyasakci","yasakci@itu.edu.tr")
+currentUser = User('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr')
 post_01 = Post(25,"mcanyasakci","Lorem ipsum",0)
 
 def get_elephantsql_dsn(vcap_services):
@@ -32,10 +32,52 @@ def get_elephantsql_dsn(vcap_services):
              dbname='{}'""".format(user, password, host, port, dbname)
     return dsn
 
-@app.route('/')
+#****
+#    Simple and low level sing in is done
+# It has many security vulnerabilities. It takes the email and password and
+# it will check if the hashed password in the database will match the given password.
+# If so, it will set the currentUser's information to new obtained ones
+# Vulnerabilities:
+#    currentUser is global variable and not private
+#    it will always takes the hashed password from database
+#    Unauthorized users can reach the different html files
+#
+# To Do:
+#    Log out is not handled
+#    if the email is not correct site will crash
+#
+# And many more
+#****
+@app.route('/', methods=['GET', 'POST'])
 def home_page():
     now = datetime.datetime.now()
-    return render_template('homepage.html', current_time=now.ctime())
+    if request.method == 'POST':
+        email=request.form['inputEmail']
+        password=request.form['inputPassword']
+
+        #hashing the password
+        hashed = pwd_context.encrypt(password)
+
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+
+            query = """SELECT PASSWORD FROM USERS WHERE MAIL = %s"""
+            cursor.execute(query, [email])
+
+            result = cursor.fetchall()
+
+            if  pwd_context.verify(password, result[0][0]):
+                query = """SELECT * FROM USERS WHERE MAIL = %s"""
+                cursor.execute(query, [email])
+                data = cursor.fetchall()
+                currentUser.set_user(data[0][0], data[0][1],data[0][2])
+                connection.commit()
+
+                return redirect(url_for('profile_page'))
+            else:
+                return render_template('homepage.html', current_time=now.ctime())
+    else:
+        return render_template('homepage.html', current_time=now.ctime())
 
 @app.route('/initdb')
 def initialize_database():
@@ -85,7 +127,7 @@ def initialize_database():
                     NAME VARCHAR(80) NOT NULL,
                     USERNAME VARCHAR(20) PRIMARY KEY,
                     MAIL VARCHAR(80) NOT NULL,
-                    PASSWORD VARCHAR(20) NOT NULL)"""
+                    PASSWORD VARCHAR(120) NOT NULL)"""
         cursor.execute(query)
 
         query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr', 'leblebi')"""
@@ -195,9 +237,9 @@ def profile_page():
                 posts = cursor.fetchall()
 
                 connection.commit()
-            return render_template('profile_page.html', results = posts)
+            return render_template('profile_page.html', user = currentUser, results = posts)
         else:
-            return render_template('profile_page.html')
+            return render_template('profile_page.html', user = currentUser)
     else:
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
@@ -207,7 +249,7 @@ def profile_page():
             posts = cursor.fetchall()
 
             connection.commit()
-        return render_template('profile_page.html', results = posts)
+        return render_template('profile_page.html', user = currentUser, results = posts)
 
 @app.route('/post_cfg', methods=['GET', 'POST'])
 def post_cfg():
@@ -296,11 +338,16 @@ def signup():
         email=request.form['inputEmail']
         password=request.form['inputPassword']
 
+        #hashing the password
+        hashed = pwd_context.encrypt(password)
+
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
 
-            query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('%s', '%s', '%s', '%s')""" %(nameSurname,username,email,password)
+            query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('%s', '%s', '%s', '%s')""" %(nameSurname,username,email,hashed)
             cursor.execute(query)
+
+            currentUser.set_user(nameSurname, username,email)
 
             connection.commit()
         return redirect(url_for('profile_page'))
@@ -310,7 +357,34 @@ def signup():
 
 @app.route('/signin')
 def signin():
-    return render_template('signin.html')
+    if request.method == 'POST':
+        email=request.form['inputEmail']
+        password=request.form['inputPassword']
+
+        #hashing the password
+        hashed = pwd_context.encrypt(password)
+
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+
+            query = """SELECT PASSWORD FROM USERS WHERE MAIL = %s"""
+            cursor.execute(query, email)
+
+            result = cursor.fetchall()
+
+            if  pwd_context.verify(result[0], hashed):
+                query = """SELECT * FROM USERS WHERE MAIL = %s"""
+                cursor.execute(query, email)
+                data = cursor.fetchall()
+                currentUser = User(data[0], data[1],data[2])
+                connection.commit()
+
+                return redirect(url_for('profile_page'))
+            else:
+                return render_template('signin.html')
+    else:
+        return render_template('signin.html')
+
 
 @app.route('/lectures', methods=['GET', 'POST'])
 def lectures():
