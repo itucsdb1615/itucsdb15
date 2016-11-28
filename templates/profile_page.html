@@ -6,7 +6,7 @@
     <div class="navbar-left">
 	   	<a class="navbar-brand" href="{{url_for('profile_page')}}"><span class="glyphicon glyphicon-home"></span></a>
 	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-envelope"></span></a>
-	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-search"></span></a>
+	   	<a class="navbar-brand" href="{{url_for('search')}}"><span class="glyphicon glyphicon-search"></span></a>
     </div>
     <div class="navbar-default">
 	   	<a class="navbar-brand" href="{{url_for('lectures')}}" style="margin-left: 50px"><span class="glyphicon glyphicon-book"></span> Lectures</a>
@@ -102,14 +102,12 @@
 		    				<!-- This part will have icons in it such as like icon -->
 		    				<button class="glyphicon glyphicon-heart btn"
 							type="submit" name="action" value="likePressed" style= "margin-right: 10px"> {{ post[3] }}</button>
-
-		    				<a href="{{url_for('post_cfg')}}" class="btn-info btn" style= "font-size: 0px">
+		    				<a href="{{url_for('post_cfg', postid = post[0])}}" class="btn-info btn" style= "font-size: 0px">
 	         						<span class="glyphicon glyphicon-tasks"></span>
 	       					</a>
 
 		    			</div>
 		    			<br>
-
    			{% endfor %}
    			{% endif %}
    				</div>
@@ -118,49 +116,41 @@
 
 		</div>
 
+
 		<div class="col-md-3">
 			<div id="profile-col">
    				<div style="margin: 10px 10px 30px 10px">
 	   					<h1 align="center">Lectures</h1>
 							<ol>
-								<!-- Those needs to be clickable -->
-								<li>10078</li>
-								<li>10932</li>
-								<li>20321</li>
-								<li>10311</li>
+								{% if lectures %}
+								{% for lecture in lectures %}
+								<li>{{ lecture[1] }}</li>
+								{% endfor %}
+								{% endif %}
 							</ol>
    				</div>
    			 </div>
+
    			 <div id="profile-col">
    				<div style="margin: 10px 10px 30px 10px">
    					<h1 align="center">Student Branches</h1>
 
 					<!-- This is one gruop -->
 					<!-- Needs to be clickable -->
+					{% if branches %}
+					{% for branch in branches %}
 					<div style=display:inline-block>
 						<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
 					</div>
-					<div style=display:inline-block>
-						<font size="3"><b>Student branch name</b></font>
-						<p><em>@</em><em>admin</em></p>
+					<div style=display:inline-block >
+						<font size="3"><b>{{ branch[0][1] }}</b></font>
+						<p><em>@{{ user.userName}}</em></p>
 					</div>
 					<div>
-	    				<p>Description of the group </p>
+	    				<p>{{ branch[0][2] }}</p>
 	    			</div>
-	    			<!-- end of one gruop -->
-
-	    			<!-- This is one gruop -->
-	    			<!-- Needs to be clickable -->
-					<div style=display:inline-block>
-						<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
-					</div>
-					<div style=display:inline-block>
-						<font size="3"><b>Student branch name</b></font>
-						<p><em>@</em><em>admin</em></p>
-					</div>
-					<div>
-	    				<p>Garbage text asfasfas </p>
-	    			</div>
+	    			{% endfor %}
+	    			{% endif %}
 	    			<!-- end of one gruop -->
    				</div>
    			 </div>

@@ -41,6 +41,7 @@ def get_elephantsql_dsn(vcap_services):
 #    currentUser is global variable and not private
 #    it will always takes the hashed password from database
 #    Unauthorized users can reach the different html files
+#    Only one user can log in at once
 #
 # To Do:
 #    Log out is not handled
@@ -189,12 +190,15 @@ def initialize_database():
         query = """INSERT INTO STUDENTBRANCHES(NAME, DESCRIPTION) VALUES ('COMPUTER SOCIETY','lorem ipsum lorem ipsum') """
         cursor.execute(query)
         query = """CREATE TABLE STUDENTBRANCHES_CASTING(
-                    STUDENTBRANCH_ID INTEGER,
-                    PERSON_NAME VARCHAR(20),
+                    STUDENTBRANCH_ID INTEGER REFERENCES STUDENTBRANCHES(ID),
+                    PERSON_NAME VARCHAR(20) REFERENCES USERS(USERNAME),
                     UNIQUE(STUDENTBRANCH_ID, PERSON_NAME)
-
         ) """
         cursor.execute(query)
+
+        query = """INSERT INTO STUDENTBRANCHES_CASTING(STUDENTBRANCH_ID, PERSON_NAME) VALUES (1,'mcanyasakci') """
+        cursor.execute(query)
+
         query= """CREATE TABLE DEPARTMENTLIST (
                     USERNAME VARCHAR(20) PRIMARY KEY REFERENCES USERS ON DELETE CASCADE,
                     FACULTYNO INTEGER,
@@ -244,15 +248,32 @@ def profile_page():
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
             username = currentUser.userName
-            query = """SELECT * FROM POST WHERE USERNAME = %s"""
+
+            ## posts
+            query = """SELECT * FROM POST WHERE USERNAME = %s ORDER BY POSTID DESC"""
             cursor.execute(query, [username])
             posts = cursor.fetchall()
 
-            connection.commit()
-        return render_template('profile_page.html', user = currentUser, results = posts)
+            ## Lectures
+            query = """SELECT * FROM CRNLIST WHERE USERNAME = %s"""
+            cursor.execute(query, [username])
+            lectures = cursor.fetchall()
 
-@app.route('/post_cfg', methods=['GET', 'POST'])
-def post_cfg():
+            ##Student Branches
+            query = """SELECT * FROM STUDENTBRANCHES_CASTING WHERE PERSON_NAME = %s"""
+            cursor.execute(query, [username])
+            ids = cursor.fetchall()
+
+            sbranches = []
+            for id in ids:
+                query = """SELECT * FROM STUDENTBRANCHES WHERE ID = %s"""
+                cursor.execute(query, [id[0]])
+                sbranches.append(cursor.fetchall())
+            connection.commit()
+        return render_template('profile_page.html', user = currentUser, results = posts, lectures = lectures, branches = sbranches)
+
+@app.route('/post_cfg/<postid>', methods=['GET', 'POST'])
+def post_cfg(postid):
     if request.method == 'POST':
         if request.form['action'] == 'updatePost':
             postContent = request.form['postContent']
@@ -261,19 +282,19 @@ def post_cfg():
 
                 query = """UPDATE POST SET CONTENT= %s WHERE (POSTID= %s)"""
 
-                cursor.execute(query, (postContent, post_01.id))
+                cursor.execute(query, (postContent, postid))
 
                 connection.commit()
-            return render_template('post_cfg.html', messageU="Post Updated" )
+            return redirect(url_for('post_cfg', postid = postid))
         elif request.form['action'] == 'deletePost':
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
                 query = """DELETE FROM POST WHERE (POSTID= %s)"""
-                cursor.execute(query, [post_01.id])
+                cursor.execute(query, [postid])
 
                 connection.commit()
-            return render_template('post_cfg.html')
+            return render_template('post_cfg.html', message = "Post is successfully deleted")
         elif request.form['action'] == 'searchPost':
             postContent=request.form['search-content']
             with dbapi2.connect(app.config['dsn']) as connection:
@@ -288,8 +309,16 @@ def post_cfg():
         else:
             return render_template('post_cfg.html')
     else:
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
 
-        return render_template('post_cfg.html')
+            query = """SELECT * FROM POST WHERE POSTID = %s"""
+
+            cursor.execute(query, [postid])
+            post = cursor.fetchall()
+
+            connection.commit()
+        return render_template('post_cfg.html', post = post)
 
 @app.route('/branches', methods=['GET', 'POST'])
 def student_branches():
@@ -444,6 +473,27 @@ def departments():
 @app.route('/privacypolicy')
 def privacy_policy():
     return render_template('privacy_policy.html')
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if request.method == 'POST':
+        if request.form['action'] == 'searchPost':
+                postContent=request.form['search-content']
+                with dbapi2.connect(app.config['dsn']) as connection:
+                    cursor = connection.cursor()
+
+                    query = """SELECT * FROM POST WHERE CONTENT = %s"""
+                    cursor.execute(query, [postContent])
+
+                    datas=cursor.fetchall()
+                    connection.commit()
+
+
+                return render_template('search.html', result = datas)
+        else:
+            return render_template('search.html')
+    else:
+        return render_template('search.html')
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings_page():
