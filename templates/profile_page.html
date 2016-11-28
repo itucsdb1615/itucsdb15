@@ -30,7 +30,7 @@
 			<div id="profile-col" >
 				<div style="margin: 10px 10px 30px 10px" align="center">
 					<br>
-					<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded"
+					<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded"
 					height="150px" width= "150px"/>
 					<font size="5"><b></b></font>
 					<p>{{ user.fullName}}</p>
@@ -60,7 +60,7 @@
 				<div style="margin: 10px 10px 30px 10px">
 					<br>
 					<div style=display:inline-block>
-						<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+						<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded" height="50px" width= "50px"/>
 					</div>
 					<div style=display:inline-block>
 						<font size="5"><b>{{ user.fullName }}</b></font>
@@ -101,11 +101,11 @@
    			{% for post in results %}
 	   					<br>
 						<div style=display:inline-block>
-							<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+							<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded" height="50px" width= "50px"/>
 						</div>
 						<div style=display:inline-block>
 							<font size="5"><b>{{ user.fullName }}</b></font>
-							<p><em>@{{ post[0][1] }}</em></p>
+							<p><em>@{{ post[0]}}</em></p>
 						</div>
 
 						<div>
@@ -116,7 +116,7 @@
 		    				<!-- This part will have icons in it such as like icon -->
 		    				<button class="glyphicon glyphicon-heart btn"
 							type="submit" name="action" value="likePressed" style= "margin-right: 10px"> {{ post[0][3] }}</button>
-		    				<a href="{{url_for('post_cfg', postid = post[0])}}" class="btn-info btn" style= "font-size: 0px">
+		    				<a href="{{url_for('post_cfg', postid = post[0][0] )}}" class="btn-info btn" style= "font-size: 0px">
 	         						<span class="glyphicon glyphicon-tasks"></span>
 	       					</a>
 
@@ -154,7 +154,7 @@
 					{% if branches %}
 					{% for branch in branches %}
 					<div style=display:inline-block>
-						<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+						<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded" height="50px" width= "50px"/>
 					</div>
 					<div style=display:inline-block >
 						<font size="3"><b>{{ branch[0][1] }}</b></font>

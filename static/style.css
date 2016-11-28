@@ -38,7 +38,7 @@ img:hover{
 	margin: 10px 10px 10px 10px;
 	background-color: white;
 	border-radius: 10%;
-	border: 1px solid #FF7F00;
+	border: 1px solid #000;
 	z-index: 10;
 }
 /* This is for increasing the icon size*/
