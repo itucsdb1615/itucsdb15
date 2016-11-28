@@ -73,6 +73,20 @@
 		    			</div>
 						<button class="glyphicon glyphicon-pencil pull-right btn btn-success btn"
 						type="submit" name="action" value="sendPost">Send a post</button>
+
+						<label>
+						<input type="radio" name="department" value="in">Normal<br>
+						{% if lectures %}
+						{% for lecture in lectures %}
+						<input type="radio" name="department" value="in">{{lecture[1]}}<br>
+     					{% endfor %}
+						{% endif %}
+						{% if branches %}
+						{% for branch in branches %}
+						<input type="radio" name="department" value="in">{{branch[0][1]}}<br>
+     					{% endfor %}
+						{% endif %}
+						</label>
 					</form>
 	    			<br>
 				</div>
@@ -91,17 +105,17 @@
 						</div>
 						<div style=display:inline-block>
 							<font size="5"><b>{{ user.fullName }}</b></font>
-							<p><em>@{{ post[1] }}</em></p>
+							<p><em>@{{ post[0][1] }}</em></p>
 						</div>
 
 						<div>
-		    				<pre>{{ post[2] }} </pre>
+		    				<pre>{{ post[0][2] }} </pre>
 		    			</div>
 
 		    			<div class="pull-right">
 		    				<!-- This part will have icons in it such as like icon -->
 		    				<button class="glyphicon glyphicon-heart btn"
-							type="submit" name="action" value="likePressed" style= "margin-right: 10px"> {{ post[3] }}</button>
+							type="submit" name="action" value="likePressed" style= "margin-right: 10px"> {{ post[0][3] }}</button>
 		    				<a href="{{url_for('post_cfg', postid = post[0])}}" class="btn-info btn" style= "font-size: 0px">
 	         						<span class="glyphicon glyphicon-tasks"></span>
 	       					</a>

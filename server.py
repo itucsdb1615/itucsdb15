@@ -99,7 +99,7 @@ def initialize_database():
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS CRNS CASCADE"""
         cursor.execute(query)
-        query = """DROP TABLE IF EXISTS POSTLIST CASCADE"""
+        query = """DROP TABLE IF EXISTS FEED CASCADE"""
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS POST CASCADE"""
         cursor.execute(query)
@@ -147,7 +147,7 @@ def initialize_database():
                                             #POST TABLE
         query = """CREATE TABLE POST (
                     POSTID SERIAL PRIMARY KEY,
-                    USERNAME VARCHAR(20) REFERENCES USERS ON DELETE CASCADE,
+                    USERNAME VARCHAR(20) REFERENCES USERS(USERNAME) ON DELETE CASCADE,
                     CONTENT VARCHAR(500) NOT NULL,
                     LIKES INT DEFAULT 0)"""
         cursor.execute(query)
@@ -159,15 +159,17 @@ def initialize_database():
 
 
                                             #POSTLIST TABLE
-        query = """CREATE TABLE POSTLIST (
-                    USERNAME VARCHAR(20) REFERENCES USERS ON DELETE CASCADE,
-                    POSTID INTEGER,
+        query = """CREATE TABLE FEED (
+                    USERNAME VARCHAR(20) REFERENCES USERS(USERNAME) ON DELETE CASCADE,
+                    POSTID INTEGER REFERENCES POST(POSTID) ON DELETE CASCADE ,
                     PRIMARY KEY(USERNAME, POSTID))"""
         cursor.execute(query)
 
-        query = """INSERT INTO POSTLIST (USERNAME, POSTID) VALUES ('mcanyasakci', 10)"""
+        query = """INSERT INTO FEED (USERNAME, POSTID) VALUES ('mcanyasakci', 10)"""
         cursor.execute(query)
 
+        query = """INSERT INTO FEED (USERNAME, POSTID) VALUES ('mcanyasakci', 25)"""
+        cursor.execute(query)
 
         query = """CREATE TABLE DEPARTMENTS (
                     FACULTYNO INTEGER PRIMARY KEY,
@@ -236,23 +238,32 @@ def profile_page():
                 query = """INSERT INTO POST(USERNAME, CONTENT) VALUES(%s, %s)"""
                 cursor.execute(query,(username, postContent))
 
-                query = """SELECT * FROM POST WHERE USERNAME = %s"""
-                cursor.execute(query, [username])
-                posts = cursor.fetchall()
+                query = """SELECT POSTID FROM POST WHERE (USERNAME = %s and CONTENT = %s)"""
+                cursor.execute(query,(username, postContent))
+                postid = cursor.fetchall()
+
+                query = """INSERT INTO FEED(USERNAME, POSTID) VALUES(%s, %s)"""
+                cursor.execute(query,(username, postid[0]))
 
                 connection.commit()
-            return render_template('profile_page.html', user = currentUser, results = posts)
+            return redirect('profile')
         else:
-            return render_template('profile_page.html', user = currentUser)
+            return redirect('profile')
     else:
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
             username = currentUser.userName
 
             ## posts
-            query = """SELECT * FROM POST WHERE USERNAME = %s ORDER BY POSTID DESC"""
+            query = """SELECT POSTID FROM FEED WHERE USERNAME = %s ORDER BY POSTID DESC"""
             cursor.execute(query, [username])
-            posts = cursor.fetchall()
+            postids = cursor.fetchall()
+
+            posts = []
+            for id in postids:
+                query = """SELECT * FROM POST WHERE POSTID = %s ORDER BY POSTID DESC"""
+                cursor.execute(query, [id[0]])
+                posts.append(cursor.fetchall())
 
             ## Lectures
             query = """SELECT * FROM CRNLIST WHERE USERNAME = %s"""
@@ -269,6 +280,7 @@ def profile_page():
                 query = """SELECT * FROM STUDENTBRANCHES WHERE ID = %s"""
                 cursor.execute(query, [id[0]])
                 sbranches.append(cursor.fetchall())
+
             connection.commit()
         return render_template('profile_page.html', user = currentUser, results = posts, lectures = lectures, branches = sbranches)
 
