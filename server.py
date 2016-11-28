@@ -97,6 +97,8 @@ def initialize_database():
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS CRNLIST CASCADE"""
         cursor.execute(query)
+        query = """DROP TABLE IF EXISTS CLASSES CASCADE"""        #DROP TABLE COMMANDS
+        cursor.execute(query)
         query = """DROP TABLE IF EXISTS CRNS CASCADE"""
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS FEED CASCADE"""
@@ -151,6 +153,15 @@ def initialize_database():
         cursor.execute(query)
 
         query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES ('mcanyasakci', 11909)"""
+        cursor.execute(query)
+
+        query = """CREATE TABLE CLASSES (
+                    CRN INTEGER REFERENCES CRNS(CRN),
+                    USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE,
+                    PRIMARY KEY(CRN))"""
+        cursor.execute(query)
+
+        query = """INSERT INTO CLASSES (CRN, USERNAME) VALUES (11909, 'mcanyasakci')"""
         cursor.execute(query)
 
                                             #POST TABLE
@@ -486,44 +497,88 @@ def lectures():
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
             if request.form['action'] == 'addtoUser':
-                userName=request.form['username']
+                username = currentUser.userName
                 adding=request.form['addCRN']
-                query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES ('%s', '%s')""" %(userName, adding)
+                query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES (%s, %s)"""
+                cursor.execute(query,(username, adding))
 
             elif request.form['action'] == 'addtoLectures':
                 adding=request.form['addCRN']
                 lecturesName=request.form['LecturesName']
                 lecturersName=request.form['LecturerSName']
-                query = """INSERT INTO CRNS (CRN, LECTURENAME, LECTURERNAME) VALUES ('%s', '%s', '%s')""" %(adding, lecturesName, lecturersName)
+                query = """INSERT INTO CRNS (CRN, LECTURENAME, LECTURERNAME) VALUES (%s, %s, %s)"""
+                cursor.execute(query, (adding, lecturesName, lecturersName))
 
             elif request.form['action'] == 'delete':
-                userName=request.form['username']
+                username = currentUser.userName
                 deleted=request.form['deleteCRN']
-                query = """DELETE FROM CRNLIST WHERE ((USERNAME = '%s') AND (CRN='%s'))""" %(userName, deleted)
-                cursor.execute(query)
+                query = """DELETE FROM CRNLIST WHERE ((USERNAME = %s) AND (CRN=%s))"""
+                cursor.execute(query, (username, deleted))
                 connection.commit()
 
             elif request.form['action'] == 'update':
-                userName=request.form['username']
+                username = currentUser.userName
                 oldcrn=request.form['oldCRN']
                 newcrn=request.form['newCRN']
-                query = """UPDATE CRNLIST SET CRN='%s' WHERE ((USERNAME='%s') AND (CRN='%s'))""" %(newcrn, userName, oldcrn)
+                query = """UPDATE CRNLIST SET CRN=%s WHERE ((USERNAME=%s) AND (CRN=%s))"""
+                cursor.execute(query, (newcrn, username, oldcrn))
 
             elif request.form['action'] == 'select':
                 selected=request.form['selectCRN']
-                query = """SELECT * FROM CRNS WHERE ( CRN='%s' )""" %(selected)
-                cursor.execute(query)
-                result=cursor.fetchall()
-                print(result)
+                query = """SELECT * FROM CRNS WHERE (CRN=%s) """
+                cursor.execute(query, [selected])
+                results=cursor.fetchall()
+                print(results)
                 connection.commit()
-                return render_template('crn_edit.html', result=result)
-
-        cursor.execute(query)
+                return render_template('crn_edit.html', result=results)
         connection.commit()
         return redirect(url_for('profile_page'))
 
     else:
         return render_template('crn_edit.html')
+
+@app.route('/classes', methods=['GET', 'POST'])
+def classes():
+    if request.method == 'POST':
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            if request.form['action'] == 'addNewLecture':
+                username = currentUser.userName
+                entering=request.form['enter']
+                query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES (%s, %s)"""
+                cursor.execute(query,(username, entering))
+                query = """INSERT INTO CLASSES (CRN, USERNAME) VALUES (%s, %s)"""
+                cursor.execute(query,(entering, username))
+
+            elif request.form['action'] == 'leftAclass':
+                username = currentUser.userName
+                leave=request.form['left']
+                query = """DELETE FROM CRNLIST WHERE ((USERNAME = %s) AND (CRN=%s))"""
+                cursor.execute(query, (username, leave))
+                query = """DELETE FROM CLASSES WHERE ((CRN=%s) AND (USERNAME=%s))"""
+                cursor.execute(query,(leave, username))
+
+            elif request.form['action'] == 'updateAclass':
+                username = currentUser.userName
+                oldcrn=request.form['oldCRN']
+                newcrn=request.form['newCRN']
+                query = """UPDATE CRNLIST SET CRN=%s WHERE ((USERNAME=%s) AND (CRN=%s))"""
+                cursor.execute(query, (newcrn, username, oldcrn))
+                query = """UPDATE CLASSES SET CRN=%s WHERE ((CRN=%s) AND (USERNAME=%s))"""
+                cursor.execute(query, (newcrn, oldcrn, username))
+
+            elif request.form['action'] == 'findLecture':
+                found=request.form['find']
+                query = """SELECT * FROM CRNS WHERE (CRN=%s) """
+                cursor.execute(query, [found])
+                results=cursor.fetchall()
+                print(results)
+                connection.commit()
+                return render_template('classes.html', result=results)
+        connection.commit()
+        return redirect(url_for('profile_page'))
+    else:
+        return render_template('classes.html')
 
 @app.route('/forgottenpassword')
 def forgotten_password():
