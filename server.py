@@ -89,7 +89,7 @@ def initialize_database():
         cursor.execute(query)
         query=  """DROP TABLE IF EXISTS STUDENTBRANCHES_CASTING CASCADE """
         cursor.execute(query)
-        query=  """DROP TABLE IF EXISTS  STUDENTBRANCHES CASCADE"""
+        query=  """DROP TABLE IF EXISTS STUDENTBRANCHES CASCADE"""
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS DEPARTMENTLIST CASCADE"""
         cursor.execute(query)
@@ -102,6 +102,8 @@ def initialize_database():
         query = """DROP TABLE IF EXISTS FEED CASCADE"""
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS POST CASCADE"""
+        cursor.execute(query)
+        query = """DROP TABLE IF EXISTS HOTTITLES CASCADE"""
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS DEPARTMENTS CASCADE"""
         cursor.execute(query)
@@ -120,7 +122,7 @@ def initialize_database():
                     LECTURERNAME VARCHAR(50))"""
         cursor.execute(query)
 
-        query = """INSERT INTO CRNS (CRN, LECTURENAME, LECTURERNAME) VALUES (11909, 'Database Managament Systems', 'Hayri Turgut Uyar')"""
+        query = """INSERT INTO CRNS (CRN, LECTURENAME, LECTURERNAME) VALUES (11909, 'Database Management Systems', 'Hayri Turgut Uyar')"""
         cursor.execute(query)
 
                                             #USERS TABLE
@@ -134,6 +136,11 @@ def initialize_database():
         password = "leblebi"
         hashed = pwd_context.encrypt(password)
         query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr', %s)"""
+        cursor.execute(query, [hashed])
+
+        password = "deneme"
+        hashed = pwd_context.encrypt(password)
+        query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('ismail', 'namdar', 'namdar@yahoo.com', %s)"""
         cursor.execute(query, [hashed])
 
                                             #CRNLIST TABLE
@@ -211,6 +218,17 @@ def initialize_database():
         query = """INSERT INTO DEPARTMENTLIST (USERNAME, FACULTYNO ) VALUES ('mcanyasakci', 15)"""
         cursor.execute(query)
 
+        query= """CREATE TABLE HOTTITLES (
+                    ID SERIAL PRIMARY KEY,
+                    TOPIC VARCHAR(20) NOT NULL,
+                    USERNAME VARCHAR(20) REFERENCES USERS(USERNAME) ON DELETE CASCADE,
+                    UNIQUE(TOPIC) )"""
+        cursor.execute(query)
+        query = """INSERT INTO HOTTITLES ( TOPIC, USERNAME ) VALUES ('beeHive is awesome!', 'namdar')"""
+        cursor.execute(query)
+        query = """INSERT INTO HOTTITLES ( TOPIC, USERNAME ) VALUES ('Database', 'namdar')"""
+        cursor.execute(query)
+
         connection.commit()
     return redirect(url_for('home_page'))
 
@@ -249,6 +267,29 @@ def profile_page():
 
                 connection.commit()
             return redirect('profile')
+        elif request.form['action'] == 'sendTitle':
+            titleContent = request.form['titleContent']
+            username = currentUser.userName
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """INSERT INTO HOTTITLES(TOPIC, USERNAME) VALUES(%s, %s)"""
+                cursor.execute(query,(titleContent, username))
+
+                connection.commit()
+            return redirect('profile')
+        elif request.form['action'] == 'updateTitle':
+            updateContent = request.form['titleUpdate']
+            titleContent = request.form['content']
+            username = currentUser.userName
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """UPDATE HOTTITLES SET TOPIC = %S WHERE USERNAME = %S AND TOPIC = %s"""
+                cursor.execute(query,(updateContent, username, titleContent))
+
+                connection.commit()
+            return redirect('profile')
         else:
             return redirect('profile')
     else:
@@ -283,8 +324,18 @@ def profile_page():
                 cursor.execute(query, [id[0]])
                 sbranches.append(cursor.fetchall())
 
+            ##Hot Titles
+            query = """SELECT * FROM HOTTITLES WHERE (ID <= 10)"""
+            cursor.execute(query)
+            titles = cursor.fetchall()
+
+            ##My Titles
+            query = """SELECT * FROM HOTTITLES WHERE USERNAME = %s"""
+            cursor.execute(query, [currentUser.userName])
+            mytitles = cursor.fetchall()
+
             connection.commit()
-        return render_template('profile_page.html', user = currentUser, results = posts, lectures = lectures, branches = sbranches)
+        return render_template('profile_page.html', user = currentUser, results = posts, lectures = lectures, branches = sbranches, titles = titles, mytitles = mytitles)
 
 @app.route('/post_cfg/<postid>', methods=['GET', 'POST'])
 def post_cfg(postid):

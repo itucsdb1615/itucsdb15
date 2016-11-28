@@ -23,6 +23,13 @@
 {% block content %}
 <!-- <body style="background-image: url('https://static.vecteezy.com/system/resources/premium_previews/000/057/904/non_2x/cartoon-bee-vector-pack.jpg')"> -->
 
+<script>
+function myFunction() {
+    var x = document.getElementById("myCheck").checked;
+    document.getElementById("demo").innerHTML = x;
+}
+</script>
+
 <br>
 <div class="container">
 	<div class="row" >
@@ -40,14 +47,23 @@
 			</div>
 
 			<div id="profile-col" >
-				<div style="margin: 10px 10px 30px 10px">
+				<div style="margin: 10px 10px 60px 10px">
 					<h1 align="center">Hot Titles</h1>
-					<ol>
+					{% if titles %}
+					{% for title in titles %}
 						<!-- Those needs to be clickable -->
-						<li>beeHive is coming soon</li>
-						<li>garbage title</li>
-						<li>troll title</li>
-					</ol>
+						<li>{{title[1]}}</li>
+						<font size="2"><p><em>@{{title[2]}}</em></p></font>
+					{% endfor %}
+					{% endif %}
+					<br>
+					<form action="" method="post">
+					<div class="form-group" align="center">
+		    			<input type="text" name="titleContent" placeholder="New rumor?" class="form-control" required autofocus>
+		    		</div>
+					<button class="glyphicon glyphicon-pencil pull-right btn btn-success btn"
+						type="submit" name="action" value="sendTitle">Create Topic</button>
+					</form>
 				</div>
 			</div>
 
@@ -75,15 +91,15 @@
 						type="submit" name="action" value="sendPost">Send a post</button>
 
 						<label>
-						<input type="radio" name="department" value="in">Normal<br>
+						<input type="radio" name="" value="">Normal<br>
 						{% if lectures %}
 						{% for lecture in lectures %}
-						<input type="radio" name="department" value="in">{{lecture[1]}}<br>
+						<input type="radio" name="" value="">{{lecture[1]}}<br>
      					{% endfor %}
 						{% endif %}
 						{% if branches %}
 						{% for branch in branches %}
-						<input type="radio" name="department" value="in">{{branch[0][1]}}<br>
+						<input type="radio" name="" value="">{{branch[0][1]}}<br>
      					{% endfor %}
 						{% endif %}
 						</label>
@@ -132,26 +148,27 @@
 
 
 		<div class="col-md-3">
+		{% if lectures %}
 			<div id="profile-col">
    				<div style="margin: 10px 10px 30px 10px">
-	   					<h1 align="center">Lectures</h1>
+   				<h1 align="center">Lectures</h1>
 							<ol>
-								{% if lectures %}
 								{% for lecture in lectures %}
 								<li>{{ lecture[1] }}</li>
 								{% endfor %}
-								{% endif %}
+
 							</ol>
    				</div>
    			 </div>
-
+   		{% endif %}
+		{% if branches %}
    			 <div id="profile-col">
    				<div style="margin: 10px 10px 30px 10px">
    					<h1 align="center">Student Branches</h1>
 
 					<!-- This is one gruop -->
 					<!-- Needs to be clickable -->
-					{% if branches %}
+
 					{% for branch in branches %}
 					<div style=display:inline-block>
 						<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded" height="50px" width= "50px"/>
@@ -164,10 +181,43 @@
 	    				<p>{{ branch[0][2] }}</p>
 	    			</div>
 	    			{% endfor %}
-	    			{% endif %}
+
 	    			<!-- end of one gruop -->
    				</div>
    			 </div>
+   		{% endif %}
+   		{% if mytitles %}
+   			 <div id="profile-col">
+   				<div style="margin: 10px 10px 50px 10px">
+
+					<h1 align="center">My Titles</h1>
+
+					{% for mytitle in mytitles %}
+						<form action="" method="post">
+		    			<!-- Those needs to be clickable -->
+						<li name = "content">{{mytitle[1]}}</li>
+						<font size="2"><em>@{{mytitle[2]}}</em></p></font>
+						<div style=display:inline-block>
+
+							<input type="text" name="titleUpdate" placeholder="Update..." class="form-control" required autofocus>
+							<div style="margin: 10px 10px 30px 10px">
+							<button class="glyphicon glyphicon-upload pull-left btn btn-info btn"
+									type="submit" name="action" value="updateTitle"> Update</button>
+							</div>
+
+						</div>
+						</form>
+						<div style="margin: 10px 10px 50px 10px">
+						<form action="" method="post">
+						<button class="glyphicon glyphicon-trash pull-left btn btn-danger"
+								type="submit" name="action" value="deleteTitle"> Delete</button>
+						</form>
+						</div>
+					{% endfor %}
+
+	    		</div>
+	    	</div>
+	    {% endif %}
 		</div>
 	</div>
 </div>
