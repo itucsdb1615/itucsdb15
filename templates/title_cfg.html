@@ -1,0 +1,110 @@
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
+{% block style %}<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">{% endblock %}
+{% block navbarlogin %}
+<div class="container">
+    <div class="navbar-left">
+	   	<a class="navbar-brand" href="{{url_for('profile_page')}}"><span class="glyphicon glyphicon-home"></span></a>
+	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-envelope"></span></a>
+	   	<a class="navbar-brand" href="{{url_for('search')}}"><span class="glyphicon glyphicon-search"></span></a>
+    </div>
+    <div class="navbar-default">
+	   	<a class="navbar-brand" href="{{url_for('lectures')}}" style="margin-left: 50px"><span class="glyphicon glyphicon-book"></span> Lectures</a>
+	   	<a class="navbar-brand" href="{{url_for('student_branches')}}"><span class="glyphicon glyphicon-send"></span> Student Branch(es)</a>
+	   	<a class="navbar-brand" href="{{url_for('department_page')}}"><span class="glyphicon glyphicon-briefcase"></span> Department(s)</a>
+    </div>
+   	<div class="navbar-right">
+	   	<a class="navbar-brand" href="{{url_for('settings_page')}}"><span class="glyphicon glyphicon-cog"></span> Settings</a>
+	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-user"></span> Profile</a>
+	   	<a class="navbar-brand" href="{{url_for('home_page')}}"><span class="glyphicon glyphicon-off"></span> Log out</a>
+	</div>
+</div>
+{% endblock %}
+{% block content %}
+<br>
+<div class="container">
+	<div class="row" >
+		<div class="col-md-3" >
+			<div id="profile-col" >
+				<div style="margin: 10px 10px 50px 10px">
+					<h1 align="center">Hot Titles</h1>
+					{% if titles %}
+					{% for title in titles %}
+						<!-- Those needs to be clickable -->
+						<li>{{title[1]}}</li>
+						<font size="2"><p><em>@{{title[2]}}</em></p></font>
+
+						<form action="" method="post">
+						<button class="glyphicon glyphicon-trash pull-left btn btn-danger"
+								type="submit" name="action" value="deleteTitle"> Delete</button>
+						</form>
+					{% endfor %}
+					{% endif %}
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-6">
+			<br>
+   			<!-- This is one post -->
+
+   			<div id="profile-col">
+   				<div style="margin: 40px 10px 50px 10px">
+	   				<form action="" method="post">
+						<div class="form-group" align="center">
+			   				<input type="text" name="postContent" placeholder="What to write today hmm..." class="form-control" required autofocus>
+			   			</div>
+						<button class="glyphicon glyphicon-pencil pull-right btn btn-success btn"
+						type="submit" name="action" value="sendPost">Send a post</button>
+					</form>
+   				{% if posts %}
+   				{% for post in posts %}
+	   					<br>
+						<div style=display:inline-block>
+							<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+						</div>
+						<div style=display:inline-block>
+							<font size="5"><b>#{{titles[0][1]}}</b></font>
+							<p><em>@{{ post[0][1]}}</em></p>
+						</div>
+
+						<div>
+		    				<pre>{{ post[0][2] }} </pre>
+		    			</div>
+
+		    			<div class="pull-right">
+		    				<!-- This part will have icons in it such as like icon -->
+		    				<button class="glyphicon glyphicon-heart btn"
+							type="submit" name="action" value="likePressed" style= "margin-right: 10px"> {{ post[0][3] }}</button>
+		    				<a href="{{url_for('post_cfg', postid = post[0] )}}" class="btn-info btn" style= "font-size: 0px">
+	         						<span class="glyphicon glyphicon-tasks"></span>
+	       					</a>
+
+		    			</div>
+		    			<br>
+   				{% endfor %}
+				{% endif %}
+				</div>
+			 <!-- end of the post -->
+		</div>
+		</div>
+		<div class="col-md-3">
+			<br>
+			<div id="profile-col">
+   				<div style="margin: 40px 10px 50px 10px">
+   					<form action="" method="post">
+   					<input type="text" name="titleUpdate" placeholder="Update the title..." class="form-control" required autofocus>
+					<br>
+					<button class="glyphicon glyphicon-upload pull-left btn btn-info btn"
+							type="submit" name="action" value="updateTitle"> Update</button>
+					</form>
+   				</div>
+   			</div>
+			</div>
+	</div>
+</div>
+<br>
+
+
+
+{% endblock %}

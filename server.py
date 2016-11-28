@@ -107,6 +107,8 @@ def initialize_database():
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS HOTTITLES CASCADE"""
         cursor.execute(query)
+        query = """DROP TABLE IF EXISTS HOTTITLECAST CASCADE"""
+        cursor.execute(query)
         query = """DROP TABLE IF EXISTS DEPARTMENTS CASCADE"""
         cursor.execute(query)
 
@@ -232,9 +234,17 @@ def initialize_database():
         query= """CREATE TABLE HOTTITLES (
                     ID SERIAL PRIMARY KEY,
                     TOPIC VARCHAR(20) NOT NULL,
-                    USERNAME VARCHAR(20) REFERENCES USERS(USERNAME) ON DELETE CASCADE,
+                    USERNAME VARCHAR(20) REFERENCES USERS(USERNAME),
                     UNIQUE(TOPIC) )"""
         cursor.execute(query)
+
+        query= """CREATE TABLE HOTTITLECAST (
+                    ID SERIAL PRIMARY KEY,
+                    HOTTITLEID INTEGER REFERENCES HOTTITLES(ID),
+                    POSTID INTEGER REFERENCES POST(POSTID) ON DELETE CASCADE,
+                    UNIQUE(HOTTITLEID, POSTID) )"""
+        cursor.execute(query)
+
         query = """INSERT INTO HOTTITLES ( TOPIC, USERNAME ) VALUES ('beeHive is awesome!', 'namdar')"""
         cursor.execute(query)
         query = """INSERT INTO HOTTITLES ( TOPIC, USERNAME ) VALUES ('Database', 'namdar')"""
@@ -593,6 +603,77 @@ def departments():
 @app.route('/privacypolicy')
 def privacy_policy():
     return render_template('privacy_policy.html')
+
+@app.route('/titles/<titleid>', methods=['GET', 'POST'])
+def title_cfg(titleid):
+    if request.method == 'POST':
+        if request.form['action'] == 'sendPost':
+            postContent = request.form['postContent']
+            username = currentUser.userName
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """INSERT INTO POST(USERNAME, CONTENT) VALUES(%s, %s)"""
+                cursor.execute(query,(username, postContent))
+
+                query = """SELECT POSTID FROM POST WHERE (USERNAME = %s and CONTENT = %s)"""
+                cursor.execute(query,(username, postContent))
+                postid = cursor.fetchall()
+
+                query = """INSERT INTO FEED(USERNAME, POSTID) VALUES(%s, %s)"""
+                cursor.execute(query,(username, postid[0]))
+
+                query = """INSERT INTO HOTTITLECAST(HOTTITLEID, POSTID) VALUES(%s, %s)"""
+                cursor.execute(query,(titleid[0], postid[0]))
+
+                connection.commit()
+            return redirect(url_for('title_cfg', titleid = titleid))
+        elif request.form['action'] == 'updateTitle':
+            updateContent = request.form['titleUpdate']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """UPDATE HOTTITLES SET TOPIC = %s WHERE ID = %s"""
+                cursor.execute(query,(updateContent, titleid[0]))
+
+                connection.commit()
+            return redirect(url_for('title_cfg', titleid = titleid))
+        elif request.form['action'] == 'deleteTitle':
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """DELETE FROM HOTTITLECAST WHERE HOTTITLEID = %s"""
+                cursor.execute(query, [titleid[0]])
+
+                query = """DELETE FROM HOTTITLES WHERE ID = %s"""
+                cursor.execute(query, [titleid[0]])
+
+                connection.commit()
+            return redirect(url_for('profile_page'))
+        else:
+            return redirect(url_for('title_cfg', titleid = titleid))
+    else:
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+
+            query = """SELECT * FROM HOTTITLECAST WHERE HOTTITLEID = %s"""
+            cursor.execute(query, [titleid])
+
+            postids = cursor.fetchall()
+
+            query = """SELECT * FROM HOTTITLES WHERE ID = %s"""
+            cursor.execute(query, [titleid])
+
+            titles = cursor.fetchall()
+
+            posts = []
+            for id in postids:
+                query = """SELECT * FROM POST WHERE POSTID = %s ORDER BY POSTID DESC"""
+                cursor.execute(query, [id[0]])
+                posts.append(cursor.fetchall())
+
+            connection.commit()
+        return render_template('title_cfg.html', posts = posts, user = currentUser, titles = titles)
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
