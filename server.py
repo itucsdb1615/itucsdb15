@@ -131,8 +131,10 @@ def initialize_database():
                     PASSWORD VARCHAR(120) NOT NULL)"""
         cursor.execute(query)
 
-        query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr', 'leblebi')"""
-        cursor.execute(query)
+        password = "leblebi"
+        hashed = pwd_context.encrypt(password)
+        query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr', %s)"""
+        cursor.execute(query, [hashed])
 
                                             #CRNLIST TABLE
         query = """CREATE TABLE CRNLIST (
