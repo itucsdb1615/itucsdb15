@@ -245,7 +245,7 @@ def initialize_database():
         cursor.execute(query)
         query = """CREATE TABLE STUDENTBRANCHES_CASTING(
                     STUDENTBRANCH_ID INTEGER REFERENCES STUDENTBRANCHES(ID),
-                    PERSON_NAME VARCHAR(20) REFERENCES USERS(USERNAME) ON DELETE CASCADE,,
+                    PERSON_NAME VARCHAR(20) REFERENCES USERS(USERNAME) ON DELETE CASCADE,
                     UNIQUE(STUDENTBRANCH_ID, PERSON_NAME)
         ) """
         cursor.execute(query)
