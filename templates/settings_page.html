@@ -103,10 +103,10 @@
 
 			<form class="" action="" method="post">
 				<h2>Delete Lost Item</h2>
-				{% for key, item in items %}
+				{% for item in items %}
 					<li>
-					<input type="checkbox" name="items_to_delete" value="{{ key }}" />
-					<p> {{ item[0][2] }} ({{ item[0][3] }}) </p>
+					<input type="checkbox" name="items_to_delete" value="{{ item[1] }}" />
+					<p> {{ item[2] }} ({{ item[3] }}) </p>
 					</li>
 				{% endfor %}
 				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="deleteLostItem">Delete Lost Item</button>
@@ -117,10 +117,10 @@
 
           <form class="" action="" method="post">
 				<h2>Update Lost Item</h2>
-				{% for key, item in items %}
+				{% for item in items %}
 					<li>
-					<input type="radio" name="items_to_delete" value="{{ key }}" />
-					<p> {{ item[0][2] }} ({{ item[0][3] }}) </p>
+					<input type="radio" name="items_to_update" value="{{ item[1] }}" />
+					<p> {{ item[2] }} ({{ item[3] }}) </p>
 					</li>
 				{% endfor %}
 				<label for="inputItemName" class="sr-only">Item name</label>

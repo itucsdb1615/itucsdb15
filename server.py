@@ -43,9 +43,9 @@ lm.login_view = 'signin'
 from user import User #user model
 from post import Post #post model
 
-hashed = pwd_context.encrypt('leblebi')
-currentUser = User('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr', hashed)
-post_01 = Post(25,"mcanyasakci","Lorem ipsum",0)
+#hashed = pwd_context.encrypt('leblebi')
+#currentUser = User('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr', hashed)
+#post_01 = Post(25,"mcanyasakci","Lorem ipsum",0)
 
 def get_elephantsql_dsn(vcap_services):
     """Returns the data source name for ElephantSQL."""
@@ -864,7 +864,32 @@ def settings_page():
                 cursor.execute(query, (username,itemName,description))
 
                 connection.commit()
-            return render_template('settings_page.html')
+            return redirect(url_for('settings_page'))
+        elif request.form['action'] == 'deleteLostItem':
+            username=current_user.userName
+            values = request.form.getlist('items_to_delete')
+            for value in values:
+                with dbapi2.connect(app.config['dsn']) as connection:
+                    cursor = connection.cursor()
+
+                    query = """DELETE FROM LOST WHERE ( USERNAME=%s AND ITEMID=%s )"""
+                    cursor.execute(query, (username, value))
+
+                    connection.commit()
+            return redirect(url_for('settings_page'))
+        elif request.form['action'] == 'updateLostItem':
+            username=current_user.userName
+            value = request.form.get('items_to_update')
+            itemName=request.form['inputItemName']
+            description=request.form['inputDescription']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """UPDATE LOST SET NAME=%s, DESCRIPTION=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
+                cursor.execute(query, (itemName, description, username, value))
+
+                connection.commit()
+            return redirect(url_for('settings_page'))
 
     else:
         username=current_user.userName
