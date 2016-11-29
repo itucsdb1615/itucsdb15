@@ -462,7 +462,38 @@ def add_students_to_branches():
                     query = """INSERT INTO STUDENTBRANCHES_CASTING(STUDENTBRANCH_ID, PERSON_NAME) VALUES (%s,%s) """
                     cursor.execute(query, [branch_id, student_name])
             connection.commit()
+            #return render_template('add_students_to_branches.html',message = message)
+            if request.form['action'] == 'remove':
+                message =""
+                print(request.form) 
+                student_name = request.form['student_name']
+                branch_name = request.form['branch_name']
+                
+                query = """SELECT * FROM USERS WHERE  NAME = %s """
+                cursor.execute(query,[student_name])
+                result = cursor.fetchall()
+                if len(result) ==0:
+                    message += "There is no such a user"
+                    return render_template('add_students_to_branches.html',message = message)
+                
+                query = """SELECT * FROM STUDENTBRANCHES WHERE  NAME = %s """ 
+                cursor.execute(query,[branch_name])
+                result = cursor.fetchall()
+                if len(result) == 0:#there is no such a user
+                    message += "There is no such a user"
+                    return render_template('add_students_to_branches.html',message = message)
+                
+                query = """SELECT STUDENTBRANCH_ID FROM STUDENTBRANCHES WHERE NAME =%s """
+                cursor.execute(query,[student_branch])
+                branch_id = cursor.fetchall()[0]
+                
+                message += "User removed from the branch succesfully"
+                
+                query = """DELETE FROM STUDENTBRANCHES_CASTING WHERE STUDENTBRANCH_ID = %s AND PERSON_NAME = %s """
+                cursor.execute(query, [branch_id, student_name])
+            connection.commit()
             return render_template('add_students_to_branches.html',message = message)
+                
         
     else:
         return render_template('add_students_to_branches.html')
@@ -944,6 +975,6 @@ if __name__ == '__main__':
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
         app.config['dsn'] = """user='vagrant' password='vagrant'
-                               host='localhost' port=5432 dbname='itucsdb'"""
+                               host='localhost' port=9993 dbname='itucsdb'"""
 
     app.run(host='0.0.0.0', port=port, debug=debug)
