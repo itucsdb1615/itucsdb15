@@ -77,7 +77,7 @@ def home_page():
                 query = """SELECT * FROM USERS WHERE MAIL = %s"""
                 cursor.execute(query, [email])
                 data = cursor.fetchall()
-                currentUser.set_user(data[0][0], data[0][1],data[0][2])
+                currentUser = User(data[0][0], data[0][1],data[0][2], password)
                 connection.commit()
 
                 return redirect(url_for('profile_page'))
