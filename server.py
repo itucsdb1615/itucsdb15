@@ -224,8 +224,8 @@ def initialize_database():
         cursor.execute(query)
 
         query= """CREATE TABLE DEPARTMENTLIST (
-                    USERNAME VARCHAR(20) PRIMARY KEY REFERENCES USERS ON DELETE CASCADE,
-                    FACULTYNO INTEGER,
+                    USERNAME VARCHAR(20) PRIMARY KEY REFERENCES USERS(USERNAME) ON DELETE CASCADE,
+                    FACULTYNO INTEGER REFERENCES DEPARTMENTS(FACULTYNO) ,
                     UNIQUE (USERNAME , FACULTYNO) )"""
         cursor.execute(query)
         query = """INSERT INTO DEPARTMENTLIST (USERNAME, FACULTYNO ) VALUES ('mcanyasakci', 15)"""
