@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+{% block title %}Settings{% endblock %}
+{% block style %}{% endblock %}
+{% block navbarlogin %}
+<div class="container">
+    <div class="navbar-left">
+	   	<a class="navbar-brand" href="{{url_for('profile_page')}}"><span class="glyphicon glyphicon-home"></span></a>
+	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-envelope"></span></a>
+	   	<a class="navbar-brand" href="{{url_for('search')}}"><span class="glyphicon glyphicon-search"></span></a>
+    </div>
+    <div class="navbar-default">
+	   	<a class="navbar-brand" href="{{url_for('lectures')}}" style="margin-left: 50px"><span class="glyphicon glyphicon-book"></span> Lectures</a>
+	   	<a class="navbar-brand" href="{{url_for('student_branches')}}"><span class="glyphicon glyphicon-send"></span> Student Branch(es)</a>
+	   	<a class="navbar-brand" href="{{url_for('department_page')}}"><span class="glyphicon glyphicon-briefcase"></span> Department(s)</a>
+    </div>
+   	<div class="navbar-right">
+	   	<a class="navbar-brand" href="{{url_for('settings_page')}}"><span class="glyphicon glyphicon-cog"></span> Settings</a>
+	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-user"></span> Profile</a>
+	   	<a class="navbar-brand" href="{{url_for('home_page')}}"><span class="glyphicon glyphicon-off"></span> Log out</a>
+	</div>
+</div>
+{% endblock %}
+{% block content %}
+
+    <div class="jumbotron">
+      <div class="container">
+        <h1>Edit Your Classes</h1>
+       </div>
+
+<div class="container">
+<div style="text-align:center">
+
+<div class="row">
+<div class="col-md-4">
+<form class="form-signin" action="" method="post">
+       	<h2 class="form-signin-heading">Enter a new class</h2>
+     	<label for="enter" class="sr-only">CRN</label>
+     	<input type="number" name="enter" class="form-control" placeholder="CRN" required autofocus>
+     	<div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" name="action" value="addNewLecture" type="submit">Submit</button></div>
+</form></div>
+
+<div class="col-md-4">
+<form class="form-signin" action="" method="post">
+       	<h2 class="form-signin-heading">Leave a class</h2>
+        <label for="left" class="sr-only">CRN</label>
+        <input type="number" name="left" class="form-control" placeholder="CRN" required autofocus>
+        <div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" name="action" value="leftAclass" type="submit">Submit</button></div>
+</form></div>
+
+<div class="col-md-4">
+<form class="form-signin" action="" method="post">
+		<h2 class="form-signin-heading">Correct a class</h2>
+        <label for="oldCRN" class="sr-only">CRN</label>
+        <input type="number" name="oldCRN" class="form-control" placeholder="Old CRN" required autofocus>
+        <label for="newCRN" class="sr-only">CRN</label>
+        <input type="number" name="newCRN" class="form-control" placeholder="New CRN" required autofocus>
+        <div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" name="action" value="updateAclass" type="submit">Submit</button></div>
+</form></div>
+
+</div>
+
+<div class="row">
+
+<div class="col-md-4">
+<form class="form-signin" action="" method="post">
+		<h2 class="form-signin-heading">Find a class' information</h2>
+        <label for="find" class="sr-only">CRN</label>
+        <input type="number" name="find" class="form-control" placeholder="CRN" required autofocus>
+        <div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" name="action" value="findLecture" type="submit">Submit</button></div>
+</form>
+</div>
+
+<div class="col-md-4">
+<form class="form-signin" action="" method="post">
+		<h2 class="form-signin-heading">List a class</h2>
+        <label for="CRNofClass" class="sr-only">CRN</label>
+        <input type="number" name="CRNofClass" class="form-control" placeholder="CRN" required autofocus>
+        <div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" name="action" value="listClass" type="submit">Submit</button></div>
+</form>
+</div>
+				</div>
+        	</div>
+		</div>
+
+	<div class="row">
+		<div class="col-md-4">
+			{% if result %}
+			<ol>
+				<li>Lecture Name: {{ result[0][1] }}</li>
+				<li>CRN: {{ result[0][0] }}</li>
+				<li>Lecturer Name: {{ result[0][2] }}</li>
+			</ol>
+			{% endif %}
+
+			{% if listClass %}
+			<ol>
+				<li>{{ listClass[0][0] }} </li>
+			</ol>
+			{% endif %}
+
+		</div>
+	</div>
+
+
+	</div>
+      <footer>
+        <p>&copy; 2016 Company, Inc.</p>
+      </footer>
+{% endblock %}

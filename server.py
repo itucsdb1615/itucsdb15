@@ -160,7 +160,7 @@ def initialize_database():
         query = """CREATE TABLE CLASSES (
                     CRN INTEGER REFERENCES CRNS(CRN),
                     USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE,
-                    PRIMARY KEY(CRN))"""
+                    PRIMARY KEY(CRN, USERNAME))"""
         cursor.execute(query)
 
         query = """INSERT INTO CLASSES (CRN, USERNAME) VALUES (11909, 'mcanyasakci')"""
@@ -585,6 +585,15 @@ def classes():
                 print(results)
                 connection.commit()
                 return render_template('classes.html', result=results)
+
+            elif request.form['action'] == 'listClass':
+                classCRN=request.form['CRNofClass']
+                query = """SELECT USERNAME FROM CLASSES WHERE (CRN=%s) """
+                cursor.execute(query, [classCRN])
+                theList=cursor.fetchall()
+                print(theList)
+                connection.commit()
+                return render_template('classes.html', listClass=theList)
         connection.commit()
         return redirect(url_for('profile_page'))
     else:
