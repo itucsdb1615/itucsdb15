@@ -16,7 +16,7 @@ from passlib.apps import custom_app_context as pwd_context
 
 #from user import get_user
 from flask_login import LoginManager
-from flask_login.utils import login_required, login_user
+from flask_login.utils import login_required, login_user, current_user
 lm = LoginManager()
 
 @lm.user_loader
@@ -295,7 +295,7 @@ def profile_page():
     if request.method == 'POST':
         if request.form['action'] == 'sendPost':
             postContent = request.form['postContent']
-            username = currentUser.userName
+            username = current_user.userName
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
@@ -313,7 +313,7 @@ def profile_page():
             return redirect('profile')
         elif request.form['action'] == 'sendTitle':
             titleContent = request.form['titleContent']
-            username = currentUser.userName
+            username = current_user.userName
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
@@ -325,7 +325,7 @@ def profile_page():
         elif request.form['action'] == 'updateTitle':
             updateContent = request.form['titleUpdate']
             titleContent = request.form['content']
-            username = currentUser.userName
+            username = current_user.userName
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
@@ -339,7 +339,7 @@ def profile_page():
     else:
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
-            username = currentUser.userName
+            username = current_user.userName
 
             ## posts
             query = """SELECT POSTID FROM FEED WHERE USERNAME = %s ORDER BY POSTID DESC"""
@@ -375,11 +375,11 @@ def profile_page():
 
             ##My Titles
             query = """SELECT * FROM HOTTITLES WHERE USERNAME = %s"""
-            cursor.execute(query, [currentUser.userName])
+            cursor.execute(query, [current_user.userName])
             mytitles = cursor.fetchall()
 
             connection.commit()
-        return render_template('profile_page.html', user = currentUser, results = posts, lectures = lectures, branches = sbranches, titles = titles, mytitles = mytitles)
+        return render_template('profile_page.html', user = current_user, results = posts, lectures = lectures, branches = sbranches, titles = titles, mytitles = mytitles)
 
 @app.route('/post_cfg/<postid>', methods=['GET', 'POST'])
 def post_cfg(postid):
@@ -532,7 +532,7 @@ def lectures():
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
             if request.form['action'] == 'addtoUser':
-                username = currentUser.userName
+                username = current_user.userName
                 adding=request.form['addCRN']
                 query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES (%s, %s)"""
                 cursor.execute(query,(username, adding))
@@ -545,14 +545,14 @@ def lectures():
                 cursor.execute(query, (adding, lecturesName, lecturersName))
 
             elif request.form['action'] == 'delete':
-                username = currentUser.userName
+                username = current_user.userName
                 deleted=request.form['deleteCRN']
                 query = """DELETE FROM CRNLIST WHERE ((USERNAME = %s) AND (CRN=%s))"""
                 cursor.execute(query, (username, deleted))
                 connection.commit()
 
             elif request.form['action'] == 'update':
-                username = currentUser.userName
+                username = current_user.userName
                 oldcrn=request.form['oldCRN']
                 newcrn=request.form['newCRN']
                 query = """UPDATE CRNLIST SET CRN=%s WHERE ((USERNAME=%s) AND (CRN=%s))"""
@@ -579,7 +579,7 @@ def classes():
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
             if request.form['action'] == 'addNewLecture':
-                username = currentUser.userName
+                username = current_user.userName
                 entering=request.form['enter']
                 query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES (%s, %s)"""
                 cursor.execute(query,(username, entering))
@@ -587,7 +587,7 @@ def classes():
                 cursor.execute(query,(entering, username))
 
             elif request.form['action'] == 'leftAclass':
-                username = currentUser.userName
+                username = current_user.userName
                 leave=request.form['left']
                 query = """DELETE FROM CRNLIST WHERE ((USERNAME = %s) AND (CRN=%s))"""
                 cursor.execute(query, (username, leave))
@@ -595,7 +595,7 @@ def classes():
                 cursor.execute(query,(leave, username))
 
             elif request.form['action'] == 'updateAclass':
-                username = currentUser.userName
+                username = current_user.userName
                 oldcrn=request.form['oldCRN']
                 newcrn=request.form['newCRN']
                 query = """UPDATE CRNLIST SET CRN=%s WHERE ((USERNAME=%s) AND (CRN=%s))"""
