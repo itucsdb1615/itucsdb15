@@ -115,6 +115,8 @@ def initialize_database():
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS DEPARTMENTLIST CASCADE"""
         cursor.execute(query)
+        query = """DROP TABLE IF EXISTS LOST CASCADE"""
+        cursor.execute(query)
         query = """DROP TABLE IF EXISTS USERS CASCADE"""
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS CRNLIST CASCADE"""
@@ -169,6 +171,12 @@ def initialize_database():
         query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('ismail', 'namdar', 'namdar@yahoo.com', %s)"""
         cursor.execute(query, [hashed])
 
+        query = """CREATE TABLE LOST (
+                    USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE,
+                    ITEMID SERIAL PRIMARY KEY,
+                    NAME VARCHAR(80) NOT NULL
+                    DESCRIPTION VARCHAR(80) NOT NULL)"""
+        cursor.execute(query)
                                             #CRNLIST TABLE
         query = """CREATE TABLE CRNLIST (
                     USERNAME VARCHAR(20) REFERENCES USERS ON DELETE CASCADE,
@@ -237,7 +245,7 @@ def initialize_database():
         cursor.execute(query)
         query = """CREATE TABLE STUDENTBRANCHES_CASTING(
                     STUDENTBRANCH_ID INTEGER REFERENCES STUDENTBRANCHES(ID),
-                    PERSON_NAME VARCHAR(20) REFERENCES USERS(USERNAME),
+                    PERSON_NAME VARCHAR(20) REFERENCES USERS(USERNAME) ON DELETE CASCADE,,
                     UNIQUE(STUDENTBRANCH_ID, PERSON_NAME)
         ) """
         cursor.execute(query)
@@ -428,7 +436,7 @@ def post_cfg(postid):
 
             connection.commit()
         return render_template('post_cfg.html', post = post)
-    
+
 @app.route('/add_students_to_branches', methods =['GET','POST'])
 def add_students_to_branches():
     if request.method =='POST':
@@ -437,8 +445,8 @@ def add_students_to_branches():
             if request.form['action'] == 'add':
                 student_name = request.form['student_name']
                 branch_name = request.form['branch_name']
-                
-                query = """SELECT * FROM STUDENTBRANCHES WHERE  NAME = %s """ 
+
+                query = """SELECT * FROM STUDENTBRANCHES WHERE  NAME = %s """
                 cursor.execute(query,[branch_name])
                 result = cursor.fetchall()
                 message =""
@@ -446,9 +454,9 @@ def add_students_to_branches():
                     query = """INSERT INTO STUDENTBRANCHES(NAME, DESCRIPTION) VALUES (%s,%s) """
                     cursor.execute(query,[branch_name,"not entered yet"])
                     message = "new student branch added(this branch created now )"
-                
-                
-                query = """SELECT * FROM USERS WHERE  NAME = %s """ 
+
+
+                query = """SELECT * FROM USERS WHERE  NAME = %s """
                 cursor.execute(query,[student_name])
                 result = cursor.fetchall()
                 if len(result) ==0:
@@ -465,36 +473,36 @@ def add_students_to_branches():
             #return render_template('add_students_to_branches.html',message = message)
             if request.form['action'] == 'remove':
                 message =""
-                print(request.form) 
+                print(request.form)
                 student_name = request.form['student_name']
                 branch_name = request.form['branch_name']
-                
+
                 query = """SELECT * FROM USERS WHERE  NAME = %s """
                 cursor.execute(query,[student_name])
                 result = cursor.fetchall()
                 if len(result) ==0:
                     message += "There is no such a user"
                     return render_template('add_students_to_branches.html',message = message)
-                
-                query = """SELECT * FROM STUDENTBRANCHES WHERE  NAME = %s """ 
+
+                query = """SELECT * FROM STUDENTBRANCHES WHERE  NAME = %s """
                 cursor.execute(query,[branch_name])
                 result = cursor.fetchall()
                 if len(result) == 0:#there is no such a user
                     message += "There is no such a user"
                     return render_template('add_students_to_branches.html',message = message)
-                
+
                 query = """SELECT STUDENTBRANCH_ID FROM STUDENTBRANCHES WHERE NAME =%s """
                 cursor.execute(query,[student_branch])
                 branch_id = cursor.fetchall()[0]
-                
+
                 message += "User removed from the branch succesfully"
-                
+
                 query = """DELETE FROM STUDENTBRANCHES_CASTING WHERE STUDENTBRANCH_ID = %s AND PERSON_NAME = %s """
                 cursor.execute(query, [branch_id, student_name])
             connection.commit()
             return render_template('add_students_to_branches.html',message = message)
-                
-        
+
+
     else:
         return render_template('add_students_to_branches.html')
     pass
@@ -809,7 +817,7 @@ def search():
 def settings_page():
     if request.method == 'POST':
         if request.form['action'] == 'deleteUser':
-            username=request.form['inputUsername']
+            username=current_user.userName
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
@@ -820,7 +828,7 @@ def settings_page():
             return render_template('settings_page.html')
         elif request.form['action'] == 'updateUser':
             nameSurname=request.form['inputNameSurname']
-            username=request.form['inputUsername']
+            username=current_user.userName
             email=request.form['inputEmail']
             password=request.form['inputPassword']
             with dbapi2.connect(app.config['dsn']) as connection:
@@ -844,8 +852,33 @@ def settings_page():
                 connection.commit()
             return render_template('settings_page.html', result=datas)
 
+        #################################################################################################################
+        elif request.form['action'] == 'createLostItem':
+            username=current_user.userName
+            itemName=request.form['inputItemName']
+            description=request.form['inputDescription']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """INSERT INTO LOST (USERNAME, NAME, DESCRIPTION) VALUES (%s, %s, %s)"""
+                cursor.execute(query, (username,itemName,description))
+
+                connection.commit()
+            return render_template('settings_page.html')
+
     else:
-        return render_template('settings_page.html')
+        username=current_user.userName
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+
+            query = """SELECT * FROM LOST WHERE ( USERNAME='%s' )""" %(username)
+            cursor.execute(query)
+
+            items=cursor.fetchall()
+
+            connection.commit()
+        return render_template('settings_page.html', items=items)
+
 @app.route('/faculty', methods=['GET', 'POST'])
 @login_required
 def faculty():
@@ -975,6 +1008,6 @@ if __name__ == '__main__':
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
         app.config['dsn'] = """user='vagrant' password='vagrant'
-                               host='localhost' port=9993 dbname='itucsdb'"""
+                               host='localhost' port=5432 dbname='itucsdb'"""
 
     app.run(host='0.0.0.0', port=port, debug=debug)
