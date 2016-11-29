@@ -14,19 +14,38 @@ from flask import current_app, request
 
 from passlib.apps import custom_app_context as pwd_context
 
+#from user import get_user
 from flask_login import LoginManager
+from flask_login.utils import login_required, login_user
 lm = LoginManager()
+
+@lm.user_loader
+def load_user(userName):
+    return get_user(userName)
+
+def get_user(user_id):
+    with dbapi2.connect(app.config['dsn']) as connection:
+        cursor = connection.cursor()
+        query = """SELECT * FROM USERS WHERE USERNAME = %s"""
+        cursor.execute(query, [user_id])
+        result = cursor.fetchall()
+        password = result[0][3]
+        user = User(result[0][0], result[0][1], result[0][2], result[0][3]) if password else None
+#    if user is not None:
+#        user.is_admin = user.username in current_app.config['ADMIN_USERS']
+    return user
 
 app = Flask(__name__)
 
 lm.init_app(app)
-lm.login_view = 'home_page'
+lm.login_view = 'signin'
 
 from user import User #user model
 from post import Post #post model
 
-#currentUser = User('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr')
-#post_01 = Post(25,"mcanyasakci","Lorem ipsum",0)
+hashed = pwd_context.encrypt('leblebi')
+currentUser = User('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr', hashed)
+post_01 = Post(25,"mcanyasakci","Lorem ipsum",0)
 
 def get_elephantsql_dsn(vcap_services):
     """Returns the data source name for ElephantSQL."""
@@ -67,22 +86,19 @@ def home_page():
 
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
-
-            query = """SELECT PASSWORD FROM USERS WHERE MAIL = %s"""
+            query = """SELECT USERNAME FROM USERS WHERE MAIL = %s"""
             cursor.execute(query, [email])
+            data = cursor.fetchall()
+            connection.commit()
 
-            result = cursor.fetchall()
-
-            if  pwd_context.verify(password, result[0][0]):
-                query = """SELECT * FROM USERS WHERE MAIL = %s"""
-                cursor.execute(query, [email])
-                data = cursor.fetchall()
-                currentUser = User(data[0][0], data[0][1],data[0][2], password)
-                connection.commit()
-
-                return redirect(url_for('profile_page'))
-            else:
-                return render_template('homepage.html', current_time=now.ctime())
+        user = get_user(data[0][0])
+        if user is not None:
+            if pwd_context.verify(password, user.password):
+                login_user(user)
+                #flash('You have logged in.')
+                next_page = request.args.get('next', url_for('profile_page'))
+                return redirect(next_page)
+        #flash('Invalid credentials.')
     else:
         return render_template('homepage.html', current_time=now.ctime())
 
@@ -274,6 +290,7 @@ def counter_page():
     return "This page was accessed %d times." % count
 
 @app.route('/profile', methods=['GET', 'POST'])
+@login_required
 def profile_page():
     if request.method == 'POST':
         if request.form['action'] == 'sendPost':
@@ -413,6 +430,7 @@ def post_cfg(postid):
         return render_template('post_cfg.html', post = post)
 
 @app.route('/branches', methods=['GET', 'POST'])
+@login_required
 def student_branches():
     if request.method =='POST':
 
@@ -508,6 +526,7 @@ def signin():
 
 
 @app.route('/lectures', methods=['GET', 'POST'])
+@login_required
 def lectures():
     if request.method == 'POST':
         with dbapi2.connect(app.config['dsn']) as connection:
@@ -554,6 +573,7 @@ def lectures():
         return render_template('crn_edit.html')
 
 @app.route('/classes', methods=['GET', 'POST'])
+@login_required
 def classes():
     if request.method == 'POST':
         with dbapi2.connect(app.config['dsn']) as connection:
@@ -613,6 +633,7 @@ def forgotten_password():
 def about_page():
     return render_template('about_page.html')
 @app.route('/departments')
+@login_required
 def departments():
     return render_template('departments.html')
 @app.route('/privacypolicy')
@@ -620,6 +641,7 @@ def privacy_policy():
     return render_template('privacy_policy.html')
 
 @app.route('/titles/<titleid>', methods=['GET', 'POST'])
+@login_required
 def title_cfg(titleid):
     if request.method == 'POST':
         if request.form['action'] == 'sendPost':
@@ -712,6 +734,7 @@ def search():
         return render_template('search.html')
 
 @app.route('/settings', methods=['GET', 'POST'])
+@login_required
 def settings_page():
     if request.method == 'POST':
         if request.form['action'] == 'deleteUser':
@@ -753,6 +776,7 @@ def settings_page():
     else:
         return render_template('settings_page.html')
 @app.route('/faculty', methods=['GET', 'POST'])
+@login_required
 def faculty():
     if request.method == 'POST':
 
@@ -810,6 +834,7 @@ def faculty():
 
         return render_template('faculty.html')
 @app.route('/department_page', methods=['GET', 'POST'])
+@login_required
 def department_page():
     if request.method == 'POST':
         if request.form['action'] == 'addFaculty':
@@ -867,6 +892,7 @@ def department_page():
         return render_template('department_page.html')
 
 if __name__ == '__main__':
+    app.secret_key = 'super secret key'
     VCAP_APP_PORT = os.getenv('VCAP_APP_PORT')
     if VCAP_APP_PORT is not None:
         port, debug = int(VCAP_APP_PORT), False
