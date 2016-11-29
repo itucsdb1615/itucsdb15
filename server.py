@@ -737,7 +737,63 @@ def settings_page():
 
     else:
         return render_template('settings_page.html')
+@app.route('/faculty', methods=['GET', 'POST'])
+def faculty():
+    if request.method == 'POST':
 
+        if request.form['action'] == 'addFaculty':
+            username = currentUser.userName
+            faculty = request.form['selectFaculty']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """INSERT INTO DEPARTMENTLIST (USERNAME, FACULTYNO ) VALUES (%s, %s)"""
+                cursor.execute(query, (username,faculty))
+                test = 'test'
+                connection.commit()
+
+            return render_template('faculty.html', resultInsert=test)
+
+        elif request.form['action'] == 'updateFaculty':
+            username = currentUser.userName
+            faculty = request.form['selectFaculty']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """UPDATE DEPARTMENTLIST SET FACULTYNO=%s WHERE (USERNAME=%s)"""
+                cursor.execute(query , (faculty, username))
+                test='test'
+                connection.commit()
+
+            return render_template('faculty.html', resultUpdate=test)
+
+        elif request.form['action'] == 'deleteFaculty':
+            username = currentUser.userName
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """DELETE FROM DEPARTMENTLIST WHERE ( USERNAME='%s' )""" %(username)
+                cursor.execute(query)
+                test='test'
+                connection.commit()
+
+            return render_template('faculty.html', resultDelete=test)
+
+        elif request.form['action'] == 'searchFaculty':
+            username = currentUser.userName
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """SELECT * FROM DEPARTMENTLIST WHERE ( USERNAME='%s' )""" %(username)
+                cursor.execute(query)
+                datas=cursor.fetchall()
+
+                connection.commit()
+            return render_template('faculty.html', resultSearch=datas)
+
+    else:
+
+        return render_template('faculty.html')
 @app.route('/department_page', methods=['GET', 'POST'])
 def department_page():
     if request.method == 'POST':
