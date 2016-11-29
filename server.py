@@ -174,7 +174,7 @@ def initialize_database():
         query = """CREATE TABLE LOST (
                     USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE,
                     ITEMID SERIAL PRIMARY KEY,
-                    NAME VARCHAR(80) NOT NULL
+                    NAME VARCHAR(80) NOT NULL,
                     DESCRIPTION VARCHAR(80) NOT NULL)"""
         cursor.execute(query)
                                             #CRNLIST TABLE
