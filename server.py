@@ -428,6 +428,46 @@ def post_cfg(postid):
 
             connection.commit()
         return render_template('post_cfg.html', post = post)
+    
+@app.route('/add_students_to_branches', methods =['GET','POST'])
+def add_students_to_branches():
+    if request.method =='POST':
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            if request.form['action'] == 'add':
+                student_name = request.form['student_name']
+                branch_name = request.form['branch_name']
+                
+                query = """SELECT * FROM STUDENTBRANCHES WHERE  NAME = %s """ 
+                cursor.execute(query,[branch_name])
+                result = cursor.fetchall()
+                message =""
+                if len(result) == 0:#there is no such a user
+                    query = """INSERT INTO STUDENTBRANCHES(NAME, DESCRIPTION) VALUES (%s,%s) """
+                    cursor.execute(query,[branch_name,"not entered yet"])
+                    message = "new student branch added(this branch created now )"
+                
+                
+                query = """SELECT * FROM USERS WHERE  NAME = %s """ 
+                cursor.execute(query,[student_name])
+                result = cursor.fetchall()
+                if len(result) ==0:
+                    message += "There is no such a user"
+                   # there is no such a user so that this operation can not be done
+                else:#adding to casting table if user is exist
+                    query = """SELECT STUDENTBRANCH_ID FROM STUDENTBRANCHES WHERE NAME =%s """
+                    cursor.execute(query,[student_branch])
+                    branch_id = cursor.fetchall()[0]
+                    message += "User added to the branch succesfully"
+                    query = """INSERT INTO STUDENTBRANCHES_CASTING(STUDENTBRANCH_ID, PERSON_NAME) VALUES (%s,%s) """
+                    cursor.execute(query, [branch_id, student_name])
+            connection.commit()
+            return render_template('add_students_to_branches.html',message = message)
+        
+    else:
+        return render_template('add_students_to_branches.html')
+    pass
+
 
 @app.route('/branches', methods=['GET', 'POST'])
 @login_required
