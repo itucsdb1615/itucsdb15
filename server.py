@@ -14,13 +14,19 @@ from flask import current_app, request
 
 from passlib.apps import custom_app_context as pwd_context
 
+from flask_login import LoginManager
+lm = LoginManager()
+
 app = Flask(__name__)
+
+lm.init_app(app)
+lm.login_view = 'home_page'
 
 from user import User #user model
 from post import Post #post model
 
-currentUser = User('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr')
-post_01 = Post(25,"mcanyasakci","Lorem ipsum",0)
+#currentUser = User('Mertcan', 'mcanyasakci', 'yasakci@itu.edu.tr')
+#post_01 = Post(25,"mcanyasakci","Lorem ipsum",0)
 
 def get_elephantsql_dsn(vcap_services):
     """Returns the data source name for ElephantSQL."""
