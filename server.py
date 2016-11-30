@@ -565,9 +565,15 @@ def signup():
             query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('%s', '%s', '%s', '%s')""" %(nameSurname,username,email,hashed)
             cursor.execute(query)
 
-            currentUser.set_user(nameSurname, username,email)
+            user = User(nameSurname, username,email,hashed)
+
 
             connection.commit()
+
+            login_user(user)
+            #flash('You have logged in.')
+            #next_page = request.args.get('next', url_for('profile_page'))
+            #return redirect(next_page)
         return redirect(url_for('profile_page'))
 
     else:
@@ -594,7 +600,7 @@ def signin():
                 query = """SELECT * FROM USERS WHERE MAIL = %s"""
                 cursor.execute(query, email)
                 data = cursor.fetchall()
-                currentUser = User(data[0], data[1],data[2])
+                user = User(data[0], data[1],data[2],hashed)
                 connection.commit()
 
                 return redirect(url_for('profile_page'))
@@ -725,7 +731,7 @@ def title_cfg(titleid):
     if request.method == 'POST':
         if request.form['action'] == 'sendPost':
             postContent = request.form['postContent']
-            username = currentUser.userName
+            username = current_user.userName
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
@@ -789,7 +795,7 @@ def title_cfg(titleid):
                 posts.append(cursor.fetchall())
 
             connection.commit()
-        return render_template('title_cfg.html', posts = posts, user = currentUser, titles = titles)
+        return render_template('title_cfg.html', posts = posts, user = current_user, titles = titles)
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
@@ -824,8 +830,12 @@ def settings_page():
                 query = """DELETE FROM USERS WHERE ( USERNAME='%s' )""" %(username)
                 cursor.execute(query)
 
+                query = """SELECT * FROM LOST WHERE ( USERNAME='%s' )""" %(current_user.userName)
+                cursor.execute(query)
+                items=cursor.fetchall()
+
                 connection.commit()
-            return render_template('settings_page.html')
+            return render_template('settings_page.html', items=items)
         elif request.form['action'] == 'updateUser':
             nameSurname=request.form['inputNameSurname']
             username=current_user.userName
@@ -837,8 +847,12 @@ def settings_page():
                 query = """UPDATE USERS SET NAME='%s', MAIL='%s', PASSWORD='%s' WHERE (USERNAME='%s')""" %(nameSurname, email, password, username)
                 cursor.execute(query)
 
+                query = """SELECT * FROM LOST WHERE ( USERNAME='%s' )""" %(current_user.userName)
+                cursor.execute(query)
+                items=cursor.fetchall()
+
                 connection.commit()
-            return render_template('settings_page.html', messageU="Updated user %s" %(username))
+            return render_template('settings_page.html', messageU="Updated user %s" %(username), items=items)
         elif request.form['action'] == 'searchUser':
             username=request.form['inputUsername']
             with dbapi2.connect(app.config['dsn']) as connection:
@@ -849,8 +863,12 @@ def settings_page():
 
                 datas=cursor.fetchall()
 
+                query = """SELECT * FROM LOST WHERE ( USERNAME='%s' )""" %(current_user.userName)
+                cursor.execute(query)
+                items=cursor.fetchall()
+
                 connection.commit()
-            return render_template('settings_page.html', result=datas)
+            return render_template('settings_page.html', result=datas, items=items)
 
         #################################################################################################################
         elif request.form['action'] == 'createLostItem':
@@ -910,7 +928,7 @@ def faculty():
     if request.method == 'POST':
 
         if request.form['action'] == 'addFaculty':
-            username = currentUser.userName
+            username = current_user.userName
             faculty = request.form['selectFaculty']
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
@@ -923,7 +941,7 @@ def faculty():
             return render_template('faculty.html', resultInsert=test)
 
         elif request.form['action'] == 'updateFaculty':
-            username = currentUser.userName
+            username = current_user.userName
             faculty = request.form['selectFaculty']
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
@@ -936,7 +954,7 @@ def faculty():
             return render_template('faculty.html', resultUpdate=test)
 
         elif request.form['action'] == 'deleteFaculty':
-            username = currentUser.userName
+            username = current_user.userName
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
@@ -948,7 +966,7 @@ def faculty():
             return render_template('faculty.html', resultDelete=test)
 
         elif request.form['action'] == 'searchFaculty':
-            username = currentUser.userName
+            username = current_user.userName
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
