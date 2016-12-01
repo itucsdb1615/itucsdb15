@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}Profile{% endblock %}
+{% block title %}Branches{% endblock %}
 {% block style %}<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">{% endblock %}
 {% block navbarlogin %}
 <div class="container">
@@ -109,6 +109,10 @@
 					{% for result in results %}
 					<li>{{ result[1] }}&nbsp;&nbsp;&nbsp;&nbsp; {{ result[2] }}</li>
 					{% endfor %}
+				 </ol>
+				{% else%}
+				<ol>
+					<li>There is no such a relation</li>
 				 </ol>
 				{% endif %}
 				</div>

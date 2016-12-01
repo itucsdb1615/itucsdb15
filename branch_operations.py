@@ -3,7 +3,8 @@ from flask_login import LoginManager
 from flask_login.utils import login_required, login_user, current_user
 from flask import current_app, request
 from jinja2 import TemplateNotFound
-
+import psycopg2 as dbapi2
+import flask
 site = Blueprint('site', __name__,template_folder='templates', static_folder='static')
 @site.route('/deneme')
 def deneme():
@@ -77,8 +78,6 @@ def add_students_to_branches():
 
     else:
         return render_template('add_students_to_branches.html')
-    pass
-
 
 @login_required
 @site.route('/branches', methods=['GET', 'POST'])
@@ -113,4 +112,13 @@ def student_branches():
                  return render_template('student_branches.html', results=result)
     else:
         return render_template('student_branches.html')
+    
+@site.route('/branch/<int:branchID>')
+def show_branch(branchID):
+    with dbapi2.connect(flask.current_app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = """SELECT * FROM STUDENTBRANCHES WHERE ID = %s """
+            cursor.execute(query,(str(branchID)))
+            results = cursor.fetchall()
+    return render_template('show_branches.html',results = results)
 
