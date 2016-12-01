@@ -14,7 +14,7 @@ from flask import current_app, request
 
 from passlib.apps import custom_app_context as pwd_context
 
-
+from branch_operations import site
 #from user import get_user
 from flask_login import LoginManager
 from flask_login.utils import login_required, login_user, current_user
@@ -35,8 +35,11 @@ def get_user(user_id):
 #    if user is not None:
 #        user.is_admin = user.username in current_app.config['ADMIN_USERS']
     return user
-
-app = Flask(__name__)
+def create_app():
+    app = Flask(__name__)
+    app.register_blueprint(site)
+    return app
+app =create_app()
 lm.init_app(app)
 lm.login_view = 'signin'
 
