@@ -13,7 +13,7 @@ def deneme():
 @site.route('/add_students_to_branches', methods =['GET','POST'])
 def add_students_to_branches():
     if request.method =='POST':
-        with dbapi2.connect(site.config['dsn']) as connection:
+        with dbapi2.connect(flask.current_app.config['dsn']) as connection:
             cursor = connection.cursor()
             if request.form['action'] == 'add':
                 student_name = request.form['student_name']
@@ -84,7 +84,7 @@ def add_students_to_branches():
 def student_branches():
     if request.method =='POST':
 
-        with dbapi2.connect(site.config['dsn']) as connection:
+        with dbapi2.connect(flask.current_app.config['dsn']) as connection:
             cursor = connection.cursor()
             if request.form['action'] == 'update':
                 branch_name = request.form['branch-name']
