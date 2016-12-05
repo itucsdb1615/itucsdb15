@@ -4,9 +4,9 @@
 {% block navbarlogin %}
 <div class="container">
     <div class="navbar-left">
-	   	<a class="navbar-brand" href="{{url_for('profile_page')}}"><span class="glyphicon glyphicon-home"></span></a>
+	   	<a class="navbar-brand" href="{{url_for('site.profile_page')}}"><span class="glyphicon glyphicon-home"></span></a>
 	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-envelope"></span></a>
-	   	<a class="navbar-brand" href="{{url_for('search')}}"><span class="glyphicon glyphicon-search"></span></a>
+	   	<a class="navbar-brand" href="{{url_for('site.search')}}"><span class="glyphicon glyphicon-search"></span></a>
     </div>
     <div class="navbar-default">
 	   	<a class="navbar-brand" href="{{url_for('lectures')}}" style="margin-left: 50px"><span class="glyphicon glyphicon-book"></span> Lectures</a>
@@ -45,7 +45,7 @@
 				</form>
 			</div>
 		</div>
-		
+
 		<div class="col-md-4">
 				<div style="margin: 20px 20px 20px 20px" align="center">
 					<font size="5">Delete Student From Branch</font>
@@ -55,9 +55,9 @@
 					<label for="student_name" class="sr-only">User Name</label>
 		        	<input type="text" name="student_name" class="form-control"
 		        	placeholder="Enter the user name that you want to remove from a branch" required autofocus>
-		        	
+
 					<br>
-					
+
 		        	<label for="branch_name" class="sr-only">Branch name</label>
 		        	<input type="text" name="branch_name" class="form-control"
 		        	placeholder="Enter the branch name" required autofocus>
@@ -67,9 +67,9 @@
 				</div>
 
 	</div>
-	
+
 				</div>
-		
+
 	{%if message%}
 		{{message}}
 	{%endif%}

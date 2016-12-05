@@ -37,9 +37,13 @@ img:hover{
 	width: relative;
 	margin: 10px 10px 10px 10px;
 	background-color: white;
-	border-radius: 10%;
-	border: 1px solid #000;
+	border-radius: 2%;
+	border: 0.1px solid #000;
 	z-index: 10;
+}
+#line-draw{
+	border: 0.01px solid #000;
+	z-index: 1;
 }
 /* This is for increasing the icon size*/
 .glyphicon {

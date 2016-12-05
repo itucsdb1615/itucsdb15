@@ -4,9 +4,9 @@
 {% block navbarlogin %}
 <div class="container">
     <div class="navbar-left">
-	   	<a class="navbar-brand" href="{{url_for('profile_page')}}"><span class="glyphicon glyphicon-home"></span></a>
+	   	<a class="navbar-brand" href="{{url_for('site.profile_page')}}"><span class="glyphicon glyphicon-home"></span></a>
 	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-envelope"></span></a>
-	   	<a class="navbar-brand" href="{{url_for('search')}}"><span class="glyphicon glyphicon-search"></span></a>
+	   	<a class="navbar-brand" href="{{url_for('site.search')}}"><span class="glyphicon glyphicon-search"></span></a>
     </div>
     <div class="navbar-default">
 	   	<a class="navbar-brand" href="{{url_for('classes')}}" style="margin-left: 50px"><span class="glyphicon glyphicon-book"></span> Lectures</a>
@@ -22,7 +22,22 @@
 {% endblock %}
 {% block content %}
 <!-- <body style="background-image: url('https://static.vecteezy.com/system/resources/premium_previews/000/057/904/non_2x/cartoon-bee-vector-pack.jpg')"> -->
-
+<style>
+#profile-col{
+	display: block;
+	position: relative;
+	width: relative;
+	margin: 10px 10px 10px 10px;
+	background-color: white;
+	border-radius: 1.5%;
+	border: 0.1px solid #000;
+	z-index: 10;
+}
+#line-draw{
+	border: 0.01px solid #000;
+	z-index: 1;
+}
+</style>
 <br>
 <div class="container">
 	<div class="row" >
@@ -104,12 +119,12 @@
 			</div>
    			<!-- end of the sending post part-->
 			<br>
-
    			<!-- This is one post -->
-   			<div id="profile-col">
-	   				<div style="margin: 30px 30px 40px 10px">
    			{% if results %}
-   			{% for post in results %}
+   			<div id="profile-col">
+			{% for post in results %}
+	   				<div style="margin: 30px 30px 40px 10px">
+
 	   					<br>
 						<div style=display:inline-block>
 							<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded" height="50px" width= "50px"/>
@@ -127,16 +142,16 @@
 		    				<!-- This part will have icons in it such as like icon -->
 		    				<button class="glyphicon glyphicon-heart btn"
 							type="submit" name="action" value="likePressed" style= "margin-right: 10px"> {{ post[0][3] }}</button>
-		    				<a href="{{url_for('post_cfg', postid = post[0][0] )}}" class="btn-info btn" style= "font-size: 0px">
+		    				<a href="{{url_for('site.post_cfg', postid = post[0][0] )}}" class="btn-info btn" style= "font-size: 0px">
 	         						<span class="glyphicon glyphicon-tasks"></span>
 	       					</a>
-
 		    			</div>
 		    			<br>
-   			{% endfor %}
-   			{% endif %}
    				</div>
+   				<div id="line-draw"></div>
+				{% endfor %}
 	   		</div>
+	   		{% endif %}
 			 <!-- end of the post -->
 
 		</div>

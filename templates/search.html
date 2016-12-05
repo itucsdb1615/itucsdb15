@@ -4,9 +4,9 @@
 {% block navbarlogin %}
 <div class="container">
     <div class="navbar-left">
-	   	<a class="navbar-brand" href="{{url_for('profile_page')}}"><span class="glyphicon glyphicon-home"></span></a>
+	   	<a class="navbar-brand" href="{{url_for('site.profile_page')}}"><span class="glyphicon glyphicon-home"></span></a>
 	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-envelope"></span></a>
-	   	<a class="navbar-brand" href="{{url_for('search')}}"><span class="glyphicon glyphicon-search"></span></a>
+	   	<a class="navbar-brand" href="{{url_for('site.search')}}"><span class="glyphicon glyphicon-search"></span></a>
     </div>
     <div class="navbar-default">
 	   	<a class="navbar-brand" href="{{url_for('classes')}}" style="margin-left: 50px"><span class="glyphicon glyphicon-book"></span> Lectures</a>
@@ -62,7 +62,7 @@
 			    				<!-- This part will have icons in it such as like icon -->
 			    				<button class="glyphicon glyphicon-heart btn"
 								type="submit" name="action" value="likePressed" style= "margin-right: 10px"> {{ result[0][3] }}</button>
-			    				<a href="{{url_for('post_cfg', postid = result[0][0])}}" class="btn-info btn" style= "font-size: 0px">
+			    				<a href="{{url_for('site.post_cfg', postid = result[0][0])}}" class="btn-info btn" style= "font-size: 0px">
 		         						<span class="glyphicon glyphicon-tasks"></span>
 		       					</a>
 
