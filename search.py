@@ -28,7 +28,21 @@ def search():
                     connection.commit()
 
 
-                return render_template('search.html', result = datas)
+                return render_template('search.html', results = datas)
+
+        elif request.form['action'] == 'searchUser':
+            username = request.form['search-user']
+            with dbapi2.connect(flask.current_app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """SELECT * FROM USERS WHERE USERNAME= %s """
+                cursor.execute(query, (username,))
+
+                datas=cursor.fetchall()
+
+                connection.commit()
+            return render_template('search.html', foundUser = datas)
+
         else:
             return render_template('search.html')
     else:

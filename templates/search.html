@@ -26,6 +26,38 @@
 	<div class="row" >
 		<div class="col-md-6" >
 			<!-- This is for searching users -->
+			<div style="margin: 10px 30px 60px 10px">
+				<br>
+	   			<form action="" method="post">
+	   				<div class="form-group" align="center">
+	    				<input type="text" name="search-user" placeholder="Enter the username that you want to search..." class="form-control" required autofocus>
+	    			</div>
+					<div class="pull-right">
+	    				<!-- This part will have icons in it such as like icon -->
+	    				<button class="glyphicon glyphicon-search pull-right btn btn-success"
+						type="submit" name="action" value="searchUser"> Search User</button>
+	    			</div>
+	   			</form>
+			</div>
+			{% if foundUser %}
+			<div id="profile-col" >
+				<div style="margin: 10px 10px 30px 10px" align="center">
+					<br>
+					<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded"
+					height="150px" width= "150px"/>
+					<font size="5"><b></b></font>
+					<p>{{ foundUser[0][0]}}</p>
+					<p><em>@{{ foundUser[0][1]}}</em></p>
+					<p>Description of the user</p>
+
+					<button class="glyphicon glyphicon-plus btn btn-success"
+						type="submit" name="action" value="searchPost"> Add to friends</button>
+				</div>
+			</div>
+			{% else %}
+			<font size="5"><p>User is not found.</p></font>
+			{% endif %}
+
 		</div>
 
 		<div class="col-md-6" >
@@ -43,36 +75,38 @@
 	   			</form>
 
 				<div style="margin: 60px 0px 0px 0px">
+					{% if results %}
 					<div id="profile-col">
 						<div style="margin: 10px 30px 40px 10px">
-							{% if result %}
+							{% for result in results %}
 							<br>
 							<div style=display:inline-block>
-								<img src="https://www.percona.com/live/data-performance-conference-2016/sites/percona.com.live.data-performance-conference-2016/themes/pl2015/img/unknown-speaker.gif" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+								<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded" height="50px" width= "50px"/>
 							</div>
 							<div style=display:inline-block>
-								<p><em>@{{ result[0][1] }}</em></p>
+								<p><em>@{{ result[1] }}</em></p>
 							</div>
 
 							<div>
-			    				<pre>{{ result[0][2] }} </pre>
+			    				<pre>{{ result[2] }} </pre>
 			    			</div>
 
 			    			<div class="pull-right">
 			    				<!-- This part will have icons in it such as like icon -->
 			    				<button class="glyphicon glyphicon-heart btn"
-								type="submit" name="action" value="likePressed" style= "margin-right: 10px"> {{ result[0][3] }}</button>
-			    				<a href="{{url_for('site.post_cfg', postid = result[0][0])}}" class="btn-info btn" style= "font-size: 0px">
+								type="submit" name="action" value="likePressed" style= "margin-right: 10px"> {{ result[3] }}</button>
+			    				<a href="{{url_for('site.post_cfg', postid = result[0])}}" class="btn-info btn" style= "font-size: 0px">
 		         						<span class="glyphicon glyphicon-tasks"></span>
 		       					</a>
 
 			    			</div>
 			    			<br>
-			    			{% else %}
-							<font size="5"><p>Post is not found.</p></font>
-							{% endif %}
+			    			{% endfor %}
 			    		</div>
 	    			</div>
+	    			{% else %}
+					<font size="5"><p>Post is not found.</p></font>
+					{% endif %}
 	    		</div>
 			</div>
 		</div>
