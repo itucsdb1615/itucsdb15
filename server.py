@@ -17,6 +17,8 @@ from passlib.apps import custom_app_context as pwd_context
 from branch_operations import site
 from profile import *
 from search import *
+from faculty import *
+
 
 #from user import get_user
 from flask_login import LoginManager
@@ -328,7 +330,7 @@ def signup():
             login_user(user)
             #flash('You have logged in.')
             #next_page = request.args.get('next', url_for('profile_page'))
-            #return redirect(next_page)
+            #    (next_page)
         return redirect(url_for('site.profile_page'))
 
     else:
@@ -659,64 +661,7 @@ def settings_page():
             connection.commit()
         return render_template('settings_page.html', items=items)
 
-@app.route('/faculty', methods=['GET', 'POST'])
-@login_required
-def faculty():
-    if request.method == 'POST':
 
-        if request.form['action'] == 'addFaculty':
-            username = current_user.userName
-            faculty = request.form['selectFaculty']
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-
-                query = """INSERT INTO DEPARTMENTLIST (USERNAME, FACULTYNO ) VALUES (%s, %s)"""
-                cursor.execute(query, (username,faculty))
-                test = 'test'
-                connection.commit()
-
-            return render_template('faculty.html', resultInsert=test)
-
-        elif request.form['action'] == 'updateFaculty':
-            username = current_user.userName
-            faculty = request.form['selectFaculty']
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-
-                query = """UPDATE DEPARTMENTLIST SET FACULTYNO=%s WHERE (USERNAME=%s)"""
-                cursor.execute(query , (faculty, username))
-                test='test'
-                connection.commit()
-
-            return render_template('faculty.html', resultUpdate=test)
-
-        elif request.form['action'] == 'deleteFaculty':
-            username = current_user.userName
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-
-                query = """DELETE FROM DEPARTMENTLIST WHERE ( USERNAME='%s' )""" %(username)
-                cursor.execute(query)
-                test='test'
-                connection.commit()
-
-            return render_template('faculty.html', resultDelete=test)
-
-        elif request.form['action'] == 'searchFaculty':
-            username = current_user.userName
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-
-                query = """SELECT * FROM DEPARTMENTLIST WHERE ( USERNAME='%s' )""" %(username)
-                cursor.execute(query)
-                datas=cursor.fetchall()
-
-                connection.commit()
-            return render_template('faculty.html', resultSearch=datas)
-
-    else:
-
-        return render_template('faculty.html')
 @app.route('/department_page', methods=['GET', 'POST'])
 @login_required
 def department_page():
