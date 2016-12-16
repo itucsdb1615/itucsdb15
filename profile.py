@@ -81,6 +81,11 @@ def profile_page():
             cursor.execute(query, [username])
             lectures = cursor.fetchall()
 
+            ## Faculty
+            query = """SELECT D.NAME FROM DEPARTMENTS AS D INNER JOIN DEPARTMENTLIST AS L ON D.FACULTYNO =L.FACULTYNO  WHERE L.USERNAME = %s"""
+            cursor.execute(query, [username])
+            faculty = cursor.fetchall()
+
             ##Student Branches
             query = """SELECT * FROM STUDENTBRANCHES_CASTING WHERE PERSON_NAME = %s"""
             cursor.execute(query, [username])
@@ -103,7 +108,7 @@ def profile_page():
             mytitles = cursor.fetchall()
 
             connection.commit()
-        return render_template('profile_page.html', user = current_user, results = posts, lectures = lectures, branches = sbranches, titles = titles, mytitles = mytitles)
+        return render_template('profile_page.html', user = current_user, results = posts, lectures = lectures, branches = sbranches, titles = titles, mytitles = mytitles, faculty = faculty)
 
 @site.route('/post_cfg/<postid>', methods=['GET', 'POST'])
 def post_cfg(postid):

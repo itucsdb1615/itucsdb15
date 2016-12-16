@@ -50,6 +50,11 @@
 					<font size="5"><b></b></font>
 					<p>{{ user.fullName}}</p>
 					<p><em>@{{ user.userName}}</em></p>
+					{% if faculty %}
+						{{faculty[0][0]}}
+						<br>
+						{% endif %}
+
 					<p>Description of the user</p>
 				</div>
 			</div>
