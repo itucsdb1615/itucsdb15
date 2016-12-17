@@ -9,6 +9,8 @@ from flask import redirect
 from flask import render_template
 from flask.helpers import url_for
 
+from flask import flash
+
 from flask import Blueprint, redirect, render_template, url_for
 from flask import current_app, request
 
@@ -346,7 +348,7 @@ def signup():
     else:
         return render_template('signup.html')
 
-@app.route('/signin')
+@app.route('/signin', methods=['GET', 'POST'])
 def signin():
     if request.method == 'POST':
         email=request.form['inputEmail']
@@ -357,22 +359,21 @@ def signin():
 
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
+            query = """SELECT USERNAME FROM USERS WHERE MAIL = %s"""
+            cursor.execute(query, [email])
+            data = cursor.fetchall()
+            connection.commit()
 
-            query = """SELECT PASSWORD FROM USERS WHERE MAIL = %s"""
-            cursor.execute(query, email)
-
-            result = cursor.fetchall()
-
-            if  pwd_context.verify(result[0], hashed):
-                query = """SELECT * FROM USERS WHERE MAIL = %s"""
-                cursor.execute(query, email)
-                data = cursor.fetchall()
-                user = User(data[0], data[1],data[2],hashed)
-                connection.commit()
-
-                return redirect(url_for('site.profile_page'))
-            else:
-                return render_template('signin.html')
+        user = get_user(data[0][0])
+        if user is not None:
+            if pwd_context.verify(password, user.password):
+                login_user(user)
+                #flash('You have logged in.')
+                next_page = request.args.get('next', url_for('site.profile_page'))
+                return redirect(next_page)
+        #flash('Invalid credentials.')
+        next = flask.request.args.get('next')
+        return flask.redirect(next or url_for('site.profile_page'))
     else:
         return render_template('signin.html')
 
