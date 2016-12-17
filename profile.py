@@ -30,8 +30,16 @@ def profile_page():
                 cursor.execute(query,(username, postContent))
                 postid = cursor.fetchall()
 
+                query = """SELECT FOLLOWER FROM FOLLOW WHERE (FOLLOWING = %s)"""
+                cursor.execute(query,(username,))
+                followers = cursor.fetchall()
+
                 query = """INSERT INTO FEED(USERNAME, POSTID) VALUES(%s, %s)"""
                 cursor.execute(query,(username, postid[0]))
+
+                for user in followers:
+                    query = """INSERT INTO FEED(USERNAME, POSTID) VALUES(%s, %s)"""
+                    cursor.execute(query,(user[0], postid[0]))
 
                 connection.commit()
             return redirect(url_for('site.profile_page'))
@@ -53,7 +61,7 @@ def profile_page():
             with dbapi2.connect(flask.current_app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """UPDATE HOTTITLES SET TOPIC = %S WHERE USERNAME = %S AND TOPIC = %s"""
+                query = """UPDATE HOTTITLES SET TOPIC = %s WHERE USERNAME = %S AND TOPIC = %s"""
                 cursor.execute(query,(updateContent, username, titleContent))
 
                 connection.commit()
@@ -157,5 +165,3 @@ def post_cfg(postid):
 
             connection.commit()
         return render_template('post_cfg.html', post = post)
-
-
