@@ -46,14 +46,19 @@
 					<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded"
 					height="150px" width= "150px"/>
 					<font size="5"><b></b></font>
-					<p>{{ foundUser[0][0]}}</p>
-					<p><em>@{{ foundUser[0][1]}}</em></p>
-					<p>Description of the user</p>
-
-					<button class="glyphicon glyphicon-plus btn btn-success"
-						type="submit" name="action" value="searchPost"> Add to friends</button>
+					<form action="" method="post">
+		    			<p>{{ foundUser[0][0]}}</p>
+		    			<div class="form-group" align="center">
+		    				<input type = "radio" name="foundUser" value="{{foundUser[0][1]}}" /> <p><em>@{{ foundUser[0][1]}}</em></p>
+		    			</div>
+						<p>Description of the user</p>
+						<button class="glyphicon glyphicon-plus btn btn-success"
+						type="submit" name="action" value="follow"> Follow</button>
+					</form>
 				</div>
 			</div>
+			{% elif message %}
+				<font size="5"><p>{{message}}</p></font>
 			{% else %}
 			<font size="5"><p>User is not found.</p></font>
 			{% endif %}

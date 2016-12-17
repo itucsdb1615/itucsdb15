@@ -140,6 +140,8 @@ def initialize_database():
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS POST CASCADE"""
         cursor.execute(query)
+        query = """DROP TABLE IF EXISTS FOLLOW CASCADE"""
+        cursor.execute(query)
         query = """DROP TABLE IF EXISTS HOTTITLES CASCADE"""
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS HOTTITLECAST CASCADE"""
@@ -168,8 +170,11 @@ def initialize_database():
         query = """CREATE TABLE USERS (
                     NAME VARCHAR(80) NOT NULL,
                     USERNAME VARCHAR(20) PRIMARY KEY,
-                    MAIL VARCHAR(80) NOT NULL UNIQUE,
-                    PASSWORD VARCHAR(120) NOT NULL)"""
+                    MAIL VARCHAR(80) NOT NULL,
+                    PASSWORD VARCHAR(120) NOT NULL,
+                    DESCRIPTION VARCHAR(100) DEFAULT 'No information given.',
+                    FOLLOWER_COUNT INTEGER DEFAULT 0,
+                    FOLLOWING_COUNT INTEGER DEFAULT 0)"""
         cursor.execute(query)
 
         password = "leblebi"
@@ -277,6 +282,13 @@ def initialize_database():
                     UNIQUE (USERNAME , FACULTYNO) )"""
         cursor.execute(query)
         query = """INSERT INTO DEPARTMENTLIST (USERNAME, FACULTYNO ) VALUES ('mcanyasakci', 15)"""
+        cursor.execute(query)
+
+        query= """CREATE TABLE FOLLOW (
+                    ID SERIAL PRIMARY KEY,
+                    FOLLOWER VARCHAR(20) REFERENCES USERS(USERNAME),
+                    FOLLOWING VARCHAR(20) REFERENCES USERS(USERNAME),
+                    UNIQUE(FOLLOWER, FOLLOWING))"""
         cursor.execute(query)
 
         query= """CREATE TABLE HOTTITLES (
