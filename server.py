@@ -20,7 +20,7 @@ from branch_operations import site
 from profile import *
 from search import *
 from faculty import *
-
+from classes import *
 
 #from user import get_user
 from flask_login import LoginManager
@@ -132,11 +132,13 @@ def initialize_database():
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS USERS CASCADE"""
         cursor.execute(query)
-        query = """DROP TABLE IF EXISTS CRNLIST CASCADE"""
-        cursor.execute(query)
-        query = """DROP TABLE IF EXISTS CLASSES CASCADE"""        #DROP TABLE COMMANDS
+        query = """DROP TABLE IF EXISTS CLASSES CASCADE"""
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS CRNS CASCADE"""
+        cursor.execute(query)
+        query = """DROP TABLE IF EXISTS CLASSPOSTS CASCADE"""
+        cursor.execute(query)
+        query = """DROP TABLE IF EXISTS CLASSPOSTCONTENT CASCADE"""
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS FEED CASCADE"""
         cursor.execute(query)
@@ -202,16 +204,7 @@ def initialize_database():
                     DESCRIPTION VARCHAR(80) NOT NULL)"""
         cursor.execute(query)
 
-                                            #CRNLIST TABLE
-        query = """CREATE TABLE CRNLIST (
-                    USERNAME VARCHAR(20) REFERENCES USERS ON DELETE CASCADE,
-                    CRN INTEGER REFERENCES CRNS(CRN),
-                    PRIMARY KEY(USERNAME, CRN))"""
-        cursor.execute(query)
-
-        query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES ('mcanyasakci', 11909)"""
-        cursor.execute(query)
-
+                                            #CLASSES TABLE
         query = """CREATE TABLE CLASSES (
                     CRN INTEGER REFERENCES CRNS(CRN),
                     USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE,
@@ -220,6 +213,28 @@ def initialize_database():
 
         query = """INSERT INTO CLASSES (CRN, USERNAME) VALUES (11909, 'mcanyasakci')"""
         cursor.execute(query)
+
+                                                    #CLASS POSTS' CONTENTS TABLE
+        query = """CREATE TABLE CLASSPOSTCONTENT (
+                    POSTID SERIAL PRIMARY KEY UNIQUE,
+                    USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE,
+                    CONTENT VARCHAR(500) NOT NULL,
+                    LIKES INT DEFAULT 0)"""
+        cursor.execute(query)
+
+        query = """INSERT INTO CLASSPOSTCONTENT(POSTID, USERNAME, CONTENT, LIKES) VALUES (0, 'mcanyasakci', 'hello camera', 0)"""
+        cursor.execute(query)
+
+                                            #CLASS POSTS TABLE
+        query = """CREATE TABLE CLASSPOSTS (
+                    GROUPID INTEGER REFERENCES CRNS(CRN),
+                    USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE,
+                    POSTID INTEGER PRIMARY KEY REFERENCES CLASSPOSTCONTENT(POSTID))"""
+        cursor.execute(query)
+
+        query = """INSERT INTO CLASSPOSTS(GROUPID, USERNAME, POSTID) VALUES (11909, 'mcanyasakci', 0)"""
+        cursor.execute(query)
+
 
                                             #POST TABLE
         query = """CREATE TABLE POST (
@@ -389,106 +404,6 @@ def signin():
     else:
         return render_template('signin.html')
 
-
-@app.route('/lectures', methods=['GET', 'POST'])
-@login_required
-def lectures():
-    if request.method == 'POST':
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
-            if request.form['action'] == 'addtoUser':
-                username = current_user.userName
-                adding=request.form['addCRN']
-                query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES (%s, %s)"""
-                cursor.execute(query,(username, adding))
-
-            elif request.form['action'] == 'addtoLectures':
-                adding=request.form['addCRN']
-                lecturesName=request.form['LecturesName']
-                lecturersName=request.form['LecturerSName']
-                query = """INSERT INTO CRNS (CRN, LECTURENAME, LECTURERNAME) VALUES (%s, %s, %s)"""
-                cursor.execute(query, (adding, lecturesName, lecturersName))
-
-            elif request.form['action'] == 'delete':
-                username = current_user.userName
-                deleted=request.form['deleteCRN']
-                query = """DELETE FROM CRNLIST WHERE ((USERNAME = %s) AND (CRN=%s))"""
-                cursor.execute(query, (username, deleted))
-                connection.commit()
-
-            elif request.form['action'] == 'update':
-                username = current_user.userName
-                oldcrn=request.form['oldCRN']
-                newcrn=request.form['newCRN']
-                query = """UPDATE CRNLIST SET CRN=%s WHERE ((USERNAME=%s) AND (CRN=%s))"""
-                cursor.execute(query, (newcrn, username, oldcrn))
-
-            elif request.form['action'] == 'select':
-                selected=request.form['selectCRN']
-                query = """SELECT * FROM CRNS WHERE (CRN=%s) """
-                cursor.execute(query, [selected])
-                results=cursor.fetchall()
-                print(results)
-                connection.commit()
-                return render_template('crn_edit.html', result=results)
-        connection.commit()
-        return redirect(url_for('site.profile_page'))
-
-    else:
-        return render_template('crn_edit.html')
-
-@app.route('/classes', methods=['GET', 'POST'])
-@login_required
-def classes():
-    if request.method == 'POST':
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
-            if request.form['action'] == 'addNewLecture':
-                username = current_user.userName
-                entering=request.form['enter']
-                query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES (%s, %s)"""
-                cursor.execute(query,(username, entering))
-                query = """INSERT INTO CLASSES (CRN, USERNAME) VALUES (%s, %s)"""
-                cursor.execute(query,(entering, username))
-
-            elif request.form['action'] == 'leftAclass':
-                username = current_user.userName
-                leave=request.form['left']
-                query = """DELETE FROM CRNLIST WHERE ((USERNAME = %s) AND (CRN=%s))"""
-                cursor.execute(query, (username, leave))
-                query = """DELETE FROM CLASSES WHERE ((CRN=%s) AND (USERNAME=%s))"""
-                cursor.execute(query,(leave, username))
-
-            elif request.form['action'] == 'updateAclass':
-                username = current_user.userName
-                oldcrn=request.form['oldCRN']
-                newcrn=request.form['newCRN']
-                query = """UPDATE CRNLIST SET CRN=%s WHERE ((USERNAME=%s) AND (CRN=%s))"""
-                cursor.execute(query, (newcrn, username, oldcrn))
-                query = """UPDATE CLASSES SET CRN=%s WHERE ((CRN=%s) AND (USERNAME=%s))"""
-                cursor.execute(query, (newcrn, oldcrn, username))
-
-            elif request.form['action'] == 'findLecture':
-                found=request.form['find']
-                query = """SELECT * FROM CRNS WHERE (CRN=%s) """
-                cursor.execute(query, [found])
-                results=cursor.fetchall()
-                print(results)
-                connection.commit()
-                return render_template('classes.html', result=results)
-
-            elif request.form['action'] == 'listClass':
-                classCRN=request.form['CRNofClass']
-                query = """SELECT USERNAME FROM CLASSES WHERE (CRN=%s) """
-                cursor.execute(query, [classCRN])
-                theList=cursor.fetchall()
-                print(theList)
-                connection.commit()
-                return render_template('classes.html', listClass=theList)
-        connection.commit()
-        return redirect(url_for('site.profile_page'))
-    else:
-        return render_template('classes.html')
 
 @app.route('/forgottenpassword')
 def forgotten_password():
