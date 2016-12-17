@@ -126,6 +126,8 @@ def initialize_database():
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS LOST CASCADE"""
         cursor.execute(query)
+        query = """DROP TABLE IF EXISTS FOUND CASCADE"""
+        cursor.execute(query)
         query = """DROP TABLE IF EXISTS USERS CASCADE"""
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS CRNLIST CASCADE"""
@@ -166,7 +168,7 @@ def initialize_database():
         query = """CREATE TABLE USERS (
                     NAME VARCHAR(80) NOT NULL,
                     USERNAME VARCHAR(20) PRIMARY KEY,
-                    MAIL VARCHAR(80) NOT NULL,
+                    MAIL VARCHAR(80) NOT NULL UNIQUE,
                     PASSWORD VARCHAR(120) NOT NULL)"""
         cursor.execute(query)
 
@@ -186,6 +188,13 @@ def initialize_database():
                     NAME VARCHAR(80) NOT NULL,
                     DESCRIPTION VARCHAR(80) NOT NULL)"""
         cursor.execute(query)
+        query = """CREATE TABLE FOUND (
+                    USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE,
+                    ITEMID SERIAL PRIMARY KEY,
+                    NAME VARCHAR(80) NOT NULL,
+                    DESCRIPTION VARCHAR(80) NOT NULL)"""
+        cursor.execute(query)
+
                                             #CRNLIST TABLE
         query = """CREATE TABLE CRNLIST (
                     USERNAME VARCHAR(20) REFERENCES USERS ON DELETE CASCADE,
@@ -590,21 +599,42 @@ def settings_page():
             password=request.form['inputPassword']
             hashed = pwd_context.encrypt(password)
 
-            current_user.fullName=nameSurname
-            current_user.email=email
-            current_user.password=hashed
+            execute=[]
+            query="""UPDATE USERS SET """
+            if len(nameSurname)!=0:
+                current_user.fullName=nameSurname
+                execute+=[str(nameSurname)]
+                query+="""NAME=%s"""
+            if len(email)!=0:
+                current_user.email=email
+                execute+=[str(email)]
+                if len(nameSurname)!=0:
+                    query+=""", """
+                query+="""MAIL=%s"""
+            if len(password)!=0:
+                current_user.password=hashed
+                execute+=[str(hashed)]
+                if len(nameSurname)!=0 or len(email)!=0:
+                    query+=""", """
+                query+="""PASSWORD=%s"""
+            if len(nameSurname)==0 and len(email)==0 and len(password)==0:
+                return render_template('settings_page.html', messageU="Could not update.")
+
+            query+=""" WHERE (USERNAME=%s)"""
+
+            execute+=[username]
+
+            print(execute)
+            print(query)
+
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """UPDATE USERS SET NAME=%s, MAIL=%s, PASSWORD=%s WHERE (USERNAME=%s)"""
-                cursor.execute(query, (nameSurname, email, str(hashed), username))
-
-                query = """SELECT * FROM LOST WHERE ( USERNAME=%s )"""
-                cursor.execute(query, ([current_user.userName]))
-                items=cursor.fetchall()
+                #query = """UPDATE USERS SET NAME=%s, MAIL=%s, PASSWORD=%s WHERE (USERNAME=%s)"""
+                cursor.execute(query, execute)
 
                 connection.commit()
-            return render_template('settings_page.html', messageU="Updated user %s" %(username), items=items)
+            return render_template('settings_page.html', messageU="Updated user %s" %(username))
         elif request.form['action'] == 'searchUser':
             username=request.form['inputUsername']
             with dbapi2.connect(app.config['dsn']) as connection:
@@ -622,57 +652,8 @@ def settings_page():
                 connection.commit()
             return render_template('settings_page.html', result=datas, items=items)
 
-        #################################################################################################################
-        elif request.form['action'] == 'createLostItem':
-            username=current_user.userName
-            itemName=request.form['inputItemName']
-            description=request.form['inputDescription']
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-
-                query = """INSERT INTO LOST (USERNAME, NAME, DESCRIPTION) VALUES (%s, %s, %s)"""
-                cursor.execute(query, (username,itemName,description))
-
-                connection.commit()
-            return redirect(url_for('settings_page'))
-        elif request.form['action'] == 'deleteLostItem':
-            username=current_user.userName
-            values = request.form.getlist('items_to_delete')
-            for value in values:
-                with dbapi2.connect(app.config['dsn']) as connection:
-                    cursor = connection.cursor()
-
-                    query = """DELETE FROM LOST WHERE ( USERNAME=%s AND ITEMID=%s )"""
-                    cursor.execute(query, (username, value))
-
-                    connection.commit()
-            return redirect(url_for('settings_page'))
-        elif request.form['action'] == 'updateLostItem':
-            username=current_user.userName
-            value = request.form.get('items_to_update')
-            itemName=request.form['inputItemName']
-            description=request.form['inputDescription']
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-
-                query = """UPDATE LOST SET NAME=%s, DESCRIPTION=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
-                cursor.execute(query, (itemName, description, username, value))
-
-                connection.commit()
-            return redirect(url_for('settings_page'))
-
     else:
-        username=current_user.userName
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
-
-            query = """SELECT * FROM LOST WHERE ( USERNAME=%s )"""
-            cursor.execute(query, [username]  )
-
-            items=cursor.fetchall()
-
-            connection.commit()
-        return render_template('settings_page.html', items=items)
+        return render_template('settings_page.html')
 
 @app.route('/lost_found', methods=['GET', 'POST'])
 @login_required
@@ -707,22 +688,80 @@ def lostfound_page():
             itemName=request.form['inputItemName']
             description=request.form['inputDescription']
             go=0
-            if itemName=='':
+            if len(itemName)==0 and len(description)==0:
+                go=0
+            elif len(itemName)==0:
                 go=1
-            elif description=='':
+            elif len(description)==0:
                 go=2
 
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
                 if go==1:
+                    print(str(go) + "girdi")
                     query = """UPDATE LOST SET DESCRIPTION=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
                     cursor.execute(query, (description, username, value))
                 elif go==2:
+                    print(str(go) + "girdi")
                     query = """UPDATE LOST SET NAME=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
                     cursor.execute(query, (itemName, username, value))
                 else:
                     query = """UPDATE LOST SET NAME=%s, DESCRIPTION=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
+                    cursor.execute(query, (itemName, description, username, value))
+
+
+                connection.commit()
+            return redirect(url_for('lostfound_page'))
+        elif request.form['action'] == 'createFoundItem':
+            username=current_user.userName
+            itemName=request.form['inputItemName']
+            description=request.form['inputDescription']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """INSERT INTO FOUND (USERNAME, NAME, DESCRIPTION) VALUES (%s, %s, %s)"""
+                cursor.execute(query, (username,itemName,description))
+
+                connection.commit()
+            return redirect(url_for('lostfound_page'))
+        elif request.form['action'] == 'deleteFoundItem':
+            username=current_user.userName
+            value = request.form.get('itemSelected')
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """DELETE FROM FOUND WHERE ( USERNAME=%s AND ITEMID=%s )"""
+                cursor.execute(query, (username, value))
+
+                connection.commit()
+            return redirect(url_for('lostfound_page'))
+        elif request.form['action'] == 'updateFoundItem':
+            username=current_user.userName
+            value = request.form.get('itemSelected')
+            itemName=request.form['inputItemName']
+            description=request.form['inputDescription']
+            go=0
+            if len(itemName)==0 and len(description)==0:
+                go=0
+            elif len(itemName)==0:
+                go=1
+            elif len(description)==0:
+                go=2
+
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                if go==1:
+                    print(str(go) + "girdi")
+                    query = """UPDATE FOUND SET DESCRIPTION=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
+                    cursor.execute(query, (description, username, value))
+                elif go==2:
+                    print(str(go) + "girdi")
+                    query = """UPDATE FOUND SET NAME=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
+                    cursor.execute(query, (itemName, username, value))
+                else:
+                    query = """UPDATE FOUND SET NAME=%s, DESCRIPTION=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
                     cursor.execute(query, (itemName, description, username, value))
 
 
@@ -741,8 +780,16 @@ def lostfound_page():
             cursor.execute(query, [username])
             userlostitems=cursor.fetchall()
 
+            query = """SELECT * FROM FOUND"""
+            cursor.execute(query)
+            founditems=cursor.fetchall()
+
+            query = """SELECT * FROM FOUND WHERE( USERNAME = %s )"""
+            cursor.execute(query, [username])
+            userfounditems=cursor.fetchall()
+
             connection.commit()
-        return render_template('lost_found.html', lostitems=lostitems, userlostitems=userlostitems)
+        return render_template('lost_found.html', lostitems=lostitems, userlostitems=userlostitems, founditems=founditems, userfounditems=userfounditems)
 
 
 @app.route('/department_page', methods=['GET', 'POST'])

@@ -5,17 +5,17 @@
 <div class="container">
     <div class="navbar-left">
 	   	<a class="navbar-brand" href="{{url_for('site.profile_page')}}"><span class="glyphicon glyphicon-home"></span></a>
-	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-envelope"></span></a>
 	   	<a class="navbar-brand" href="{{url_for('site.search')}}"><span class="glyphicon glyphicon-search"></span></a>
     </div>
     <div class="navbar-default">
 	   	<a class="navbar-brand" href="{{url_for('classes')}}" style="margin-left: 50px"><span class="glyphicon glyphicon-book"></span> Lectures</a>
-	   	<a class="navbar-brand" href="{{url_for('site.student_branches')}}"><span class="glyphicon glyphicon-send"></span> Student Branch(es)</a>
-	   	<a class="navbar-brand" href="{{url_for('site.faculty')}}"><span class="glyphicon glyphicon-briefcase"></span> Department(s)</a>
+	   	<a class="navbar-brand" href="{{url_for('site.student_branches')}}"><span class="glyphicon glyphicon-send"></span> Student Branches</a>
+	   	<a class="navbar-brand" href="{{url_for('site.faculty')}}"><span class="glyphicon glyphicon-briefcase"></span> Departments</a>
+	   	<a class="navbar-brand" href="{{url_for('lostfound_page')}}"><span class="glyphicon glyphicon-sort"></span> Lost/Found</a>
     </div>
    	<div class="navbar-right">
 	   	<a class="navbar-brand" href="{{url_for('settings_page')}}"><span class="glyphicon glyphicon-cog"></span> Settings</a>
-	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-user"></span> Profile</a>
+	   	<a class="navbar-brand" href="{{url_for('site.profile_page')}}"><span class="glyphicon glyphicon-user"></span> Profile</a>
 	   	<a class="navbar-brand" href="{{url_for('logout')}}"><span class="glyphicon glyphicon-off"></span> Log out</a>
 	</div>
 </div>
@@ -28,8 +28,6 @@
 
 			<form class="" action="" method="post">
 				<h2>Delete User</h2>
-				<!-- <label for="inputUsername" class="sr-only">Username</label>
-				<input type="text" name="inputUsername" class="form-control" placeholder="Username" required autofocus>  -->
 				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="deleteUser">Delete user</button>
 			</form>
 
@@ -39,16 +37,13 @@
           <form class="" action="" method="post">
 				<h2>Update User</h2>
 				<label for="inputNameSurname" class="sr-only">Name and surname</label>
-				<input type="text" name="inputNameSurname" class="form-control" placeholder="Name and surname" required autofocus>
-
-				<!-- <label for="inputUsername" class="sr-only">Username</label>
-				<input type="text" name="inputUsername" class="form-control" placeholder="Username" required autofocus>  -->
+				<input type="text" name="inputNameSurname" class="form-control" placeholder="Name and surname" autofocus>
 
 				<label for="inputEmail" class="sr-only">Email address</label>
-				<input type="email" name="inputEmail" class="form-control" placeholder="Email address" required>
+				<input type="email" name="inputEmail" class="form-control" placeholder="Email address">
 
 				<label for="inputPassword" class="sr-only">Password</label>
-				<input type="password" name="inputPassword" class="form-control" placeholder="Password" required>
+				<input type="password" name="inputPassword" class="form-control" placeholder="Password">
 
 				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="updateUser">Update user</button>
 			</form>
@@ -65,7 +60,7 @@
 
 		</div>
 	</div>
-
+	</br>
 	<div class="row">
 		<div class="col-md-4">
 			{% if messageD %}
@@ -83,64 +78,6 @@
 			<p>Name and surname: {{ result[0][0] }}</p>
 			<p>E-mail: {{ result[0][2] }}</p>
 			{% endif %}
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-md-4">
-
-			<form class="" action="" method="post">
-				<h2>Create Lost Item</h2>
-				<label for="inputItemName" class="sr-only">Item name</label>
-				<input type="text" name="inputItemName" class="form-control" placeholder="Item name" required autofocus>
-				<label for="inputDescription" class="sr-only">Description</label>
-				<input type="text" name="inputDescription" class="form-control" placeholder="Description" required autofocus>
-				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="createLostItem">Create Lost Item</button>
-			</form>
-
-		</div>
-		<div class="col-md-4">
-
-			<form class="" action="" method="post">
-				<h2>Delete Lost Item</h2>
-				{% for item in items %}
-					<li>
-					<input type="checkbox" name="items_to_delete" value="{{ item[1] }}" />
-					<p> {{ item[2] }} ({{ item[3] }}) </p>
-					</li>
-				{% endfor %}
-				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="deleteLostItem">Delete Lost Item</button>
-			</form>
-
-		</div>
-		<div class="col-md-4">
-
-          <form class="" action="" method="post">
-				<h2>Update Lost Item</h2>
-				{% for item in items %}
-					<li>
-					<input type="radio" name="items_to_update" value="{{ item[1] }}" />
-					<p> {{ item[2] }} ({{ item[3] }}) </p>
-					</li>
-				{% endfor %}
-				<label for="inputItemName" class="sr-only">Item name</label>
-				<input type="text" name="inputItemName" class="form-control" placeholder="Item name" required autofocus>
-				<label for="inputDescription" class="sr-only">Description</label>
-				<input type="text" name="inputDescription" class="form-control" placeholder="Description" required autofocus>
-
-				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="updateLostItem">Update Lost Item</button>
-			</form>
-
-		</div>
-		<div class="col-md-4">
-
-			<form class="" action="" method="post">
-				<h2>Search Lost Item</h2>
-				<label for="inputItemName" class="sr-only">Item name</label>
-				<input type="text" name="inputItemName" class="form-control" placeholder="Item name" required autofocus>
-				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="searchLostItem">Search Lost Item</button>
-			</form>
-
 		</div>
 	</div>
 
