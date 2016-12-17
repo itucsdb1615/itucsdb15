@@ -22,7 +22,8 @@ from faculty import *
 
 #from user import get_user
 from flask_login import LoginManager
-from flask_login.utils import login_required, login_user, current_user
+from flask_login.utils import login_required, login_user, current_user,\
+    logout_user
 lm = LoginManager()
 
 @lm.user_loader
@@ -557,6 +558,12 @@ def title_cfg(titleid):
             connection.commit()
         return render_template('title_cfg.html', posts = posts, user = current_user, titles = titles)
 
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home_page'))
+
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings_page():
@@ -566,28 +573,34 @@ def settings_page():
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """DELETE FROM USERS WHERE ( USERNAME='%s' )""" %(username)
-                cursor.execute(query)
+                query = """DELETE FROM USERS WHERE ( USERNAME=%s )"""
+                cursor.execute(query, ([username]))
 
-                query = """SELECT * FROM LOST WHERE ( USERNAME='%s' )""" %(current_user.userName)
-                cursor.execute(query)
+                query = """SELECT * FROM LOST WHERE ( USERNAME=%s )"""
+                cursor.execute(query, ([current_user.userName]))
                 items=cursor.fetchall()
 
                 connection.commit()
-            return render_template('settings_page.html', items=items)
+            logout_user()
+            return redirect(url_for('home_page'))
         elif request.form['action'] == 'updateUser':
             nameSurname=request.form['inputNameSurname']
             username=current_user.userName
             email=request.form['inputEmail']
             password=request.form['inputPassword']
+            hashed = pwd_context.encrypt(password)
+
+            current_user.fullName=nameSurname
+            current_user.email=email
+            current_user.password=hashed
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """UPDATE USERS SET NAME='%s', MAIL='%s', PASSWORD='%s' WHERE (USERNAME='%s')""" %(nameSurname, email, password, username)
-                cursor.execute(query)
+                query = """UPDATE USERS SET NAME=%s, MAIL=%s, PASSWORD=%s WHERE (USERNAME=%s)"""
+                cursor.execute(query, (nameSurname, email, str(hashed), username))
 
-                query = """SELECT * FROM LOST WHERE ( USERNAME='%s' )""" %(current_user.userName)
-                cursor.execute(query)
+                query = """SELECT * FROM LOST WHERE ( USERNAME=%s )"""
+                cursor.execute(query, ([current_user.userName]))
                 items=cursor.fetchall()
 
                 connection.commit()
@@ -597,13 +610,13 @@ def settings_page():
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """SELECT * FROM USERS WHERE ( USERNAME='%s' )""" %(username)
-                cursor.execute(query)
+                query = """SELECT * FROM USERS WHERE ( USERNAME=%s )"""
+                cursor.execute(query, [username])
 
                 datas=cursor.fetchall()
 
-                query = """SELECT * FROM LOST WHERE ( USERNAME='%s' )""" %(current_user.userName)
-                cursor.execute(query)
+                query = """SELECT * FROM LOST WHERE ( USERNAME=%s )"""
+                cursor.execute(query, ([current_user.userName]))
                 items=cursor.fetchall()
 
                 connection.commit()
@@ -653,8 +666,8 @@ def settings_page():
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
 
-            query = """SELECT * FROM LOST WHERE ( USERNAME='%s' )""" %(username)
-            cursor.execute(query)
+            query = """SELECT * FROM LOST WHERE ( USERNAME=%s )"""
+            cursor.execute(query, [username]  )
 
             items=cursor.fetchall()
 
