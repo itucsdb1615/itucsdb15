@@ -674,6 +674,76 @@ def settings_page():
             connection.commit()
         return render_template('settings_page.html', items=items)
 
+@app.route('/lost_found', methods=['GET', 'POST'])
+@login_required
+def lostfound_page():
+    if request.method == 'POST':
+        if request.form['action'] == 'createLostItem':
+            username=current_user.userName
+            itemName=request.form['inputItemName']
+            description=request.form['inputDescription']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """INSERT INTO LOST (USERNAME, NAME, DESCRIPTION) VALUES (%s, %s, %s)"""
+                cursor.execute(query, (username,itemName,description))
+
+                connection.commit()
+            return redirect(url_for('lostfound_page'))
+        elif request.form['action'] == 'deleteLostItem':
+            username=current_user.userName
+            value = request.form.get('itemSelected')
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """DELETE FROM LOST WHERE ( USERNAME=%s AND ITEMID=%s )"""
+                cursor.execute(query, (username, value))
+
+                connection.commit()
+            return redirect(url_for('lostfound_page'))
+        elif request.form['action'] == 'updateLostItem':
+            username=current_user.userName
+            value = request.form.get('itemSelected')
+            itemName=request.form['inputItemName']
+            description=request.form['inputDescription']
+            go=0
+            if itemName=='':
+                go=1
+            elif description=='':
+                go=2
+
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                if go==1:
+                    query = """UPDATE LOST SET DESCRIPTION=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
+                    cursor.execute(query, (description, username, value))
+                elif go==2:
+                    query = """UPDATE LOST SET NAME=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
+                    cursor.execute(query, (itemName, username, value))
+                else:
+                    query = """UPDATE LOST SET NAME=%s, DESCRIPTION=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
+                    cursor.execute(query, (itemName, description, username, value))
+
+
+                connection.commit()
+            return redirect(url_for('lostfound_page'))
+    else:
+        username=current_user.userName
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+
+            query = """SELECT * FROM LOST"""
+            cursor.execute(query)
+            lostitems=cursor.fetchall()
+
+            query = """SELECT * FROM LOST WHERE( USERNAME = %s )"""
+            cursor.execute(query, [username])
+            userlostitems=cursor.fetchall()
+
+            connection.commit()
+        return render_template('lost_found.html', lostitems=lostitems, userlostitems=userlostitems)
+
 
 @app.route('/department_page', methods=['GET', 'POST'])
 @login_required

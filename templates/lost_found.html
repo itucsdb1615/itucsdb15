@@ -1,0 +1,145 @@
+{% extends "layout.html" %}
+{% block title %}Lost and Found Items{% endblock %}
+{% block style %}
+	<style>
+		dd {
+    	text-indent: 2em;
+		}
+		.bas {
+			text-align: center;
+		}
+	</style>
+{% endblock %}
+{% block navbarlogin %}
+<div class="container">
+    <div class="navbar-left">
+	   	<a class="navbar-brand" href="{{url_for('site.profile_page')}}"><span class="glyphicon glyphicon-home"></span></a>
+	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-envelope"></span></a>
+	   	<a class="navbar-brand" href="{{url_for('site.search')}}"><span class="glyphicon glyphicon-search"></span></a>
+    </div>
+    <div class="navbar-default">
+	   	<a class="navbar-brand" href="{{url_for('classes')}}" style="margin-left: 50px"><span class="glyphicon glyphicon-book"></span> Lectures</a>
+	   	<a class="navbar-brand" href="{{url_for('site.student_branches')}}"><span class="glyphicon glyphicon-send"></span> Student Branch(es)</a>
+	   	<a class="navbar-brand" href="{{url_for('site.faculty')}}"><span class="glyphicon glyphicon-briefcase"></span> Department(s)</a>
+    </div>
+   	<div class="navbar-right">
+	   	<a class="navbar-brand" href="{{url_for('settings_page')}}"><span class="glyphicon glyphicon-cog"></span> Settings</a>
+	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-user"></span> Profile</a>
+	   	<a class="navbar-brand" href="{{url_for('logout')}}"><span class="glyphicon glyphicon-off"></span> Log out</a>
+	</div>
+</div>
+{% endblock %}
+{% block content %}
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-6">
+			<h2 class="bas">All Lost Items</h2>
+			<dl>
+          	{% for item in lostitems %}
+				<dt>{{ item[2] }}</dt>
+				<dd>{{ item[3] }}</dd>
+			{% endfor %}
+			</dl>
+
+		</div>
+		<div class="col-md-6">
+			<h2 class="bas">All Found Items</h2>
+			<dl>
+          	{% for item in founditems %}
+				<dt>{{ item[2] }}</dt>
+				<dd>{{ item[3] }}</dd>
+			{% endfor %}
+			</dl>
+
+		</div>
+	</div>
+
+
+	<div class="row">
+
+		<div class="col-md-6">
+		<form class="" action="" method="post">
+			<h2 class="bas">Your Lost Items</h2>
+			<dl>
+          	{% for item in userlostitems %}
+				<dt><input type="radio" name="itemSelected" value="{{ item[1] }}" /> {{ item[2] }}</dt>
+				<dd>{{ item[3] }}</dd>
+			{% endfor %}
+			</dl>
+
+			<div class="col-md-4">
+
+				<h2>Create Lost Item</h2>
+				<label for="inputItemName" class="sr-only">Item name</label>
+				<input type="text" name="inputItemName" class="form-control" placeholder="Item name" required autofocus>
+				<label for="inputDescription" class="sr-only">Description</label>
+				<input type="text" name="inputDescription" class="form-control" placeholder="Description" required autofocus>
+				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="createLostItem">Create Lost Item</button>
+
+			</div>
+			<div class="col-md-4">
+
+				<h2>Delete Lost Item</h2>
+				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="deleteLostItem" formnovalidate>Delete Lost Item</button>
+
+			</div>
+			<div class="col-md-4">
+
+				<h2>Update Lost Item</h2>
+				<label for="inputItemName" class="sr-only">Item name</label>
+				<input type="text" name="inputItemName" class="form-control" placeholder="Item name" autofocus>
+				<label for="inputDescription" class="sr-only">Description</label>
+				<input type="text" name="inputDescription" class="form-control" placeholder="Description" autofocus>
+				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="updateLostItem" formnovalidate>Update Lost Item</button>
+
+			</div>
+		</form>
+		</div>
+
+
+		<div class="col-md-6">
+		<form class="" action="" method="post">
+			<h2 class="bas">Your Found Items</h2>
+			<dl>
+          	{% for item in userfounditems %}
+				<dt><input type="radio" name="itemSelected" value="{{ item[1] }}" /> {{ item[2] }}</dt>
+				<dd>{{ item[3] }}</dd>
+			{% endfor %}
+			</dl>
+
+			<div class="col-md-4">
+
+				<h2>Create Found Item</h2>
+				<label for="inputItemName" class="sr-only">Item name</label>
+				<input type="text" name="inputItemName" class="form-control" placeholder="Item name" required autofocus>
+				<label for="inputDescription" class="sr-only">Description</label>
+				<input type="text" name="inputDescription" class="form-control" placeholder="Description" required autofocus>
+				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="createFoundItem">Create Found Item</button>
+
+			</div>
+			<div class="col-md-4">
+
+				<h2>Delete Found Item</h2>
+				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="deleteFoundItem">Delete Found Item</button>
+
+			</div>
+			<div class="col-md-4">
+
+				<h2>Update Found Item</h2>
+				<label for="inputItemName" class="sr-only">Item name</label>
+				<input type="text" name="inputItemName" class="form-control" placeholder="Item name" autofocus>
+				<label for="inputDescription" class="sr-only">Description</label>
+				<input type="text" name="inputDescription" class="form-control" placeholder="Description" autofocus>
+				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="updateFoundItem">Update Found Item</button>
+
+			</div>
+		</form>
+		</div>
+
+	</div>
+
+
+
+</div> <!-- /container -->
+{% endblock %}
