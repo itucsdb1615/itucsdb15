@@ -138,8 +138,6 @@ def initialize_database():
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS CLASSPOSTS CASCADE"""
         cursor.execute(query)
-        query = """DROP TABLE IF EXISTS CLASSPOSTCONTENT CASCADE"""
-        cursor.execute(query)
         query = """DROP TABLE IF EXISTS FEED CASCADE"""
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS POST CASCADE"""
@@ -218,27 +216,6 @@ def initialize_database():
         query = """INSERT INTO CLASSES (CRN, USERNAME) VALUES (11909, 'mcanyasakci')"""
         cursor.execute(query)
 
-                                                    #CLASS POSTS' CONTENTS TABLE
-        query = """CREATE TABLE CLASSPOSTCONTENT (
-                    POSTID SERIAL PRIMARY KEY UNIQUE,
-                    USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE,
-                    CONTENT VARCHAR(500) NOT NULL,
-                    LIKES INT DEFAULT 0)"""
-        cursor.execute(query)
-
-        query = """INSERT INTO CLASSPOSTCONTENT(POSTID, USERNAME, CONTENT, LIKES) VALUES (0, 'mcanyasakci', 'hello camera', 0)"""
-        cursor.execute(query)
-
-                                            #CLASS POSTS TABLE
-        query = """CREATE TABLE CLASSPOSTS (
-                    GROUPID INTEGER REFERENCES CRNS(CRN),
-                    USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE,
-                    POSTID INTEGER PRIMARY KEY REFERENCES CLASSPOSTCONTENT(POSTID))"""
-        cursor.execute(query)
-
-        query = """INSERT INTO CLASSPOSTS(GROUPID, USERNAME, POSTID) VALUES (11909, 'mcanyasakci', 0)"""
-        cursor.execute(query)
-
 
                                             #POST TABLE
         query = """CREATE TABLE POST (
@@ -265,6 +242,16 @@ def initialize_database():
         cursor.execute(query)
 
         query = """INSERT INTO FEED (USERNAME, POSTID) VALUES ('mcanyasakci', 25)"""
+        cursor.execute(query)
+
+                                                    #CLASS POSTS TABLE
+        query = """CREATE TABLE CLASSPOSTS (
+                    GROUPID INTEGER REFERENCES CRNS(CRN),
+                    USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE,
+                    POSTID INTEGER PRIMARY KEY REFERENCES POST(POSTID))"""
+        cursor.execute(query)
+
+        query = """INSERT INTO CLASSPOSTS(GROUPID, USERNAME, POSTID) VALUES (11909, 'mcanyasakci', 10)"""
         cursor.execute(query)
 
         query = """CREATE TABLE FACULTYFEED (
@@ -370,9 +357,9 @@ def initialize_database():
         cursor.execute(query)
         query = """INSERT INTO HOTTITLES ( TOPIC, USERNAME ) VALUES ('Database', 'namdar')"""
         cursor.execute(query)
-        query = """ 
+        query = """
                 CREATE TABLE BRANCHFEEDS(
-                ID SERIAL PRIMARY KEY, 
+                ID SERIAL PRIMARY KEY,
                 BRANCH_ID INTEGER REFERENCES STUDENTBRANCHES(ID),
                 USER_NAME VARCHAR(20) REFERENCES USERS(USERNAME),
                 CONTENT VARCHAR(200) NOT NULL
@@ -381,11 +368,11 @@ def initialize_database():
         cursor.execute(query)
 
         query = """ INSERT INTO
-                     BRANCHFEEDS (BRANCH_ID, USER_NAME,CONTENT) VALUES 
+                     BRANCHFEEDS (BRANCH_ID, USER_NAME,CONTENT) VALUES
                      (1,'namdar', 'This is awesome branch, keep in touch for news !!!') """
         cursor.execute(query)
 
-        
+
         connection.commit()
     return redirect(url_for('home_page'))
 

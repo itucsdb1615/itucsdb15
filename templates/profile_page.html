@@ -162,13 +162,15 @@
    				<h1 align="center">Lectures</h1>
 							<ol>
 								{% for lecture in lectures %}
-								<li>{{ lecture[0] }}</li>
+										<a href="{{url_for('site.lecture_cfg', lectureid = lecture[0] )}}" class="" style= "font-size: 15px">
+	         							<li>{{lecture[0]}}</li>
+	       								</a>
 								{% endfor %}
-
 							</ol>
    				</div>
    			 </div>
    		{% endif %}
+
 		{% if branches %}
    			 <div id="profile-col">
    				<div style="margin: 10px 10px 30px 10px">

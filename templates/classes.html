@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
-{% block title %}Settings{% endblock %}
-{% block style %}{% endblock %}
+{% block title %}Classes{% endblock %}
+{% block style %}<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">{% endblock %}
 {% block navbarlogin %}
 <div class="container">
     <div class="navbar-left">
@@ -22,88 +22,146 @@
 {% endblock %}
 {% block content %}
 
-    <div class="jumbotron">
-      <div class="container">
-        <h1>Edit Your Classes</h1>
-       </div>
+<style>
+#classes-col{
+	display: block;
+	position: relative;
+	width: relative;
+	margin: 10px 10px 10px 10px;
+	background-color: white;
+	border-radius: 1.5%;
+	border: 0.1px solid #000;
+	z-index: 10;
+}
+#line-draw{
+	border: 0.01px solid #000;
+	z-index: 1;
+}
+</style>
 
+<br>
 <div class="container">
-<div style="text-align:center">
+	<div class="row" >
 
-<div class="row">
-<div class="col-md-4">
-<form class="form-signin" action="" method="post">
-       	<h2 class="form-signin-heading">Enter a new class</h2>
-     	<label for="enter" class="sr-only">CRN</label>
-     	<input type="number" name="enter" class="form-control" placeholder="CRN" required autofocus>
-     	<div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" name="action" value="addNewLecture" type="submit">Submit</button></div>
-</form></div>
 
-<div class="col-md-4">
-<form class="form-signin" action="" method="post">
-       	<h2 class="form-signin-heading">Leave a class</h2>
-        <label for="left" class="sr-only">CRN</label>
-        <input type="number" name="left" class="form-control" placeholder="CRN" required autofocus>
-        <div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" name="action" value="leftAclass" type="submit">Submit</button></div>
-</form></div>
+		<div style="text-align:center">
+			<div class="col-md-3">
+			<div style="margin: 10px 10px 60px 50px">
+			<h2>Edit Classes</h2>
+				<form action="" method="post">
+						<div class="form-group" align="center">
+		    				<input type="text" name="CRN" placeholder="CRN" class="form-control" required autofocus>
+		    			</div>
 
-<div class="col-md-4">
-<form class="form-signin" action="" method="post">
-		<h2 class="form-signin-heading">Correct a class</h2>
-        <label for="oldCRN" class="sr-only">CRN</label>
-        <input type="number" name="oldCRN" class="form-control" placeholder="Old CRN" required autofocus>
-        <label for="newCRN" class="sr-only">CRN</label>
-        <input type="number" name="newCRN" class="form-control" placeholder="New CRN" required autofocus>
-        <div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" name="action" value="updateAclass" type="submit">Submit</button></div>
-</form></div>
+		    			<div style="margin: 10px 10px 60px 10px">
+						<button class="glyphicon btn btn-success btn"
+							type="submit" name="action" value="enter" style= "margin: 2px 23px">Enter in a class</button>
 
-</div>
+						<button class="glyphicon btn btn-success btn"
+							type="submit" name="action" value="leave" style= "margin: 20px 33px">Leave a class</button>
+						</div>
+				</form>
 
-<div class="row">
+				<form action="" method="post">
+						<div class="form-group" align="center">
+		    				<input type="text" name="oldCRN" placeholder="Old CRN" class="form-control" required autofocus>
+		    			</div>
 
-<div class="col-md-4">
-<form class="form-signin" action="" method="post">
-		<h2 class="form-signin-heading">Find a class' information</h2>
-        <label for="find" class="sr-only">CRN</label>
-        <input type="number" name="find" class="form-control" placeholder="CRN" required autofocus>
-        <div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" name="action" value="findLecture" type="submit">Submit</button></div>
-</form>
-</div>
+		    			<div class="form-group" align="center">
+		    				<input type="text" name="newCRN" placeholder="New CRN" class="form-control" required autofocus>
+		    			</div>
 
-<div class="col-md-4">
-<form class="form-signin" action="" method="post">
-		<h2 class="form-signin-heading">List a class</h2>
-        <label for="CRNofClass" class="sr-only">CRN</label>
-        <input type="number" name="CRNofClass" class="form-control" placeholder="CRN" required autofocus>
-        <div style="text-align:center"><button class="btn btn-lg btn-primary btn-block" name="action" value="listClass" type="submit">Submit</button></div>
-</form>
-</div>
+		    			<div style="margin: 10px 10px 60px 10px">
+						<button class="glyphicon btn btn-success btn"
+							type="submit" name="action" value="updateClass" style= "margin: 2px 23px">Leave&Add a class</button>
+						</div>
+				</form>
+
 				</div>
-        	</div>
+			</div>
 		</div>
 
-	<div class="row">
-		<div class="col-md-4">
-			{% if result %}
-			<ol>
-				<li>Lecture Name: {{ result[0][1] }}</li>
-				<li>CRN: {{ result[0][0] }}</li>
-				<li>Lecturer Name: {{ result[0][2] }}</li>
-			</ol>
-			{% endif %}
 
-			{% if listClass %}
-			<ol>
-				<li>{{ listClass[0][0] }} </li>
-			</ol>
-			{% endif %}
-
+		<div class="col-md-5" >
+		<div style="margin: 50px 40px">
+			<div id="classes-col" >
+					<h1 align="center">My Classes</h1>
+					{% if lectures %}
+					{% for lecture in lectures %}
+					<a href="{{url_for('site.lecture_cfg', lectureid = lecture[0])}}" class="" style= "font-size: 15px">
+	         				<li>{{lecture[0]}} - {{lecture[1]}}</li></a>
+					{% endfor %}
+					{% endif %}
+					<br>
+				</div>
+			</div>
 		</div>
-	</div>
 
+		<div style="text-align:center">
+			<div class="col-md-3">
+			<div style="margin: 10px 10px 60px 50px">
+			<h2>Edit CRNs</h2>
+				<form action="" method="post">
+				<div style="margin: 10px 10px 10px 10px">
+						<div class="form-group" align="center">
+		    				<input type="number" name="CRN" placeholder="CRN" class="form-control" required autofocus>
+		    			</div>
+		    			<div class="form-group" align="center">
+		    				<input type="text" name="lecture" placeholder="Lecture Name" class="form-control" required autofocus>
+		    			</div>
+		    			<div class="form-group" align="center">
+		    				<input type="text" name="lecturer" placeholder="Lecturer Name" class="form-control" required autofocus>
+		    			</div>
+</div>
+						<button class="glyphicon btn btn-success btn"
+							type="submit" name="action" value="add" style= "margin: 2px 18px">Add a new lecture</button>
+</form>
+
+					<div style="margin: 80px 10px 10px 10px">
+					<form action="" method="post">
+						<div style="margin: 10px 10px 10px 10px">
+						<div class="form-group" align="center">
+		    				<input type="number" name="CRN" placeholder="CRN" class="form-control" required autofocus>
+		    			</div>
+		    			</div>
+
+						<button class="glyphicon btn btn-success btn"
+							type="submit" name="action" value="delete" style= "margin: 2px 15px">Delete a lecture</button>
+						</form>
+						</div>
+
+			<div style="margin: 80px 10px 60px 10px">
+			<form action="" method="post">
+					<div style="margin: 10px 10px 10px 10px">
+						<div class="form-group" align="center">
+		    				<input type="number" name="oldCRN" placeholder="CRN" class="form-control" required autofocus>
+		    			</div>
+		    			<div class="form-group" align="center">
+		    				<input type="text" name="lecture" placeholder="New Lecture Name" class="form-control" required autofocus>
+		    			</div>
+		    			<div class="form-group" align="center">
+		    				<input type="text" name="lecturer" placeholder="New Lecturer Name" class="form-control" required autofocus>
+		    			</div>
+					</div>
+
+						<button class="glyphicon btn btn-success btn"
+							type="submit" name="action" value="update" style= "margin: 2px 2px">Update a lecture's information</button>
+						</form>
+						</div>
+				</div>
+			</div>
+		</div>
 
 	</div>
+</div>
+
+				{% if message %}
+					<font size="5"><p>{{message}}</p></font>
+				{% endif %}
+
+<div style="text-align:center">
       <footer>
         <p>&copy; 2016 Company, Inc.</p>
       </footer>
+</div>
 {% endblock %}

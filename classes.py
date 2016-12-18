@@ -17,46 +17,158 @@ from branch_operations import site
 @site.route('/classes', methods=['GET', 'POST'])
 @login_required
 def classes():
-    if request.method == 'POST':
+    if request.method == 'GET':
         with dbapi2.connect(flask.current_app.config['dsn']) as connection:
             cursor = connection.cursor()
-            if request.form['action'] == 'addNewLecture':
+            username = current_user.userName
+
+            query="""SELECT * FROM CRNS AS C INNER JOIN CLASSES AS D ON C.CRN=D.CRN WHERE D.USERNAME=%s"""
+            cursor.execute(query, [username])
+            myCRNs = cursor.fetchall()
+
+            connection.commit()
+        return render_template('classes.html', user = current_user, lectures=myCRNs)
+
+
+    elif request.method == 'POST':
+        with dbapi2.connect(flask.current_app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            if request.form['action'] == 'add':
                 username = current_user.userName
-                entering=request.form['enter']
+                crn=request.form['CRN']
+                lectureName=request.form['lecture']
+                lecturerName=request.form['lecturer']
+                query = """INSERT INTO CRNS (CRN, LECTURENAME, LECTURERNAME) VALUES (%s, %s,%s)"""
+                cursor.execute(query,(crn, lectureName, lecturerName))
+                return redirect(url_for('site.classes', message = "Lecture is successfully added to current lectures"))
+
+            elif request.form['action'] == 'delete':
+                username = current_user.userName
+                delete=request.form['CRN']
+                query = """DELETE FROM CRNS WHERE (CRN=%s)"""
+                cursor.execute(query,[delete])
+                return redirect(url_for('site.classes', message = "Lecture is successfully deleted"))
+
+            elif request.form['action'] == 'update':
+                username = current_user.userName
+                update=request.form['CRN']
+                lecturename=request.form['lecture']
+                lecturername=request.form['lecturer']
+                query = """UPDATE CRNS SET (LECTURENAME=%s AND LECTURERNAME=%s) WHERE CRN=%s"""
+                cursor.execute(query,(lecturename, lecturername, [update]))
+                return redirect(url_for('site.classes', message = "Lecture information is successfully updated"))
+
+            elif request.form['action'] == 'enter':
+                username = current_user.userName
+                add=request.form['CRN']
                 query = """INSERT INTO CLASSES (CRN, USERNAME) VALUES (%s, %s)"""
-                cursor.execute(query,(entering, username))
+                cursor.execute(query,(add, username))
+                return redirect(url_for('site.classes', message = "Enjoy in your new class!"))
 
-            elif request.form['action'] == 'leftAclass':
+            elif request.form['action'] == 'leave':
                 username = current_user.userName
-                leave=request.form['left']
+                left=request.form['leave']
                 query = """DELETE FROM CLASSES WHERE ((CRN=%s) AND (USERNAME=%s))"""
-                cursor.execute(query,(leave, username))
+                cursor.execute(query,(left, username))
+                return redirect(url_for('site.classes', message = "You successfully left the class"))
 
-            elif request.form['action'] == 'updateAclass':
+            elif request.form['action'] == 'updateClass':
                 username = current_user.userName
                 oldcrn=request.form['oldCRN']
                 newcrn=request.form['newCRN']
                 query = """UPDATE CLASSES SET CRN=%s WHERE ((CRN=%s) AND (USERNAME=%s))"""
                 cursor.execute(query, (newcrn, oldcrn, username))
-
-            elif request.form['action'] == 'findLecture':
-                found=request.form['find']
-                query = """SELECT * FROM CRNS WHERE (CRN=%s) """
-                cursor.execute(query, [found])
-                results=cursor.fetchall()
-                print(results)
-                connection.commit()
-                return render_template('classes.html', result=results)
-
-            elif request.form['action'] == 'listClass':
-                classCRN=request.form['CRNofClass']
-                query = """SELECT USERNAME FROM CLASSES WHERE (CRN=%s) """
-                cursor.execute(query, [classCRN])
-                theList=cursor.fetchall()
-                print(theList)
-                connection.commit()
-                return render_template('classes.html', listClass=theList)
+                return redirect(url_for('site.classes', message = "Your current classes are successfully updated"))
         connection.commit()
-        return redirect(url_for('site.profile_page'))
+        return redirect(url_for('site.classes'))
     else:
-        return render_template('classes.html', user = current_user)
+        return render_template('site.classes')
+
+
+
+@site.route('/classes/<lectureid>', methods=['GET', 'POST'])
+def lecture_cfg(lectureid):
+    if request.method == 'POST':
+        if request.form['action'] == 'sendPost':
+            postContent = request.form['postContent']
+            username = current_user.userName
+            with dbapi2.connect(flask.current_app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """INSERT INTO POST(USERNAME, CONTENT) VALUES(%s, %s)"""
+                cursor.execute(query,(username, postContent))
+
+                query = """SELECT POSTID FROM POST WHERE (USERNAME = %s and CONTENT = %s)"""
+                cursor.execute(query,(username, postContent))
+                postid = cursor.fetchall()
+
+                query = """INSERT INTO FEED(USERNAME, POSTID) VALUES(%s, %s)"""
+                cursor.execute(query,(username, [postid]))
+
+                query = """INSERT INTO CLASSPOSTS(GROUPID, POSTID) VALUES(%s, %s)"""
+                cursor.execute(query,(lectureid, [postid]))
+                print(postid[0][0])
+                print(lectureid)
+                connection.commit()
+            return redirect(url_for('site.lecture_cfg', lectureid = lectureid))
+
+        elif request.form['action'] == 'updatePost':
+            postContent = request.form['postContent']
+            with dbapi2.connect(flask.current_app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """UPDATE POST SET CONTENT= %s WHERE (POSTID= %s)"""
+
+                cursor.execute(query, (postContent, postid))
+
+                connection.commit()
+            return redirect(url_for('site.lecture_cfg', postid = postid))
+
+        elif request.form['action'] == 'deletePost':
+            with dbapi2.connect(flask.current_app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """DELETE FROM FEED WHERE (POSTID= %s)"""
+                cursor.execute(query, [postid])
+
+                query = """DELETE FROM CLASSPOSTS WHERE (GROUPID= %s AND POSTID=%s)"""
+                cursor.execute(query, [lectureid], [postid])
+
+                query = """DELETE FROM POST WHERE (POSTID= %s)"""
+                cursor.execute(query, [postid])
+
+                connection.commit()
+            return render_template('lecture_cfg.html', message = "Post is successfully deleted")
+
+        elif request.form['action'] == 'searchPost':
+            postContent=request.form['search-content']
+            with dbapi2.connect(flask.current_app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """SELECT * FROM POST WHERE CONTENT = %s"""
+                cursor.execute(query, [postContent])
+
+                datas=cursor.fetchall()
+                connection.commit()
+            return render_template('lecture_cfg.html', result=datas)
+
+        else:
+            return render_template('lecture_cfg.html')
+    else:
+        with dbapi2.connect(flask.current_app.config['dsn']) as connection:
+            cursor = connection.cursor()
+
+            query = """SELECT * FROM CRNS WHERE CRN = %s"""
+            cursor.execute(query, [lectureid])
+            lecture = cursor.fetchall()
+
+            query = """SELECT * FROM POST WHERE POSTID = %s"""
+            cursor.execute(query, [lectureid])
+            post = cursor.fetchall()
+
+            query="""SELECT USERNAME FROM CLASSES WHERE CRN=%s"""
+            cursor.execute(query, [lectureid])
+            students = cursor.fetchall()
+
+            connection.commit()
+        return render_template('lecture_cfg.html', post = post, lecture=lecture, student=students)

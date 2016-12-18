@@ -174,27 +174,26 @@ def post_cfg(postid):
 def follow_cfg():
     with dbapi2.connect(flask.current_app.config['dsn']) as connection:
         cursor = connection.cursor()
+        if request.method == 'POST':
+            query = """SELECT FOLLOWER FROM FOLLOW WHERE FOLLOWING = %s"""
+            cursor.execute(query, (current_user.userName,))
 
-        query = """SELECT FOLLOWER FROM FOLLOW WHERE FOLLOWING = %s"""
-        cursor.execute(query, (current_user.userName,))
+            followers=cursor.fetchall()
+            follower_data = []
+            for follower in followers:
+                query = """SELECT * FROM USERS WHERE USERNAME = %s"""
+                cursor.execute(query, (follower[0],))
+                follower_data.append(cursor.fetchall())
 
-        followers=cursor.fetchall()
-        follower_data = []
-        for follower in followers:
-            query = """SELECT * FROM USERS WHERE USERNAME = %s"""
-            cursor.execute(query, (follower[0],))
-            follower_data.append(cursor.fetchall())
+                followings=cursor.fetchall()
+                following_data = []
+                for following in followings:
+                    query = """SELECT * FROM USERS WHERE USERNAME = %s"""
+                cursor.execute(query, (following[0],))
+                following_data.append(cursor.fetchall())
 
-        query = """SELECT FOLLOWING FROM FOLLOW WHERE FOLLOWER = %s"""
-        cursor.execute(query, (current_user.userName,))
+            connection.commit()
+            return render_template('follow_cfg.html', followers = follower_data, followings = following_data)
+        if request.method == 'GET':
 
-        followings=cursor.fetchall()
-        following_data = []
-        for following in followings:
-            query = """SELECT * FROM USERS WHERE USERNAME = %s"""
-            cursor.execute(query, (following[0],))
-            following_data.append(cursor.fetchall())
-
-        connection.commit()
-    return render_template('follow_cfg.html', followers = follower_data, followings = following_data)
-
+            return render_template('follow_cfg.html', followers = follower_data, followings = following_data)

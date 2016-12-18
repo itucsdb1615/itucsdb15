@@ -1,0 +1,120 @@
+{% extends "layout.html" %}
+{% block title %}Classes{% endblock %}
+{% block style %}<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">{% endblock %}
+{% block navbarlogin %}
+<div class="container">
+    <div class="navbar-left">
+	   	<a class="navbar-brand" href="{{url_for('site.profile_page')}}"><span class="glyphicon glyphicon-home"></span></a>
+	   	<a class="navbar-brand" href="{{url_for('site.search')}}"><span class="glyphicon glyphicon-search"></span></a>
+    </div>
+    <div class="navbar-default">
+	   	<a class="navbar-brand" href="{{url_for('site.classes')}}" style="margin-left: 50px"><span class="glyphicon glyphicon-book"></span> Lectures</a>
+	   	<a class="navbar-brand" href="{{url_for('site.student_branches')}}"><span class="glyphicon glyphicon-send"></span> Student Branches</a>
+	   	<a class="navbar-brand" href="{{url_for('site.faculty')}}"><span class="glyphicon glyphicon-briefcase"></span> Departments</a>
+	   	<a class="navbar-brand" href="{{url_for('lostfound_page')}}"><span class="glyphicon glyphicon-sort"></span> Lost/Found</a>
+    </div>
+   	<div class="navbar-right">
+	   	<a class="navbar-brand" href="{{url_for('settings_page')}}"><span class="glyphicon glyphicon-cog"></span> Settings</a>
+	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-user"></span> Profile</a>
+	   	<a class="navbar-brand" href="{{url_for('logout')}}"><span class="glyphicon glyphicon-off"></span> Log out</a>
+	</div>
+</div>
+{% endblock %}
+{% block content %}
+<br>
+<div class="container">
+	<div class="row" >
+		<div class="col-md-3" >
+			<div id="profile-col" >
+				<div style="margin: 10px 10px 50px 10px">
+					<h1 align="center">Lecture</h1>
+						<p>CRN: {{lecture[0][0]}}</p>
+						<p>Lecture Name: {{lecture[0][1]}}</p>
+						<p>Lecturer Name: {{lecture[0][2]}}</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-6">
+			<br>
+   			<!-- This is one post -->
+
+   			<div id="profile-col">
+   				<div style="margin: 40px 10px 50px 10px">
+	   				<form action="" method="post">
+						<div class="form-group" align="center">
+			   				<input type="text" name="postContent" placeholder="What's happening?" class="form-control" required autofocus>
+			   			</div>
+						<button class="glyphicon glyphicon-pencil pull-right btn btn-success btn"
+						type="submit" name="action" value="sendPost">Send a post</button>
+					</form>
+   				{% if posts %}
+   				{% for post in posts %}
+	   					<br>
+						<div style=display:inline-block>
+							<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+						</div>
+						<div style=display:inline-block>
+							<font size="5"><b>#{{lectures[0][1]}}</b></font>
+							<p><em>@{{ post[0][1]}}</em></p>
+						</div>
+
+						<div>
+		    				<pre>{{ post[0][2] }} </pre>
+		    			</div>
+
+		    			<div class="pull-right">
+		    				<!-- This part will have icons in it such as like icon -->
+		    				<button class="glyphicon glyphicon-heart btn"
+							type="submit" name="action" value="likePressed" style= "margin-right: 10px"> {{ post[0][3] }}</button>
+		    				<a href="{{url_for('site.post_cfg', postid = post[0][0] )}}" class="btn-info btn" style= "font-size: 0px">
+	         						<span class="glyphicon glyphicon-tasks"></span>
+	       					</a>
+
+		    			</div>
+		    			<br>
+   				{% endfor %}
+				{% endif %}
+				</div>
+			 <!-- end of the post -->
+		</div>
+		</div>
+		<div class="col-md-3">
+			<br>
+			{% if lectures %}
+			{% for lecture in lectures %}
+			{% if user.userName == lecture[2] %}
+			<div id="profile-col">
+   				<div style="margin: 40px 10px 50px 10px">
+   					<h1 align="center">Update Title</h1>
+   					<form action="" method="post">
+   					<input type="text" name="titleUpdate" placeholder="Update the title..." class="form-control" required autofocus>
+					<br>
+					<button class="glyphicon glyphicon-upload pull-left btn btn-info btn"
+							type="submit" name="action" value="updateTitle"> Update</button>
+					</form>
+   				</div>
+   			</div>
+   			{% endif %}
+   			{% endfor %}
+   			{% endif %}
+			</div>
+
+			<div class="col-md-3">
+				<div id="profile-col" >
+					<h1 align="center">Class List</h1>
+					{% if students %}
+					{% for student in students %}
+	         				<li>{{student[0]}}</li>
+					{% endfor %}
+					{% endif %}
+					<br>
+				</div>
+				</div>
+			</div>
+
+	</div>
+</div>
+<br>
+
+{% endblock %}
