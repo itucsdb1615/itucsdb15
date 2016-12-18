@@ -96,7 +96,7 @@ def profile_page():
                 posts.append(cursor.fetchall())
 
             ## Lectures
-            query = """SELECT * FROM CRNLIST WHERE USERNAME = %s"""
+            query = """SELECT CRN FROM CLASSES WHERE USERNAME = %s"""
             cursor.execute(query, [username])
             lectures = cursor.fetchall()
 
