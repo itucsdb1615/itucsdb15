@@ -4,6 +4,7 @@ from flask_login.utils import login_required, login_user, current_user
 from flask import current_app, request
 from jinja2 import TemplateNotFound
 import psycopg2 as dbapi2
+from flask import redirect
 import flask
 site = Blueprint('site', __name__,template_folder='templates', static_folder='static')
 @site.route('/deneme')
@@ -113,12 +114,29 @@ def student_branches():
     else:
         return render_template('student_branches.html')
     
-@site.route('/branch/<int:branchID>')
+@site.route('/branch/<int:branchID>', methods =['GET','POST'])
+#@login_required
 def show_branch(branchID):
     with dbapi2.connect(flask.current_app.config['dsn']) as connection:
-            cursor = connection.cursor()
-            query = """SELECT * FROM STUDENTBRANCHES WHERE ID = %s """
-            cursor.execute(query,(str(branchID)))
-            results = cursor.fetchall()
-    return render_template('show_branches.html',results = results)
+        cursor = connection.cursor()
+        query = """SELECT * FROM STUDENTBRANCHES WHERE ID = %s """
+        cursor.execute(query,(str(branchID),))
+        results = cursor.fetchall()
+        if request.method =='GET':
+            if len(results) == 0:
+                return render_template('show_branches.html',results = results)
+            else:
+                query = """SELECT * FROM BRANCHFEEDS WHERE BRANCH_ID = %s"""
+                cursor.execute(query,(str(branchID),))
+                feeds = cursor.fetchall()
+                return render_template('show_branches.html',results = results,feeds=feeds,user = current_user)
+
+        else:
+            postContent = request.form['postContent']
+            username = current_user.userName
+            query = """INSERT INTO BRANCHFEEDS (BRANCH_ID, USER_NAME, CONTENT) VALUES(%s, %s, %s) """
+            cursor.execute(query,(str(branchID), username, postContent))
+            return redirect('/branch/'+str(branchID))
+
+    #return render_template('show_branches.html',results = results)
 

@@ -5,18 +5,18 @@
 <div class="container">
     <div class="navbar-left">
 	   	<a class="navbar-brand" href="{{url_for('site.profile_page')}}"><span class="glyphicon glyphicon-home"></span></a>
+	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-envelope"></span></a>
 	   	<a class="navbar-brand" href="{{url_for('site.search')}}"><span class="glyphicon glyphicon-search"></span></a>
     </div>
     <div class="navbar-default">
 	   	<a class="navbar-brand" href="{{url_for('site.classes')}}" style="margin-left: 50px"><span class="glyphicon glyphicon-book"></span> Lectures</a>
-	   	<a class="navbar-brand" href="{{url_for('site.student_branches')}}"><span class="glyphicon glyphicon-send"></span> Student Branches</a>
-	   	<a class="navbar-brand" href="{{url_for('site.faculty')}}"><span class="glyphicon glyphicon-briefcase"></span> Departments</a>
-	   	<a class="navbar-brand" href="{{url_for('lostfound_page')}}"><span class="glyphicon glyphicon-sort"></span> Lost/Found</a>
+	   	<a class="navbar-brand" href="{{url_for('site.student_branches')}}"><span class="glyphicon glyphicon-send"></span> Student Branch(es)</a>
+	   	<a class="navbar-brand" href="{{url_for('site.faculty')}}"><span class="glyphicon glyphicon-briefcase"></span> Department(s)</a>
     </div>
    	<div class="navbar-right">
 	   	<a class="navbar-brand" href="{{url_for('settings_page')}}"><span class="glyphicon glyphicon-cog"></span> Settings</a>
 	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-user"></span> Profile</a>
-	   	<a class="navbar-brand" href="{{url_for('logout')}}"><span class="glyphicon glyphicon-off"></span> Log out</a>
+	   	<a class="navbar-brand" href="{{url_for('home_page')}}"><span class="glyphicon glyphicon-off"></span> Log out</a>
 	</div>
 </div>
 {% endblock %}
@@ -25,27 +25,84 @@
 <br>
 <br>
 <div class="container">
-	<div class="row">
-		<div class="col-md-2" >
+	{% if user%}
+		{% if user.is_authenticated%}
+			<div class="col-md-6">
+				<div id ="profile-col">
+					<div style="margin: 10px 10px 30px 10px">
+						<br>
+						<div style=display:inline-block>
+							<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded" height="50px" width= "50px"/>
 
-		</div>
-		<div class="col-md-8">
-			<h1 align="center">Search</h1>
+							<div style=display:inline-block>
+								<font size="5"><b>{{ user.fullName }}</b></font>
+								<p><em>@{{ user.userName}}</em></p>
+							</div>
+							<br>
+							<form action = "" method="post" >
+								<div class="form-group" align="center">
+				    				<input type="text" name="postContent" placeholder="What to write today hmm..." class="form-control" required autofocus>
+				    			</div>
+				    			<button class="glyphicon glyphicon-pencil pull-right btn btn-success btn"
+								type="submit" name="action" value="sendPost">Send a post</button>
+
+							</form>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		{%endif%}
+	{%endif%}
+		<div class="col-md-6">
+			<h1 align="center">BRANCH</h1>
 
 			<div style="margin: 20px 20px 20px 20px" align="center">
 				{% if results %}
-				<ol>
+				<ul>
 					{% for result in results %}
 					<li>{{ result[1] }}&nbsp;&nbsp;&nbsp;&nbsp; {{ result[2] }}</li>
 					{% endfor %}
-				 </ol>
+				</ul>
+				{%endif%}
+				{% if not results%}
+					<h2> There is no such a Student Branch</h2>
 				{% endif %}
+
+			</div>
+		</div>
+
+
+	{% if results %}
+		{%if feeds%}
+			<div class = "col-md-12">
+			{%for feed in feeds %}
+				<div class ="row">
+					<div id ="profile-col">
+						<div style="margin: 10px 10px 30px 10px" align="center">
+							<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded"
+								height="50px" width= "50px"/>
+							<font size="5"><b></b></font>
+							<p><em>@{{ feed[2] }}</em></p>
+							<p> {{ feed[3] }}</p>
+
+						</div>
+						
+					</div>
 				</div>
-		</div>
-		<div class="col-md-2">
+			{%endfor%}
+			</div>
+		{% endif%}
+	{%endif%}
 
-		</div>
-	</div>
 </div>
+{%endblock%}
 
-{% endblock %}
+
+
+
+
+
+
+
+
