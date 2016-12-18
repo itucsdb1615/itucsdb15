@@ -79,11 +79,14 @@ def profile_page():
             cursor.execute(query, [username])
             postids = cursor.fetchall()
 
+
             posts = []
+
             for id in postids:
-                query = """SELECT * FROM POST WHERE POSTID = %s ORDER BY POSTID DESC"""
+                query = """SELECT * FROM POST NATURAL JOIN USERS  WHERE POSTID = %s ORDER BY POSTID DESC"""
                 cursor.execute(query, [id[0]])
                 posts.append(cursor.fetchall())
+
 
             ## Lectures
             query = """SELECT CRN FROM CLASSES WHERE USERNAME = %s"""
