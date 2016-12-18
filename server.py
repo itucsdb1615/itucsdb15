@@ -176,7 +176,7 @@ def initialize_database():
         query = """CREATE TABLE USERS (
                     NAME VARCHAR(80) NOT NULL,
                     USERNAME VARCHAR(20) PRIMARY KEY,
-                    MAIL VARCHAR(80) NOT NULL,
+                    MAIL VARCHAR(80) NOT NULL UNIQUE,
                     PASSWORD VARCHAR(120) NOT NULL,
                     DESCRIPTION VARCHAR(100) DEFAULT 'No information given.',
                     FOLLOWER_COUNT INTEGER DEFAULT 0,

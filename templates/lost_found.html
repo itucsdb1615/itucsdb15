@@ -8,6 +8,22 @@
 		.bas {
 			text-align: center;
 		}
+		#profile-col{
+			display: block;
+			position: relative;
+			width: relative;
+			padding: 10px 10px 10px 10px;
+			background-color: white;
+			border-radius: 2%;
+			border: 0.1px solid #000;
+			z-index: 10;
+		}
+		.row{
+			padding: 10px;
+		}
+		#pad{
+			padding: 10px;
+		}
 	</style>
 {% endblock %}
 {% block navbarlogin %}
@@ -33,32 +49,42 @@
 
 <div class="container">
 	<div class="row">
-		<div class="col-md-6">
+		<div class="col-md-6" id="pad">
+		<div class="col-md-12" id="profile-col">
 			<h2 class="bas">All Lost Items</h2>
+			{% if lostitems %}
 			<dl>
           	{% for item in lostitems %}
 				<dt>{{ item[2] }}</dt>
 				<dd>{{ item[3] }}</dd>
 			{% endfor %}
 			</dl>
-
+			{% else %}
+				<p>No items found.</p>
+			{% endif %}
 		</div>
-		<div class="col-md-6">
+		</div>
+		<div class="col-md-6" id="pad">
+		<div class="col-md-12" id="profile-col">
 			<h2 class="bas">All Found Items</h2>
+			{% if founditems %}
 			<dl>
           	{% for item in founditems %}
 				<dt>{{ item[2] }}</dt>
 				<dd>{{ item[3] }}</dd>
 			{% endfor %}
 			</dl>
-
+			{% else %}
+				<p>No items found.</p>
+			{% endif %}
+		</div>
 		</div>
 	</div>
 
 
 	<div class="row">
-
-		<div class="col-md-6">
+		<div class="col-md-6" id="pad">
+		<div class="col-md-12" id="profile-col">
 		<form class="" action="" method="post">
 			<h2 class="bas">Your Lost Items</h2>
 
@@ -78,18 +104,22 @@
 				</div>
 			</div>
 
+			{% if userlostitems %}
 			<dl>
           	{% for item in userlostitems %}
 				<dt><input type="radio" name="itemSelected" value="{{ item[1] }}" /> {{ item[2] }}</dt>
 				<dd>{{ item[3] }}</dd>
 			{% endfor %}
 			</dl>
+			{% else %}
+				<p>You have no lost items.</p>
+			{% endif %}
 
 		</form>
 		</div>
-
-
-		<div class="col-md-6">
+		</div>
+		<div class="col-md-6" id="pad">
+		<div class="col-md-12" id="profile-col">
 		<form class="" action="" method="post">
 			<h2 class="bas">Your Found Items</h2>
 
@@ -109,16 +139,20 @@
 				</div>
 			</div>
 
+			{% if userfounditems %}
 			<dl>
           	{% for item in userfounditems %}
 				<dt><input type="radio" name="itemSelected" value="{{ item[1] }}" /> {{ item[2] }}</dt>
 				<dd>{{ item[3] }}</dd>
 			{% endfor %}
 			</dl>
+			{% else %}
+				<p>You have no found items.</p>
+			{% endif %}
 
 		</form>
 		</div>
-
+		</div>
 	</div>
 
 
