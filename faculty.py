@@ -118,7 +118,7 @@ def faculty():
 
             posts = []
             for id in postids:
-                query = """SELECT U.NAME,P.USERNAME,P.CONTENT FROM POST AS P NATURAL JOIN FACULTYFEED AS F NATURAL JOIN USERS AS U   WHERE P.POSTID = %s ORDER BY POSTID DESC"""
+                query = """SELECT U.NAME,P.USERNAME,P.CONTENT,P.POSTID FROM POST AS P NATURAL JOIN FACULTYFEED AS F NATURAL JOIN USERS AS U   WHERE P.POSTID = %s ORDER BY POSTID DESC"""
                 cursor.execute(query, [id[0]])
                 posts.append(cursor.fetchall())
 
