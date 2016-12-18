@@ -963,6 +963,6 @@ if __name__ == '__main__':
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
         app.config['dsn'] = """user='vagrant' password='vagrant'
-                               host='localhost' port=5432 dbname='itucsdb'"""
+                               host='localhost' port=9993 dbname='itucsdb'"""
 
     app.run(host='0.0.0.0', port=port, debug=debug)
