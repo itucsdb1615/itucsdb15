@@ -27,17 +27,18 @@
 		<div class="col-md-3" >
 			<div id="profile-col" >
 				<div style="margin: 10px 10px 50px 10px">
-					<h1 align="center">Hot Titles</h1>
+					<h1 align="center">Hot Title</h1>
 					{% if titles %}
 					{% for title in titles %}
 						<!-- Those needs to be clickable -->
 						<li>{{title[1]}}</li>
 						<font size="2"><p><em>@{{title[2]}}</em></p></font>
-
+					{% if user.userName == title[2] %}
 						<form action="" method="post">
 						<button class="glyphicon glyphicon-trash pull-left btn btn-danger"
 								type="submit" name="action" value="deleteTitle"> Delete</button>
 						</form>
+					{% endif %}
 					{% endfor %}
 					{% endif %}
 				</div>
@@ -52,7 +53,7 @@
    				<div style="margin: 40px 10px 50px 10px">
 	   				<form action="" method="post">
 						<div class="form-group" align="center">
-			   				<input type="text" name="postContent" placeholder="What to write today hmm..." class="form-control" required autofocus>
+			   				<input type="text" name="postContent" placeholder="What's happening?" class="form-control" required autofocus>
 			   			</div>
 						<button class="glyphicon glyphicon-pencil pull-right btn btn-success btn"
 						type="submit" name="action" value="sendPost">Send a post</button>
@@ -90,8 +91,12 @@
 		</div>
 		<div class="col-md-3">
 			<br>
+			{% if titles %}
+			{% for title in titles %}
+			{% if user.userName == title[2] %}
 			<div id="profile-col">
    				<div style="margin: 40px 10px 50px 10px">
+   					<h1 align="center">Update Title</h1>
    					<form action="" method="post">
    					<input type="text" name="titleUpdate" placeholder="Update the title..." class="form-control" required autofocus>
 					<br>
@@ -100,6 +105,9 @@
 					</form>
    				</div>
    			</div>
+   			{% endif %}
+   			{% endfor %}
+   			{% endif %}
 			</div>
 	</div>
 </div>

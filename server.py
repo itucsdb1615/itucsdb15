@@ -516,7 +516,6 @@ def title_cfg(titleid):
             cursor.execute(query, titleid[0])
             print(titleid[0])
             titles = cursor.fetchall()
-
             posts = []
             for id in postids:
                 query = """SELECT * FROM POST WHERE POSTID = %s"""
