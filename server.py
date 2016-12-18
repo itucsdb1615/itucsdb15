@@ -9,23 +9,15 @@ from flask import redirect
 from flask import render_template
 from flask.helpers import url_for
 
-from flask import flash
-
 from flask import Blueprint, redirect, render_template, url_for
 from flask import current_app, request
 
 from passlib.apps import custom_app_context as pwd_context
 
 from branch_operations import site
-from profile import *
-from search import *
-from faculty import *
-from classes import *
-
 #from user import get_user
 from flask_login import LoginManager
-from flask_login.utils import login_required, login_user, current_user,\
-    logout_user
+from flask_login.utils import login_required, login_user, current_user
 lm = LoginManager()
 
 @lm.user_loader
@@ -39,7 +31,7 @@ def get_user(user_id):
         cursor.execute(query, [user_id])
         result = cursor.fetchall()
         password = result[0][3]
-        user = User(result[0][0], result[0][1], result[0][2], result[0][3], result[0][4], result[0][5], result[0][6]) if password else None
+        user = User(result[0][0], result[0][1], result[0][2], result[0][3]) if password else None
 #    if user is not None:
 #        user.is_admin = user.username in current_app.config['ADMIN_USERS']
     return user
@@ -107,7 +99,7 @@ def home_page():
             if pwd_context.verify(password, user.password):
                 login_user(user)
                 #flash('You have logged in.')
-                next_page = request.args.get('next', url_for('site.profile_page'))
+                next_page = request.args.get('next', url_for('profile_page'))
                 return redirect(next_page)
         #flash('Invalid credentials.')
     else:
@@ -128,31 +120,26 @@ def initialize_database():
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS LOST CASCADE"""
         cursor.execute(query)
-        query = """DROP TABLE IF EXISTS FOUND CASCADE"""
-        cursor.execute(query)
         query = """DROP TABLE IF EXISTS USERS CASCADE"""
         cursor.execute(query)
-        query = """DROP TABLE IF EXISTS CLASSES CASCADE"""
+        query = """DROP TABLE IF EXISTS CRNLIST CASCADE"""
+        cursor.execute(query)
+        query = """DROP TABLE IF EXISTS CLASSES CASCADE"""        #DROP TABLE COMMANDS
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS CRNS CASCADE"""
-        cursor.execute(query)
-        query = """DROP TABLE IF EXISTS CLASSPOSTS CASCADE"""
-        cursor.execute(query)
-        query = """DROP TABLE IF EXISTS CLASSPOSTCONTENT CASCADE"""
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS FEED CASCADE"""
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS POST CASCADE"""
         cursor.execute(query)
-        query = """DROP TABLE IF EXISTS FOLLOW CASCADE"""
-        cursor.execute(query)
         query = """DROP TABLE IF EXISTS HOTTITLES CASCADE"""
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS HOTTITLECAST CASCADE"""
         cursor.execute(query)
-        query = """DROP TABLE IF EXISTS FACULTYFEED CASCADE"""
-        cursor.execute(query)
         query = """DROP TABLE IF EXISTS DEPARTMENTS CASCADE"""
+        cursor.execute(query)
+
+        query = """DROP TABLE IF EXISTS BRANCHFEEDS CASCADE"""
         cursor.execute(query)
 
         query = """CREATE TABLE COUNTER (N INTEGER)"""            #COUNTER TABLE
@@ -177,10 +164,7 @@ def initialize_database():
                     NAME VARCHAR(80) NOT NULL,
                     USERNAME VARCHAR(20) PRIMARY KEY,
                     MAIL VARCHAR(80) NOT NULL,
-                    PASSWORD VARCHAR(120) NOT NULL,
-                    DESCRIPTION VARCHAR(100) DEFAULT 'No information given.',
-                    FOLLOWER_COUNT INTEGER DEFAULT 0,
-                    FOLLOWING_COUNT INTEGER DEFAULT 0)"""
+                    PASSWORD VARCHAR(120) NOT NULL)"""
         cursor.execute(query)
 
         password = "leblebi"
@@ -199,14 +183,16 @@ def initialize_database():
                     NAME VARCHAR(80) NOT NULL,
                     DESCRIPTION VARCHAR(80) NOT NULL)"""
         cursor.execute(query)
-        query = """CREATE TABLE FOUND (
-                    USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE,
-                    ITEMID SERIAL PRIMARY KEY,
-                    NAME VARCHAR(80) NOT NULL,
-                    DESCRIPTION VARCHAR(80) NOT NULL)"""
+                                            #CRNLIST TABLE
+        query = """CREATE TABLE CRNLIST (
+                    USERNAME VARCHAR(20) REFERENCES USERS ON DELETE CASCADE,
+                    CRN INTEGER REFERENCES CRNS(CRN),
+                    PRIMARY KEY(USERNAME, CRN))"""
         cursor.execute(query)
 
-                                            #CLASSES TABLE
+        query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES ('mcanyasakci', 11909)"""
+        cursor.execute(query)
+
         query = """CREATE TABLE CLASSES (
                     CRN INTEGER REFERENCES CRNS(CRN),
                     USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE,
@@ -215,28 +201,6 @@ def initialize_database():
 
         query = """INSERT INTO CLASSES (CRN, USERNAME) VALUES (11909, 'mcanyasakci')"""
         cursor.execute(query)
-
-                                                    #CLASS POSTS' CONTENTS TABLE
-        query = """CREATE TABLE CLASSPOSTCONTENT (
-                    POSTID SERIAL PRIMARY KEY UNIQUE,
-                    USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE,
-                    CONTENT VARCHAR(500) NOT NULL,
-                    LIKES INT DEFAULT 0)"""
-        cursor.execute(query)
-
-        query = """INSERT INTO CLASSPOSTCONTENT(POSTID, USERNAME, CONTENT, LIKES) VALUES (0, 'mcanyasakci', 'hello camera', 0)"""
-        cursor.execute(query)
-
-                                            #CLASS POSTS TABLE
-        query = """CREATE TABLE CLASSPOSTS (
-                    GROUPID INTEGER REFERENCES CRNS(CRN),
-                    USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE,
-                    POSTID INTEGER PRIMARY KEY REFERENCES CLASSPOSTCONTENT(POSTID))"""
-        cursor.execute(query)
-
-        query = """INSERT INTO CLASSPOSTS(GROUPID, USERNAME, POSTID) VALUES (11909, 'mcanyasakci', 0)"""
-        cursor.execute(query)
-
 
                                             #POST TABLE
         query = """CREATE TABLE POST (
@@ -265,16 +229,9 @@ def initialize_database():
         query = """INSERT INTO FEED (USERNAME, POSTID) VALUES ('mcanyasakci', 25)"""
         cursor.execute(query)
 
-        query = """CREATE TABLE FACULTYFEED (
-                    SENDER VARCHAR(20) REFERENCES USERS(USERNAME) ON DELETE CASCADE,
-                    READER VARCHAR(20) REFERENCES USERS(USERNAME) ON DELETE CASCADE,
-                    POSTID INTEGER REFERENCES POST(POSTID) ON DELETE CASCADE ,
-                    PRIMARY KEY(READER, POSTID))"""
-        cursor.execute(query)
-
         query = """CREATE TABLE DEPARTMENTS (
                     FACULTYNO INTEGER PRIMARY KEY,
-                    NAME VARCHAR(80))"""   #DEPARTMENTS TABLE
+                    NAME VARCHAR(40))"""   #DEPARTMENTS TABLE
         cursor.execute(query)
 
         query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (01, 'Faculty of Civil Engineering')"""
@@ -282,39 +239,6 @@ def initialize_database():
 
         query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (15, 'Faculty of Computer and Informatics')"""
         cursor.execute(query)
-        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (02, 'Faculty of Architecture')"""
-        cursor.execute(query)
-        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (03, 'Faculty of Mechanical Engineering')"""
-        cursor.execute(query)
-
-        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (04, 'Faculty of Electrical and Electronics Engineering')"""
-        cursor.execute(query)
-
-        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (05, 'Faculty of Mines')"""
-        cursor.execute(query)
-        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (06, 'Faculty of Chemical and Metallurgical Engineering')"""
-        cursor.execute(query)
-
-        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (07, 'Faculty of Management')"""
-        cursor.execute(query)
-        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (08, 'Faculty of Naval Architecture and Ocean Engineering')"""
-        cursor.execute(query)
-
-        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (09, 'Faculty of Science and Letters')"""
-        cursor.execute(query)
-        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (10, 'Faculty of Aeronautics and Astronautics')"""
-        cursor.execute(query)
-
-        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (11, 'Turkish Music State Conservatory')"""
-        cursor.execute(query)
-        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (12, 'Maritime Faculty')"""
-        cursor.execute(query)
-
-        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (13, 'Faculty of Textile Technologies and Design ')"""
-        cursor.execute(query)
-
-
-
 
         query = """CREATE TABLE STUDENTBRANCHES(
                     ID SERIAL PRIMARY KEY,
@@ -323,7 +247,7 @@ def initialize_database():
         ) """
         cursor.execute(query)
 
-        query = """INSERT INTO STUDENTBRANCHES(NAME, DESCRIPTION) VALUES ('COMPUTER SOCIETY','lorem ipsum lorem ipsum') """
+        query = """INSERT INTO STUDENTBRANCHES(NAME, DESCRIPTION) VALUES ('COMPUTER SOCIETY','This is typical geeks branch') """
         cursor.execute(query)
         query = """CREATE TABLE STUDENTBRANCHES_CASTING(
                     STUDENTBRANCH_ID INTEGER REFERENCES STUDENTBRANCHES(ID),
@@ -341,13 +265,6 @@ def initialize_database():
                     UNIQUE (USERNAME , FACULTYNO) )"""
         cursor.execute(query)
         query = """INSERT INTO DEPARTMENTLIST (USERNAME, FACULTYNO ) VALUES ('mcanyasakci', 15)"""
-        cursor.execute(query)
-
-        query= """CREATE TABLE FOLLOW (
-                    ID SERIAL PRIMARY KEY,
-                    FOLLOWER VARCHAR(20) REFERENCES USERS(USERNAME),
-                    FOLLOWING VARCHAR(20) REFERENCES USERS(USERNAME),
-                    UNIQUE(FOLLOWER, FOLLOWING))"""
         cursor.execute(query)
 
         query= """CREATE TABLE HOTTITLES (
@@ -368,6 +285,21 @@ def initialize_database():
         cursor.execute(query)
         query = """INSERT INTO HOTTITLES ( TOPIC, USERNAME ) VALUES ('Database', 'namdar')"""
         cursor.execute(query)
+        ###Branch feeds
+        query = """ 
+                CREATE TABLE BRANCHFEEDS(
+                ID SERIAL PRIMARY KEY, 
+                BRANCH_ID INTEGER REFERENCES STUDENTBRANCHES(ID),
+                USER_NAME VARCHAR(20) REFERENCES USERS(USERNAME),
+                CONTENT VARCHAR(200) NOT NULL
+                )
+                """
+        cursor.execute(query)
+
+        query = """ INSERT INTO
+                     BRANCHFEEDS (BRANCH_ID, USER_NAME,CONTENT) VALUES 
+                     (1,'namdar', 'This is awesome branch, keep in touch for news !!!') """
+        cursor.execute(query)
 
         connection.commit()
     return redirect(url_for('home_page'))
@@ -386,6 +318,148 @@ def counter_page():
         count = cursor.fetchone()[0]
     return "This page was accessed %d times." % count
 
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile_page():
+    if request.method == 'POST':
+        if request.form['action'] == 'sendPost':
+            postContent = request.form['postContent']
+            username = current_user.userName
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """INSERT INTO POST(USERNAME, CONTENT) VALUES(%s, %s)"""
+                cursor.execute(query,(username, postContent))
+
+                query = """SELECT POSTID FROM POST WHERE (USERNAME = %s and CONTENT = %s)"""
+                cursor.execute(query,(username, postContent))
+                postid = cursor.fetchall()
+
+                query = """INSERT INTO FEED(USERNAME, POSTID) VALUES(%s, %s)"""
+                cursor.execute(query,(username, postid[0]))
+
+                connection.commit()
+            return redirect('profile')
+        elif request.form['action'] == 'sendTitle':
+            titleContent = request.form['titleContent']
+            username = current_user.userName
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """INSERT INTO HOTTITLES(TOPIC, USERNAME) VALUES(%s, %s)"""
+                cursor.execute(query,(titleContent, username))
+
+                connection.commit()
+            return redirect('profile')
+        elif request.form['action'] == 'updateTitle':
+            updateContent = request.form['titleUpdate']
+            titleContent = request.form['content']
+            username = current_user.userName
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """UPDATE HOTTITLES SET TOPIC = %S WHERE USERNAME = %S AND TOPIC = %s"""
+                cursor.execute(query,(updateContent, username, titleContent))
+
+                connection.commit()
+            return redirect('profile')
+        else:
+            return redirect('profile')
+    else:
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            username = current_user.userName
+
+            ## posts
+            query = """SELECT POSTID FROM FEED WHERE USERNAME = %s ORDER BY POSTID DESC"""
+            cursor.execute(query, [username])
+            postids = cursor.fetchall()
+
+            posts = []
+            for id in postids:
+                query = """SELECT * FROM POST WHERE POSTID = %s ORDER BY POSTID DESC"""
+                cursor.execute(query, [id[0]])
+                posts.append(cursor.fetchall())
+
+            ## Lectures
+            query = """SELECT * FROM CRNLIST WHERE USERNAME = %s"""
+            cursor.execute(query, [username])
+            lectures = cursor.fetchall()
+
+            ##Student Branches
+            query = """SELECT * FROM STUDENTBRANCHES_CASTING WHERE PERSON_NAME = %s"""
+            cursor.execute(query, [username])
+            ids = cursor.fetchall()
+
+            sbranches = []
+            for id in ids:
+                query = """SELECT * FROM STUDENTBRANCHES WHERE ID = %s"""
+                cursor.execute(query, [id[0]])
+                sbranches.append(cursor.fetchall())
+
+            ##Hot Titles
+            query = """SELECT * FROM HOTTITLES WHERE (ID <= 10)"""
+            cursor.execute(query)
+            titles = cursor.fetchall()
+
+            ##My Titles
+            query = """SELECT * FROM HOTTITLES WHERE USERNAME = %s"""
+            cursor.execute(query, [current_user.userName])
+            mytitles = cursor.fetchall()
+
+            connection.commit()
+        return render_template('profile_page.html', user = current_user, results = posts, lectures = lectures, branches = sbranches, titles = titles, mytitles = mytitles)
+
+@app.route('/post_cfg/<postid>', methods=['GET', 'POST'])
+def post_cfg(postid):
+    if request.method == 'POST':
+        if request.form['action'] == 'updatePost':
+            postContent = request.form['postContent']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """UPDATE POST SET CONTENT= %s WHERE (POSTID= %s)"""
+
+                cursor.execute(query, (postContent, postid))
+
+                connection.commit()
+            return redirect(url_for('post_cfg', postid = postid))
+        elif request.form['action'] == 'deletePost':
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """DELETE FROM POST WHERE (POSTID= %s)"""
+                cursor.execute(query, [postid])
+
+                connection.commit()
+            return render_template('post_cfg.html', message = "Post is successfully deleted")
+        elif request.form['action'] == 'searchPost':
+            postContent=request.form['search-content']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """SELECT * FROM POST WHERE CONTENT = %s"""
+                cursor.execute(query, [postContent])
+
+                datas=cursor.fetchall()
+                connection.commit()
+            return render_template('post_cfg.html', result=datas)
+        else:
+            return render_template('post_cfg.html')
+    else:
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+
+            query = """SELECT * FROM POST WHERE POSTID = %s"""
+
+            cursor.execute(query, [postid])
+            post = cursor.fetchall()
+
+            connection.commit()
+        return render_template('post_cfg.html', post = post)
+
+
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -403,7 +477,7 @@ def signup():
             query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('%s', '%s', '%s', '%s')""" %(nameSurname,username,email,hashed)
             cursor.execute(query)
 
-            user = User(nameSurname, username,email,hashed,"No information given.",0,0)
+            user = User(nameSurname, username,email,hashed)
 
 
             connection.commit()
@@ -411,13 +485,13 @@ def signup():
             login_user(user)
             #flash('You have logged in.')
             #next_page = request.args.get('next', url_for('profile_page'))
-            #    (next_page)
-        return redirect(url_for('site.profile_page'))
+            #return redirect(next_page)
+        return redirect(url_for('profile_page'))
 
     else:
         return render_template('signup.html')
 
-@app.route('/signin', methods=['GET', 'POST'])
+@app.route('/signin')
 def signin():
     if request.method == 'POST':
         email=request.form['inputEmail']
@@ -428,24 +502,125 @@ def signin():
 
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
-            query = """SELECT USERNAME FROM USERS WHERE MAIL = %s"""
-            cursor.execute(query, [email])
-            data = cursor.fetchall()
-            connection.commit()
 
-        user = get_user(data[0][0])
-        if user is not None:
-            if pwd_context.verify(password, user.password):
-                login_user(user)
-                #flash('You have logged in.')
-                next_page = request.args.get('next', url_for('site.profile_page'))
-                return redirect(next_page)
-        #flash('Invalid credentials.')
-        next = flask.request.args.get('next')
-        return flask.redirect(next or url_for('site.profile_page'))
+            query = """SELECT PASSWORD FROM USERS WHERE MAIL = %s"""
+            cursor.execute(query, email)
+
+            result = cursor.fetchall()
+
+            if  pwd_context.verify(result[0], hashed):
+                query = """SELECT * FROM USERS WHERE MAIL = %s"""
+                cursor.execute(query, email)
+                data = cursor.fetchall()
+                user = User(data[0], data[1],data[2],hashed)
+                connection.commit()
+
+                return redirect(url_for('profile_page'))
+            else:
+                return render_template('signin.html')
     else:
         return render_template('signin.html')
 
+
+@app.route('/lectures', methods=['GET', 'POST'])
+@login_required
+def lectures():
+    if request.method == 'POST':
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            if request.form['action'] == 'addtoUser':
+                username = current_user.userName
+                adding=request.form['addCRN']
+                query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES (%s, %s)"""
+                cursor.execute(query,(username, adding))
+
+            elif request.form['action'] == 'addtoLectures':
+                adding=request.form['addCRN']
+                lecturesName=request.form['LecturesName']
+                lecturersName=request.form['LecturerSName']
+                query = """INSERT INTO CRNS (CRN, LECTURENAME, LECTURERNAME) VALUES (%s, %s, %s)"""
+                cursor.execute(query, (adding, lecturesName, lecturersName))
+
+            elif request.form['action'] == 'delete':
+                username = current_user.userName
+                deleted=request.form['deleteCRN']
+                query = """DELETE FROM CRNLIST WHERE ((USERNAME = %s) AND (CRN=%s))"""
+                cursor.execute(query, (username, deleted))
+                connection.commit()
+
+            elif request.form['action'] == 'update':
+                username = current_user.userName
+                oldcrn=request.form['oldCRN']
+                newcrn=request.form['newCRN']
+                query = """UPDATE CRNLIST SET CRN=%s WHERE ((USERNAME=%s) AND (CRN=%s))"""
+                cursor.execute(query, (newcrn, username, oldcrn))
+
+            elif request.form['action'] == 'select':
+                selected=request.form['selectCRN']
+                query = """SELECT * FROM CRNS WHERE (CRN=%s) """
+                cursor.execute(query, [selected])
+                results=cursor.fetchall()
+                print(results)
+                connection.commit()
+                return render_template('crn_edit.html', result=results)
+        connection.commit()
+        return redirect(url_for('profile_page'))
+
+    else:
+        return render_template('crn_edit.html')
+
+@app.route('/classes', methods=['GET', 'POST'])
+@login_required
+def classes():
+    if request.method == 'POST':
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            if request.form['action'] == 'addNewLecture':
+                username = current_user.userName
+                entering=request.form['enter']
+                query = """INSERT INTO CRNLIST (USERNAME, CRN) VALUES (%s, %s)"""
+                cursor.execute(query,(username, entering))
+                query = """INSERT INTO CLASSES (CRN, USERNAME) VALUES (%s, %s)"""
+                cursor.execute(query,(entering, username))
+
+            elif request.form['action'] == 'leftAclass':
+                username = current_user.userName
+                leave=request.form['left']
+                query = """DELETE FROM CRNLIST WHERE ((USERNAME = %s) AND (CRN=%s))"""
+                cursor.execute(query, (username, leave))
+                query = """DELETE FROM CLASSES WHERE ((CRN=%s) AND (USERNAME=%s))"""
+                cursor.execute(query,(leave, username))
+
+            elif request.form['action'] == 'updateAclass':
+                username = current_user.userName
+                oldcrn=request.form['oldCRN']
+                newcrn=request.form['newCRN']
+                query = """UPDATE CRNLIST SET CRN=%s WHERE ((USERNAME=%s) AND (CRN=%s))"""
+                cursor.execute(query, (newcrn, username, oldcrn))
+                query = """UPDATE CLASSES SET CRN=%s WHERE ((CRN=%s) AND (USERNAME=%s))"""
+                cursor.execute(query, (newcrn, oldcrn, username))
+
+            elif request.form['action'] == 'findLecture':
+                found=request.form['find']
+                query = """SELECT * FROM CRNS WHERE (CRN=%s) """
+                cursor.execute(query, [found])
+                results=cursor.fetchall()
+                print(results)
+                connection.commit()
+                return render_template('classes.html', result=results)
+
+            elif request.form['action'] == 'listClass':
+                classCRN=request.form['CRNofClass']
+                query = """SELECT USERNAME FROM CLASSES WHERE (CRN=%s) """
+                cursor.execute(query, [classCRN])
+                theList=cursor.fetchall()
+                print(theList)
+                connection.commit()
+                return render_template('classes.html', listClass=theList)
+        connection.commit()
+        return redirect(url_for('profile_page'))
+    else:
+        return render_template('classes.html')
 
 @app.route('/forgottenpassword')
 def forgotten_password():
@@ -480,12 +655,11 @@ def title_cfg(titleid):
                 postid = cursor.fetchall()
 
                 query = """INSERT INTO FEED(USERNAME, POSTID) VALUES(%s, %s)"""
-                cursor.execute(query,(username, postid[0][0]))
+                cursor.execute(query,(username, postid[0]))
 
                 query = """INSERT INTO HOTTITLECAST(HOTTITLEID, POSTID) VALUES(%s, %s)"""
-                cursor.execute(query,(titleid[0], postid[0][0]))
-                print(postid[0][0])
-                print(titleid)
+                cursor.execute(query,(titleid[0], postid[0]))
+
                 connection.commit()
             return redirect(url_for('title_cfg', titleid = titleid))
         elif request.form['action'] == 'updateTitle':
@@ -509,38 +683,52 @@ def title_cfg(titleid):
                 cursor.execute(query, [titleid[0]])
 
                 connection.commit()
-            return redirect(url_for('site.profile_page'))
+            return redirect(url_for('profile_page'))
         else:
-            return render_template('title_cfg.html', titleid = titleid)
+            return redirect(url_for('title_cfg', titleid = titleid))
     else:
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
 
-            query = """SELECT POSTID FROM HOTTITLECAST WHERE HOTTITLEID = %s"""
-            cursor.execute(query, titleid[0])
+            query = """SELECT * FROM HOTTITLECAST WHERE HOTTITLEID = %s"""
+            cursor.execute(query, [titleid])
 
             postids = cursor.fetchall()
-            print(postids)
+
             query = """SELECT * FROM HOTTITLES WHERE ID = %s"""
-            cursor.execute(query, titleid[0])
-            print(titleid[0])
+            cursor.execute(query, [titleid])
+
             titles = cursor.fetchall()
+
             posts = []
             for id in postids:
-                query = """SELECT * FROM POST WHERE POSTID = %s"""
+                query = """SELECT * FROM POST WHERE POSTID = %s ORDER BY POSTID DESC"""
                 cursor.execute(query, [id[0]])
                 posts.append(cursor.fetchall())
-                print([id[0]])
 
-            print(posts)
             connection.commit()
         return render_template('title_cfg.html', posts = posts, user = current_user, titles = titles)
 
-@app.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('home_page'))
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if request.method == 'POST':
+        if request.form['action'] == 'searchPost':
+                postContent=request.form['search-content']
+                with dbapi2.connect(app.config['dsn']) as connection:
+                    cursor = connection.cursor()
+
+                    query = """SELECT * FROM POST WHERE CONTENT = %s"""
+                    cursor.execute(query, [postContent])
+
+                    datas=cursor.fetchall()
+                    connection.commit()
+
+
+                return render_template('search.html', result = datas)
+        else:
+            return render_template('search.html')
+    else:
+        return render_template('search.html')
 
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
@@ -551,84 +739,51 @@ def settings_page():
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """DELETE FROM USERS WHERE ( USERNAME=%s )"""
-                cursor.execute(query, ([username]))
+                query = """DELETE FROM USERS WHERE ( USERNAME='%s' )""" %(username)
+                cursor.execute(query)
 
-                query = """SELECT * FROM LOST WHERE ( USERNAME=%s )"""
-                cursor.execute(query, ([current_user.userName]))
+                query = """SELECT * FROM LOST WHERE ( USERNAME='%s' )""" %(current_user.userName)
+                cursor.execute(query)
                 items=cursor.fetchall()
 
                 connection.commit()
-            logout_user()
-            return redirect(url_for('home_page'))
+            return render_template('settings_page.html', items=items)
         elif request.form['action'] == 'updateUser':
             nameSurname=request.form['inputNameSurname']
             username=current_user.userName
             email=request.form['inputEmail']
             password=request.form['inputPassword']
-            hashed = pwd_context.encrypt(password)
-
-            execute=[]
-            query="""UPDATE USERS SET """
-            if len(nameSurname)!=0:
-                current_user.fullName=nameSurname
-                execute+=[str(nameSurname)]
-                query+="""NAME=%s"""
-            if len(email)!=0:
-                current_user.email=email
-                execute+=[str(email)]
-                if len(nameSurname)!=0:
-                    query+=""", """
-                query+="""MAIL=%s"""
-            if len(password)!=0:
-                current_user.password=hashed
-                execute+=[str(hashed)]
-                if len(nameSurname)!=0 or len(email)!=0:
-                    query+=""", """
-                query+="""PASSWORD=%s"""
-            if len(nameSurname)==0 and len(email)==0 and len(password)==0:
-                return render_template('settings_page.html', messageU="Could not update.")
-
-            query+=""" WHERE (USERNAME=%s)"""
-
-            execute+=[username]
-
-            print(execute)
-            print(query)
-
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                #query = """UPDATE USERS SET NAME=%s, MAIL=%s, PASSWORD=%s WHERE (USERNAME=%s)"""
-                cursor.execute(query, execute)
+                query = """UPDATE USERS SET NAME='%s', MAIL='%s', PASSWORD='%s' WHERE (USERNAME='%s')""" %(nameSurname, email, password, username)
+                cursor.execute(query)
+
+                query = """SELECT * FROM LOST WHERE ( USERNAME='%s' )""" %(current_user.userName)
+                cursor.execute(query)
+                items=cursor.fetchall()
 
                 connection.commit()
-            return render_template('settings_page.html', messageU="Updated user %s" %(username))
+            return render_template('settings_page.html', messageU="Updated user %s" %(username), items=items)
         elif request.form['action'] == 'searchUser':
             username=request.form['inputUsername']
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """SELECT * FROM USERS WHERE ( USERNAME=%s )"""
-                cursor.execute(query, [username])
+                query = """SELECT * FROM USERS WHERE ( USERNAME='%s' )""" %(username)
+                cursor.execute(query)
 
                 datas=cursor.fetchall()
 
-                query = """SELECT * FROM LOST WHERE ( USERNAME=%s )"""
-                cursor.execute(query, ([current_user.userName]))
+                query = """SELECT * FROM LOST WHERE ( USERNAME='%s' )""" %(current_user.userName)
+                cursor.execute(query)
                 items=cursor.fetchall()
 
                 connection.commit()
             return render_template('settings_page.html', result=datas, items=items)
 
-    else:
-        return render_template('settings_page.html')
-
-@app.route('/lost_found', methods=['GET', 'POST'])
-@login_required
-def lostfound_page():
-    if request.method == 'POST':
-        if request.form['action'] == 'createLostItem':
+        #################################################################################################################
+        elif request.form['action'] == 'createLostItem':
             username=current_user.userName
             itemName=request.form['inputItemName']
             description=request.form['inputDescription']
@@ -639,128 +794,104 @@ def lostfound_page():
                 cursor.execute(query, (username,itemName,description))
 
                 connection.commit()
-            return redirect(url_for('lostfound_page'))
+            return redirect(url_for('settings_page'))
         elif request.form['action'] == 'deleteLostItem':
             username=current_user.userName
-            value = request.form.get('itemSelected')
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
+            values = request.form.getlist('items_to_delete')
+            for value in values:
+                with dbapi2.connect(app.config['dsn']) as connection:
+                    cursor = connection.cursor()
 
-                query = """DELETE FROM LOST WHERE ( USERNAME=%s AND ITEMID=%s )"""
-                cursor.execute(query, (username, value))
+                    query = """DELETE FROM LOST WHERE ( USERNAME=%s AND ITEMID=%s )"""
+                    cursor.execute(query, (username, value))
 
-                connection.commit()
-            return redirect(url_for('lostfound_page'))
+                    connection.commit()
+            return redirect(url_for('settings_page'))
         elif request.form['action'] == 'updateLostItem':
             username=current_user.userName
-            value = request.form.get('itemSelected')
-            itemName=request.form['inputItemName']
-            description=request.form['inputDescription']
-            go=0
-            if len(itemName)==0 and len(description)==0:
-                go=0
-            elif len(itemName)==0:
-                go=1
-            elif len(description)==0:
-                go=2
-
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-
-                if go==1:
-                    print(str(go) + "girdi")
-                    query = """UPDATE LOST SET DESCRIPTION=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
-                    cursor.execute(query, (description, username, value))
-                elif go==2:
-                    print(str(go) + "girdi")
-                    query = """UPDATE LOST SET NAME=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
-                    cursor.execute(query, (itemName, username, value))
-                else:
-                    query = """UPDATE LOST SET NAME=%s, DESCRIPTION=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
-                    cursor.execute(query, (itemName, description, username, value))
-
-
-                connection.commit()
-            return redirect(url_for('lostfound_page'))
-        elif request.form['action'] == 'createFoundItem':
-            username=current_user.userName
+            value = request.form.get('items_to_update')
             itemName=request.form['inputItemName']
             description=request.form['inputDescription']
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """INSERT INTO FOUND (USERNAME, NAME, DESCRIPTION) VALUES (%s, %s, %s)"""
-                cursor.execute(query, (username,itemName,description))
+                query = """UPDATE LOST SET NAME=%s, DESCRIPTION=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
+                cursor.execute(query, (itemName, description, username, value))
 
                 connection.commit()
-            return redirect(url_for('lostfound_page'))
-        elif request.form['action'] == 'deleteFoundItem':
-            username=current_user.userName
-            value = request.form.get('itemSelected')
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
+            return redirect(url_for('settings_page'))
 
-                query = """DELETE FROM FOUND WHERE ( USERNAME=%s AND ITEMID=%s )"""
-                cursor.execute(query, (username, value))
-
-                connection.commit()
-            return redirect(url_for('lostfound_page'))
-        elif request.form['action'] == 'updateFoundItem':
-            username=current_user.userName
-            value = request.form.get('itemSelected')
-            itemName=request.form['inputItemName']
-            description=request.form['inputDescription']
-            go=0
-            if len(itemName)==0 and len(description)==0:
-                go=0
-            elif len(itemName)==0:
-                go=1
-            elif len(description)==0:
-                go=2
-
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-
-                if go==1:
-                    print(str(go) + "girdi")
-                    query = """UPDATE FOUND SET DESCRIPTION=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
-                    cursor.execute(query, (description, username, value))
-                elif go==2:
-                    print(str(go) + "girdi")
-                    query = """UPDATE FOUND SET NAME=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
-                    cursor.execute(query, (itemName, username, value))
-                else:
-                    query = """UPDATE FOUND SET NAME=%s, DESCRIPTION=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
-                    cursor.execute(query, (itemName, description, username, value))
-
-
-                connection.commit()
-            return redirect(url_for('lostfound_page'))
     else:
         username=current_user.userName
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
 
-            query = """SELECT * FROM LOST"""
+            query = """SELECT * FROM LOST WHERE ( USERNAME='%s' )""" %(username)
             cursor.execute(query)
-            lostitems=cursor.fetchall()
 
-            query = """SELECT * FROM LOST WHERE( USERNAME = %s )"""
-            cursor.execute(query, [username])
-            userlostitems=cursor.fetchall()
-
-            query = """SELECT * FROM FOUND"""
-            cursor.execute(query)
-            founditems=cursor.fetchall()
-
-            query = """SELECT * FROM FOUND WHERE( USERNAME = %s )"""
-            cursor.execute(query, [username])
-            userfounditems=cursor.fetchall()
+            items=cursor.fetchall()
 
             connection.commit()
-        return render_template('lost_found.html', lostitems=lostitems, userlostitems=userlostitems, founditems=founditems, userfounditems=userfounditems)
+        return render_template('settings_page.html', items=items)
 
+@app.route('/faculty', methods=['GET', 'POST'])
+@login_required
+def faculty():
+    if request.method == 'POST':
 
+        if request.form['action'] == 'addFaculty':
+            username = current_user.userName
+            faculty = request.form['selectFaculty']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """INSERT INTO DEPARTMENTLIST (USERNAME, FACULTYNO ) VALUES (%s, %s)"""
+                cursor.execute(query, (username,faculty))
+                test = 'test'
+                connection.commit()
+
+            return render_template('faculty.html', resultInsert=test)
+
+        elif request.form['action'] == 'updateFaculty':
+            username = current_user.userName
+            faculty = request.form['selectFaculty']
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """UPDATE DEPARTMENTLIST SET FACULTYNO=%s WHERE (USERNAME=%s)"""
+                cursor.execute(query , (faculty, username))
+                test='test'
+                connection.commit()
+
+            return render_template('faculty.html', resultUpdate=test)
+
+        elif request.form['action'] == 'deleteFaculty':
+            username = current_user.userName
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """DELETE FROM DEPARTMENTLIST WHERE ( USERNAME='%s' )""" %(username)
+                cursor.execute(query)
+                test='test'
+                connection.commit()
+
+            return render_template('faculty.html', resultDelete=test)
+
+        elif request.form['action'] == 'searchFaculty':
+            username = current_user.userName
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """SELECT * FROM DEPARTMENTLIST WHERE ( USERNAME='%s' )""" %(username)
+                cursor.execute(query)
+                datas=cursor.fetchall()
+
+                connection.commit()
+            return render_template('faculty.html', resultSearch=datas)
+
+    else:
+
+        return render_template('faculty.html')
 @app.route('/department_page', methods=['GET', 'POST'])
 @login_required
 def department_page():
@@ -771,8 +902,8 @@ def department_page():
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """INSERT INTO DEPARTMENTLIST (USERNAME, FACULTYNO ) VALUES (%s, %s)"""
-                cursor.execute(query, (userName,faculty))
+                query = """INSERT INTO DEPARTMENTLIST (USERNAME, FACULTYNO ) VALUES ('%s', '%s')""" %(userName,faculty)
+                cursor.execute(query)
                 test = 'test'
                 connection.commit()
 
@@ -784,8 +915,8 @@ def department_page():
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """UPDATE DEPARTMENTLIST SET FACULTYNO=%s WHERE (USERNAME=%s)"""
-                cursor.execute(query, (faculty,userName))
+                query = """UPDATE DEPARTMENTLIST SET FACULTYNO='%s' WHERE (USERNAME='%s')""" %(faculty,userName)
+                cursor.execute(query)
                 test='test'
                 connection.commit()
 
@@ -796,8 +927,8 @@ def department_page():
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """DELETE FROM DEPARTMENTLIST WHERE ( USERNAME=%s )"""
-                cursor.execute(query,[userName])
+                query = """DELETE FROM DEPARTMENTLIST WHERE ( USERNAME='%s' )""" %(userName)
+                cursor.execute(query)
                 test='test'
                 connection.commit()
 
@@ -808,16 +939,12 @@ def department_page():
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """SELECT * FROM DEPARTMENTLIST WHERE ( USERNAME=%s )"""
-                cursor.execute(query, [userName])
+                query = """SELECT * FROM DEPARTMENTLIST WHERE ( USERNAME='%s' )""" %(userName)
+                cursor.execute(query)
                 datas=cursor.fetchall()
 
-                query = """SELECT D.NAME FROM DEPARTMENTS AS D INNER JOIN DEPARTMENTLIST AS L ON D.FACULTYNO =L.FACULTYNO  WHERE L.USERNAME = %s"""
-                cursor.execute(query, [userName])
-                faculty = cursor.fetchall()
-
                 connection.commit()
-            return render_template('department_page.html', resultSearch=datas ,faculty=faculty)
+            return render_template('department_page.html', resultSearch=datas)
 
     else:
 
