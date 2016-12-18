@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
+{% block style %}<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">{% endblock %}
+{% block navbarlogin %}
+<div class="container">
+    <div class="navbar-left">
+	   	<a class="navbar-brand" href="{{url_for('site.profile_page')}}"><span class="glyphicon glyphicon-home"></span></a>
+	   	<a class="navbar-brand" href="{{url_for('site.search')}}"><span class="glyphicon glyphicon-search"></span></a>
+    </div>
+    <div class="navbar-default">
+	   	<a class="navbar-brand" href="{{url_for('site.classes')}}" style="margin-left: 50px"><span class="glyphicon glyphicon-book"></span> Lectures</a>
+	   	<a class="navbar-brand" href="{{url_for('site.student_branches')}}"><span class="glyphicon glyphicon-send"></span> Student Branches</a>
+	   	<a class="navbar-brand" href="{{url_for('site.faculty')}}"><span class="glyphicon glyphicon-briefcase"></span> Departments</a>
+	   	<a class="navbar-brand" href="{{url_for('lostfound_page')}}"><span class="glyphicon glyphicon-sort"></span> Lost/Found</a>
+    </div>
+   	<div class="navbar-right">
+	   	<a class="navbar-brand" href="{{url_for('settings_page')}}"><span class="glyphicon glyphicon-cog"></span> Settings</a>
+	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-user"></span> Profile</a>
+	   	<a class="navbar-brand" href="{{url_for('logout')}}"><span class="glyphicon glyphicon-off"></span> Log out</a>
+	</div>
+</div>
+{% endblock %}
+{% block content %}
+
+<div class="container">
+	<div class="row" style="margin: 10px 10px 10px 10px">
+		<div class= "col-md-6" >
+			<div id="profile-col">
+				<div style="margin: 10px 10px 30px 10px" align="center">
+					{% if followers %}
+						<h1> Followers </h1>
+						{% for follower in followers %}
+						<br>
+						<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded"
+						height="150px" width= "150px"/>
+						<font size="5"><b></b></font>
+						<form action="" method="post">
+		    			<p>{{ follower[0][0]}}</p>
+		    			<div class="form-group" align="center">
+							<p><em>@{{ follower[0][1]}}</em></p>
+		    			</div>
+						<p>{{follower[0][4]}}</p>
+						{% endfor %}
+					{% else %}
+						<p> Follower list is empty! </p>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-6">
+			<div id="profile-col">
+				<div style="margin: 10px 10px 30px 10px" align="center">
+					{% if followings %}
+						<h1> Following </h1>
+						{% for following in followings %}
+						<br>
+						<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded"
+						height="150px" width= "150px"/>
+						<font size="5"><b></b></font>
+		    			<p>{{ following[0][0]}}</p>
+		    			<div class="form-group" align="center">
+							<p><em>@{{ following[0][1]}}</em></p>
+		    			</div>
+						<p>{{following[0][4]}}</p>
+						{% endfor %}
+					{% else %}
+						<p> Following list is empty! </p>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{% endblock %}

@@ -30,24 +30,11 @@
 					<br>
 					<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded"
 					height="150px" width= "150px"/>
-					<font size="5"><b>Full name</b></font>
-					<p><em>@</em><em>Username</em></p>
+					<font size="5"><b>{{current_user.fullName}}</b></font>
+					<p><em>@</em><em>{{current_user.userName}}</em></p>
 					<p>Description of the user</p>
 				</div>
 			</div>
-
-			<div id="profile-col" >
-				<div style="margin: 10px 10px 30px 10px">
-					<h1 align="center">Hot Titles</h1>
-					<ol>
-						<!-- Those needs to be clickable -->
-						<li>beeHive is coming soon</li>
-						<li>garbage title</li>
-						<li>troll title</li>
-					</ol>
-				</div>
-			</div>
-
 		</div>
 
 		<div class="col-md-6">
@@ -63,7 +50,7 @@
 					</div>
 					<div style=display:inline-block>
 						<font size="5"><b>Full name</b></font>
-						<p><em>@</em><em>Username</em></p>
+						<p><em>@</em><em>{{post[0][1]}}</em></p>
 					</div>
 					<div>
 
@@ -71,6 +58,7 @@
 	    			</div>
 	    			<br>
    				</div>
+   				{% if current_user.userName == post[0][1] %}
    				<div id="profile-col"></div>
    				<div style="margin: 10px 30px 40px 10px">
    					<br>
@@ -79,7 +67,7 @@
 					</div>
 					<div style=display:inline-block>
 						<font size="5"><b>Full name</b></font>
-						<p><em>@</em><em>Username</em></p>
+						<p><em>@</em><em>{{post[0][1]}}</em></p>
 					</div>
 					<form action="" method="post">
 						<div class="form-group" align="center">
@@ -101,7 +89,7 @@
 					</div>
 					<div style=display:inline-block>
 						<font size="5"><b>Full name</b></font>
-						<p><em>@</em><em>Username</em></p>
+						<p><em>@</em><em>{{post[0][1]}}</em></p>
 					</div>
 					<div>
 	    				<p>{{post[0][2]}}</p>
@@ -113,6 +101,7 @@
 						type="submit" name="action" value="deletePost"> Delete</button>
 	    			</div>
 	    			</form>
+	    			{% endif %}
 	    			<br>
    				</div>
    				<div id="profile-col"></div>
@@ -129,51 +118,7 @@
 		</div>
 
 		<div class="col-md-3">
-			<div id="profile-col">
-   				<div style="margin: 10px 10px 30px 10px">
-	   					<h1 align="center">Lectures</h1>
-							<ol>
-								<!-- Those needs to be clickable -->
-								<li>10078</li>
-								<li>10932</li>
-								<li>20321</li>
-								<li>10311</li>
-							</ol>
-   				</div>
-   			 </div>
-   			 <div id="profile-col">
-   				<div style="margin: 10px 10px 30px 10px">
-   					<h1 align="center">Student Branches</h1>
 
-					<!-- This is one gruop -->
-					<!-- Needs to be clickable -->
-					<div style=display:inline-block>
-						<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded" height="50px" width= "50px"/>
-					</div>
-					<div style=display:inline-block>
-						<font size="3"><b>Student branch name</b></font>
-						<p><em>@</em><em>admin</em></p>
-					</div>
-					<div>
-	    				<p>Description of the group </p>
-	    			</div>
-	    			<!-- end of one gruop -->
-
-	    			<!-- This is one gruop -->
-	    			<!-- Needs to be clickable -->
-					<div style=display:inline-block>
-						<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded" height="50px" width= "50px"/>
-					</div>
-					<div style=display:inline-block>
-						<font size="3"><b>Student branch name</b></font>
-						<p><em>@</em><em>admin</em></p>
-					</div>
-					<div>
-	    				<p>Garbage text asfasfas </p>
-	    			</div>
-	    			<!-- end of one gruop -->
-   				</div>
-   			 </div>
 		</div>
 	</div>
 </div>

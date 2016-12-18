@@ -39,7 +39,7 @@ def get_user(user_id):
         cursor.execute(query, [user_id])
         result = cursor.fetchall()
         password = result[0][3]
-        user = User(result[0][0], result[0][1], result[0][2], result[0][3]) if password else None
+        user = User(result[0][0], result[0][1], result[0][2], result[0][3], result[0][4], result[0][5], result[0][6]) if password else None
 #    if user is not None:
 #        user.is_admin = user.username in current_app.config['ADMIN_USERS']
     return user
