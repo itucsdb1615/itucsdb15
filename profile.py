@@ -34,12 +34,23 @@ def profile_page():
                 cursor.execute(query,(username,))
                 followers = cursor.fetchall()
 
+                query = """SELECT USERNAME FROM DEPARTMENTLIST WHERE (FACULTYNO = ( SELECT FACULTYNO FROM DEPARTMENTLIST WHERE USERNAME=%s )) AND USERNAME!= %s """
+                cursor.execute(query,(username,username))
+                departmentalFriends = cursor.fetchall()
+
                 query = """INSERT INTO FEED(USERNAME, POSTID) VALUES(%s, %s)"""
                 cursor.execute(query,(username, postid[0]))
 
                 for user in followers:
                     query = """INSERT INTO FEED(USERNAME, POSTID) VALUES(%s, %s)"""
                     cursor.execute(query,(user[0], postid[0]))
+                for friend in departmentalFriends:
+                    query = """SELECT * FROM FEED WHERE (USERNAME= %s AND POSTID=%s)"""
+                    cursor.execute(query,(friend[0],postid[0]))
+                    control = cursor.fetchall()
+                    if not control:
+                        query = """INSERT INTO FEED(USERNAME, POSTID) VALUES (%s, %s)"""
+                        cursor.execute(query,(friend[0], postid[0]))
 
                 connection.commit()
             return redirect(url_for('site.profile_page'))
