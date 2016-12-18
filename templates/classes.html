@@ -64,11 +64,11 @@
 
 				<form action="" method="post">
 						<div class="form-group" align="center">
-		    				<input type="text" name="oldCRN" placeholder="Old CRN" class="form-control" required autofocus>
+		    				<input type="number" name="oldCRN" placeholder="Old CRN" class="form-control" required autofocus>
 		    			</div>
 
 		    			<div class="form-group" align="center">
-		    				<input type="text" name="newCRN" placeholder="New CRN" class="form-control" required autofocus>
+		    				<input type="number" name="newCRN" placeholder="New CRN" class="form-control" required autofocus>
 		    			</div>
 
 		    			<div style="margin: 10px 10px 60px 10px">
@@ -117,8 +117,8 @@
 							type="submit" name="action" value="add" style= "margin: 2px 18px">Add a new lecture</button>
 </form>
 
+				<form action="" method="post">
 					<div style="margin: 80px 10px 10px 10px">
-					<form action="" method="post">
 						<div style="margin: 10px 10px 10px 10px">
 						<div class="form-group" align="center">
 		    				<input type="number" name="CRN" placeholder="CRN" class="form-control" required autofocus>
@@ -127,27 +127,28 @@
 
 						<button class="glyphicon btn btn-success btn"
 							type="submit" name="action" value="delete" style= "margin: 2px 15px">Delete a lecture</button>
-						</form>
 						</div>
+					</form>
 
+		<form action="" method="post">
 			<div style="margin: 80px 10px 60px 10px">
-			<form action="" method="post">
 					<div style="margin: 10px 10px 10px 10px">
 						<div class="form-group" align="center">
-		    				<input type="number" name="oldCRN" placeholder="CRN" class="form-control" required autofocus>
+		    				<input type="number" name="CRN" placeholder="CRN" class="form-control" required autofocus>
 		    			</div>
 		    			<div class="form-group" align="center">
-		    				<input type="text" name="lecture" placeholder="New Lecture Name" class="form-control" required autofocus>
+		    				<input type="text" name="nlecture" placeholder="New Lecture Name" class="form-control" required autofocus>
 		    			</div>
 		    			<div class="form-group" align="center">
-		    				<input type="text" name="lecturer" placeholder="New Lecturer Name" class="form-control" required autofocus>
+		    				<input type="text" name="nlecturer" placeholder="New Lecturer Name" class="form-control" required autofocus>
 		    			</div>
 					</div>
 
 						<button class="glyphicon btn btn-success btn"
 							type="submit" name="action" value="update" style= "margin: 2px 2px">Update a lecture's information</button>
-						</form>
 						</div>
+				</form>
+
 				</div>
 			</div>
 		</div>
@@ -156,7 +157,7 @@
 </div>
 
 				{% if message %}
-					<font size="5"><p>{{message}}</p></font>
+					{{message}}
 				{% endif %}
 
 <div style="text-align:center">

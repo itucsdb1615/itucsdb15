@@ -40,37 +40,39 @@ def classes():
                 lecturerName=request.form['lecturer']
                 query = """INSERT INTO CRNS (CRN, LECTURENAME, LECTURERNAME) VALUES (%s, %s,%s)"""
                 cursor.execute(query,(crn, lectureName, lecturerName))
-                return redirect(url_for('site.classes', message = "Lecture is successfully added to current lectures"))
+                textMessage = 'Lecture is successfully added to current lectures'
 
             elif request.form['action'] == 'delete':
                 username = current_user.userName
                 delete=request.form['CRN']
                 query = """DELETE FROM CRNS WHERE (CRN=%s)"""
                 cursor.execute(query,[delete])
-                return redirect(url_for('site.classes', message = "Lecture is successfully deleted"))
+                textMessage = 'Lecture is successfully deleted'
 
             elif request.form['action'] == 'update':
                 username = current_user.userName
                 update=request.form['CRN']
-                lecturename=request.form['lecture']
-                lecturername=request.form['lecturer']
-                query = """UPDATE CRNS SET (LECTURENAME=%s AND LECTURERNAME=%s) WHERE CRN=%s"""
-                cursor.execute(query,(lecturename, lecturername, [update]))
-                return redirect(url_for('site.classes', message = "Lecture information is successfully updated"))
+                lecturename=request.form['nlecture']
+                lecturername=request.form['nlecturer']
+                query = """UPDATE CRNS SET LECTURENAME=%s WHERE CRN=%s"""
+                cursor.execute(query,(lecturename, update))
+                query = """UPDATE CRNS SET LECTURERNAME=%s WHERE CRN=%s"""
+                cursor.execute(query,(lecturername, update))
+                textMessage = 'Lecture information is successfully updated'
 
             elif request.form['action'] == 'enter':
                 username = current_user.userName
                 add=request.form['CRN']
                 query = """INSERT INTO CLASSES (CRN, USERNAME) VALUES (%s, %s)"""
                 cursor.execute(query,(add, username))
-                return redirect(url_for('site.classes', message = "Enjoy in your new class!"))
+                textMessage = 'Have a good time in your new class!'
 
             elif request.form['action'] == 'leave':
                 username = current_user.userName
-                left=request.form['leave']
-                query = """DELETE FROM CLASSES WHERE ((CRN=%s) AND (USERNAME=%s))"""
+                left=request.form['CRN']
+                query = """DELETE FROM CLASSES WHERE (CRN=%s AND USERNAME=%s)"""
                 cursor.execute(query,(left, username))
-                return redirect(url_for('site.classes', message = "You successfully left the class"))
+                textMessage = 'You successfully left the class'
 
             elif request.form['action'] == 'updateClass':
                 username = current_user.userName
@@ -78,12 +80,11 @@ def classes():
                 newcrn=request.form['newCRN']
                 query = """UPDATE CLASSES SET CRN=%s WHERE ((CRN=%s) AND (USERNAME=%s))"""
                 cursor.execute(query, (newcrn, oldcrn, username))
-                return redirect(url_for('site.classes', message = "Your current classes are successfully updated"))
+                textMessage = 'Your current classes are successfully updated'
         connection.commit()
         return redirect(url_for('site.classes'))
     else:
-        return render_template('site.classes')
-
+        return render_template('site.classes', message=textMessage)
 
 
 @site.route('/classes/<lectureid>', methods=['GET', 'POST'])
@@ -138,7 +139,7 @@ def lecture_cfg(lectureid):
                 cursor.execute(query, [postid])
 
                 connection.commit()
-            return render_template('lecture_cfg.html', message = "Post is successfully deleted")
+            return render_template('lecture_cfg.html', message = 'Post is successfully deleted')
 
         elif request.form['action'] == 'searchPost':
             postContent=request.form['search-content']
@@ -171,4 +172,4 @@ def lecture_cfg(lectureid):
             students = cursor.fetchall()
 
             connection.commit()
-        return render_template('lecture_cfg.html', post = post, lecture=lecture, student=students)
+        return render_template('lecture_cfg.html', post = post, lecture=lecture, students=students)
