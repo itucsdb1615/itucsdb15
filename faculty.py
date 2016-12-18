@@ -50,8 +50,8 @@ def faculty():
             with dbapi2.connect(flask.current_app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """DELETE FROM DEPARTMENTLIST WHERE ( USERNAME='%s' )""" %(username)
-                cursor.execute(query)
+                query = """DELETE FROM DEPARTMENTLIST WHERE ( USERNAME=%s )"""
+                cursor.execute(query, [username])
                 test='test'
                 connection.commit()
 
@@ -62,12 +62,16 @@ def faculty():
             with dbapi2.connect(flask.current_app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """SELECT * FROM DEPARTMENTLIST WHERE ( USERNAME='%s' )""" %(username)
-                cursor.execute(query)
+                query = """SELECT * FROM DEPARTMENTLIST WHERE ( USERNAME=%s )"""
+                cursor.execute(query, [username])
                 datas=cursor.fetchall()
 
+                query = """SELECT D.NAME FROM DEPARTMENTS AS D INNER JOIN DEPARTMENTLIST AS L ON D.FACULTYNO =L.FACULTYNO  WHERE L.USERNAME = %s"""
+                cursor.execute(query, [username])
+                faculty = cursor.fetchall()
+
                 connection.commit()
-            return render_template('faculty.html', resultSearch=datas)
+            return render_template('faculty.html', resultSearch=datas, faculty= faculty)
 
     else:
 

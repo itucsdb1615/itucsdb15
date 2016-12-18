@@ -34,8 +34,22 @@
 				<label for="selectFaculty" class="sr-only">SelectFaculty</label>
 				<select name ="selectFaculty" class="form-control" >
 				<option selected disabled>Choose your Faculty</option>
-				<option value ="15" >Faculty of Computer and Informatics</option>
 				<option value ="01" > Faculty of Civil Engineering </option>
+				<option value ="02" >Faculty of Architecture</option>
+				<option value ="03" >Faculty of Mechanical Engineering</option>
+				<option value ="04" >Faculty of Electrical and Electronics Engineering</option>
+				<option value ="05" >Faculty of Mines</option>
+				<option value ="06" >Faculty of Chemical and Metallurgical Engineering</option>
+				<option value ="07" > Faculty of Management </option>
+				<option value ="08" >Faculty of Naval Architecture and Ocean Engineering</option>
+				<option value ="09" > Faculty of Science and Letters </option>
+				<option value ="10" >Faculty of Aeronautics and Astronautics</option>
+				<option value ="11" > Turkish Music State Conservatory </option>
+				<option value ="12" >Maritime Faculty</option>
+				<option value ="13" >Faculty of Textile Technologies and Design</option>
+				<option value ="15" >Faculty of Computer and Informatics</option>
+
+
 				</select>
 				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="addFaculty">Save</button>
 			</form>
@@ -54,8 +68,20 @@
 				<label for="selectFaculty" class="sr-only">SelectFaculty</label>
 				<select name ="selectFaculty" class="form-control" >
 				<option selected disabled>Select your new Faculty</option>
-				<option value ="15" >Faculty of Computer and Informatics</option>
 				<option value ="01" > Faculty of Civil Engineering </option>
+				<option value ="02" >Faculty of Architecture</option>
+				<option value ="03" >Faculty of Mechanical Engineering</option>
+				<option value ="04" >Faculty of Electrical and Electronics Engineering</option>
+				<option value ="05" >Faculty of Mines</option>
+				<option value ="06" >Faculty of Chemical and Metallurgical Engineering</option>
+				<option value ="07" > Faculty of Management </option>
+				<option value ="08" >Faculty of Naval Architecture and Ocean Engineering</option>
+				<option value ="09" > Faculty of Science and Letters </option>
+				<option value ="10" >Faculty of Aeronautics and Astronautics</option>
+				<option value ="11" > Turkish Music State Conservatory </option>
+				<option value ="12" >Maritime Faculty</option>
+				<option value ="13" >Faculty of Textile Technologies and Design</option>
+				<option value ="15" >Faculty of Computer and Informatics</option>
 				</select>
 				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="updateFaculty">Change</button>
 			</form>
@@ -79,11 +105,8 @@
 
 			{% if resultSearch %}
 			<p>Username: {{ resultSearch[0][0] }}</p>
-				{% if resultSearch[0][1]==1 %}
-			<p>Faculty : Faculty of Civil Engineering</p>
-				{% elif resultSearch[0][1]==15 %}
-			<p>Faculty : Faculty of Computer and Informatics</p>
-				{% endif %}
+			<p>Faculty : {{faculty[0][0]}}</p>
+
 			{% endif %}
 
 

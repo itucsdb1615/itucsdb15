@@ -265,7 +265,7 @@ def initialize_database():
 
         query = """CREATE TABLE DEPARTMENTS (
                     FACULTYNO INTEGER PRIMARY KEY,
-                    NAME VARCHAR(40))"""   #DEPARTMENTS TABLE
+                    NAME VARCHAR(80))"""   #DEPARTMENTS TABLE
         cursor.execute(query)
 
         query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (01, 'Faculty of Civil Engineering')"""
@@ -273,6 +273,39 @@ def initialize_database():
 
         query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (15, 'Faculty of Computer and Informatics')"""
         cursor.execute(query)
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (02, 'Faculty of Architecture')"""
+        cursor.execute(query)
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (03, 'Faculty of Mechanical Engineering')"""
+        cursor.execute(query)
+
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (04, 'Faculty of Electrical and Electronics Engineering')"""
+        cursor.execute(query)
+
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (05, 'Faculty of Mines')"""
+        cursor.execute(query)
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (06, 'Faculty of Chemical and Metallurgical Engineering')"""
+        cursor.execute(query)
+
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (07, 'Faculty of Management')"""
+        cursor.execute(query)
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (08, 'Faculty of Naval Architecture and Ocean Engineering')"""
+        cursor.execute(query)
+
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (09, 'Faculty of Science and Letters')"""
+        cursor.execute(query)
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (10, 'Faculty of Aeronautics and Astronautics')"""
+        cursor.execute(query)
+
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (11, 'Turkish Music State Conservatory')"""
+        cursor.execute(query)
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (12, 'Maritime Faculty')"""
+        cursor.execute(query)
+
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (13, 'Faculty of Textile Technologies and Design ')"""
+        cursor.execute(query)
+
+
+
 
         query = """CREATE TABLE STUDENTBRANCHES(
                     ID SERIAL PRIMARY KEY,
@@ -730,8 +763,8 @@ def department_page():
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """INSERT INTO DEPARTMENTLIST (USERNAME, FACULTYNO ) VALUES ('%s', '%s')""" %(userName,faculty)
-                cursor.execute(query)
+                query = """INSERT INTO DEPARTMENTLIST (USERNAME, FACULTYNO ) VALUES (%s, %s)"""
+                cursor.execute(query, (userName,faculty))
                 test = 'test'
                 connection.commit()
 
@@ -743,8 +776,8 @@ def department_page():
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """UPDATE DEPARTMENTLIST SET FACULTYNO='%s' WHERE (USERNAME='%s')""" %(faculty,userName)
-                cursor.execute(query)
+                query = """UPDATE DEPARTMENTLIST SET FACULTYNO=%s WHERE (USERNAME=%s)"""
+                cursor.execute(query, (faculty,userName))
                 test='test'
                 connection.commit()
 
@@ -755,8 +788,8 @@ def department_page():
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """DELETE FROM DEPARTMENTLIST WHERE ( USERNAME='%s' )""" %(userName)
-                cursor.execute(query)
+                query = """DELETE FROM DEPARTMENTLIST WHERE ( USERNAME=%s )"""
+                cursor.execute(query,[userName])
                 test='test'
                 connection.commit()
 
@@ -767,12 +800,16 @@ def department_page():
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """SELECT * FROM DEPARTMENTLIST WHERE ( USERNAME='%s' )""" %(userName)
-                cursor.execute(query)
+                query = """SELECT * FROM DEPARTMENTLIST WHERE ( USERNAME=%s )"""
+                cursor.execute(query, [userName])
                 datas=cursor.fetchall()
 
+                query = """SELECT D.NAME FROM DEPARTMENTS AS D INNER JOIN DEPARTMENTLIST AS L ON D.FACULTYNO =L.FACULTYNO  WHERE L.USERNAME = %s"""
+                cursor.execute(query, [userName])
+                faculty = cursor.fetchall()
+
                 connection.commit()
-            return render_template('department_page.html', resultSearch=datas)
+            return render_template('department_page.html', resultSearch=datas ,faculty=faculty)
 
     else:
 
