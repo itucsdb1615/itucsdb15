@@ -403,7 +403,7 @@ def signup():
             query = """INSERT INTO USERS (NAME, USERNAME, MAIL, PASSWORD) VALUES ('%s', '%s', '%s', '%s')""" %(nameSurname,username,email,hashed)
             cursor.execute(query)
 
-            user = User(nameSurname, username,email,hashed)
+            user = User(nameSurname, username,email,hashed,"No information given.",0,0)
 
 
             connection.commit()
