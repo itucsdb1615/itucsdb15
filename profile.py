@@ -167,8 +167,13 @@ def post_cfg(postid):
             cursor.execute(query, [postid])
             post = cursor.fetchall()
 
+            query = """SELECT NAME FROM USERS WHERE USERNAME = %s"""
+
+            cursor.execute(query, (post[0][1],))
+            fullname = cursor.fetchall()
+
             connection.commit()
-        return render_template('post_cfg.html', post = post)
+        return render_template('post_cfg.html', post = post, fullname = fullname)
 
 @site.route('/follow_cfg', methods=['GET', 'POST'])
 def follow_cfg():
