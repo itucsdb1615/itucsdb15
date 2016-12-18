@@ -17,9 +17,38 @@ from branch_operations import site
 @site.route('/faculty', methods=['GET', 'POST'])
 @login_required
 def faculty():
-    if request.method == 'POST':
 
-        if request.form['action'] == 'addFaculty':
+
+    if request.method == 'POST':
+        if request.form['action'] == 'sendPost':
+            postContent = request.form['postContent']
+            username = current_user.userName
+            with dbapi2.connect(flask.current_app.config['dsn']) as connection:
+                cursor = connection.cursor()
+
+                query = """INSERT INTO POST(USERNAME, CONTENT) VALUES(%s, %s)"""
+                cursor.execute(query,(username, postContent))
+
+                query = """SELECT POSTID FROM POST WHERE (USERNAME = %s and CONTENT = %s)"""
+                cursor.execute(query,(username, postContent))
+                postid = cursor.fetchall()
+
+                query = """SELECT USERNAME FROM DEPARTMENTLIST WHERE (FACULTYNO = ( SELECT FACULTYNO FROM DEPARTMENTLIST WHERE USERNAME=%s )) AND USERNAME!= %s """
+                cursor.execute(query,(username,username))
+                departmentalFriends = cursor.fetchall()
+
+                query = """INSERT INTO FACULTYFEED VALUES(%s, %s, %s)"""
+                cursor.execute(query,(username,username, postid[0]))
+
+                for friend in departmentalFriends:
+                    query = """INSERT INTO FACULTYFEED VALUES (%s, %s,%s)"""
+                    cursor.execute(query,(username,friend[0], postid[0]))
+
+
+
+                connection.commit()
+            return render_template('faculty.html', user = current_user)
+        elif request.form['action'] == 'addFaculty':
             username = current_user.userName
             faculty = request.form['selectFaculty']
             with dbapi2.connect(flask.current_app.config['dsn']) as connection:
@@ -30,7 +59,7 @@ def faculty():
                 test = 'test'
                 connection.commit()
 
-            return render_template('faculty.html', resultInsert=test)
+            return render_template('faculty.html', resultInsert=test,user = current_user)
 
         elif request.form['action'] == 'updateFaculty':
             username = current_user.userName
@@ -43,7 +72,7 @@ def faculty():
                 test='test'
                 connection.commit()
 
-            return render_template('faculty.html', resultUpdate=test)
+            return render_template('faculty.html', resultUpdate=test,user = current_user)
 
         elif request.form['action'] == 'deleteFaculty':
             username = current_user.userName
@@ -55,7 +84,7 @@ def faculty():
                 test='test'
                 connection.commit()
 
-            return render_template('faculty.html', resultDelete=test)
+            return render_template('faculty.html', resultDelete=test,user = current_user)
 
         elif request.form['action'] == 'searchFaculty':
             username = current_user.userName
@@ -71,8 +100,22 @@ def faculty():
                 faculty = cursor.fetchall()
 
                 connection.commit()
-            return render_template('faculty.html', resultSearch=datas, faculty= faculty)
+            return render_template('faculty.html', resultSearch=datas, faculty= faculty,user = current_user)
 
     else:
+        with dbapi2.connect(flask.current_app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            username = current_user.userName
 
-        return render_template('faculty.html')
+            ## posts
+            query = """SELECT POSTID FROM FACULTYFEED WHERE READER = %s ORDER BY POSTID DESC"""
+            cursor.execute(query, [username])
+            postids = cursor.fetchall()
+
+            posts = []
+            for id in postids:
+                query = """SELECT F.SENDER,P.USERNAME,P.CONTENT FROM POST AS P NATURAL JOIN FACULTYFEED AS F   WHERE P.POSTID = %s ORDER BY POSTID DESC"""
+                cursor.execute(query, [id[0]])
+                posts.append(cursor.fetchall())
+
+        return render_template('faculty.html', user = current_user,posts =posts)

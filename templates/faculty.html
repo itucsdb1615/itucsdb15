@@ -26,9 +26,74 @@
 <div class="row">
 		<div style="margin-top: 100px" align="center">
 		<div class="col-md-4">
+		<!-- This is for sending post -->
+			<div id="profile-col">
+				<div style="margin: 10px 10px 30px 10px">
+					<br>
+					<div style=display:inline-block>
+						<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+					</div>
+					<div style=display:inline-block>
+						<font size="5"><b>{{ user.fullName }}</b></font>
+						<p><em>@{{ user.userName}}</em></p>
+					</div>
+					<br>
+					<form action="" method="post">
+						<div class="form-group" align="center">
+		    				<input type="text" name="postContent" placeholder="Write to your faculty friends..." class="form-control" required autofocus>
+		    			</div>
+						<button class="glyphicon glyphicon-pencil pull-right btn btn-success btn"
+						type="submit" name="action" value="sendPost">Send a post</button>
 
+					</form>
+	    			<br>
+				</div>
+			</div>
+   			<!-- end of the sending post part-->
+   			<br>
+   			<!-- This is one post -->
+   			{% if posts %}
+   			<div id="profile-col">
+			{% for post in posts %}
+	   				<div style="margin: 30px 30px 40px 10px">
+
+	   					<br>
+						<div style=display:inline-block>
+							<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded" height="50px" width= "50px"/>
+						</div>
+						<div style=display:inline-block>
+
+							<font size="5"><b>{{ post[0][0] }}</b></font>
+
+							<p><em>@{{ post[0][1]}}</em></p>
+						</div>
+
+						<div>
+		    				<pre>{{ post[0][2] }} </pre>
+		    			</div>
+
+		    			<div class="pull-right">
+		    				<!-- This part will have icons in it such as like icon -->
+		    				<button class="glyphicon glyphicon-heart btn"
+							type="submit" name="action" value="likePressed" style= "margin-right: 10px"> {{ post[0][3] }}</button>
+		    				<a href="{{url_for('site.post_cfg', postid = post[0][0] )}}" class="btn-info btn" style= "font-size: 0px">
+	         						<span class="glyphicon glyphicon-tasks"></span>
+	       					</a>
+		    			</div>
+		    			<br>
+   				</div>
+   				<div id="line-draw"></div>
+
+				{% endfor %}
+			</div>
+	   		{% endif %}
+			 <!-- end of the post -->
+</div>
+		</div>
+
+		<div class="col-md-2">
 			<form class="" action="" method="post">
-				<h1>Add Faculty to User</h1>
+				<h3>Add Faculty to User</h3>
 
 				<label for="selectFaculty" class="sr-only">SelectFaculty</label>
 				<select name ="selectFaculty" class="form-control" >
@@ -54,12 +119,11 @@
 			{% if resultInsert %}
 			<p>You added your faculty succesfully </p>
 			{% endif %}
-
-		</div>
-		<div class="col-md-4">
+</div>
+		<div class="col-md-2">
 
          			<form class="" action="" method="post">
-				<h1>Update My Faculty</h1>
+				<h3>Update My Faculty</h3>
 
 				<select name ="selectFaculty" class="form-control" >
 				<option selected disabled>Select your new Faculty</option>
@@ -86,16 +150,21 @@
 			{% endif %}
 
 		</div>
-		<div class="col-md-4">
+
+
+<br>
+<br>
+<br>
+		<div class="col-md-2">
 
 			<form class="" action="" method="post">
-				<h1>Search Faculty</h1>
+				<h3>Search Faculty</h3>
 
 				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="searchFaculty">Search</button>
 			</form>
 
 <br>
-</div>	<div class="col-md-4">
+
 
 			{% if resultSearch %}
 			<p>Username: {{ resultSearch[0][0] }}</p>
@@ -103,19 +172,13 @@
 
 			{% endif %}
 
+</div>
 
 
-		</div>
-	</div>
-		</div>
-	</div>
-<br>
-<br>
-<br>
 
-	<div style="margin-left: 500px ;margin-right: 500px" align= "center" >
+<div class="col-md-2">
 			<form class="" action="" method="post">
-				<h1>Delete Faculty</h1>
+				<h3>Delete Faculty</h3>
 
 				<button class="btn btn-lg btn-primary btn-block" type="submit" name="action" value="deleteFaculty">Delete</button>
 			</form>
@@ -127,7 +190,9 @@
 
 
 
+</div>
 
+	</div>
 	</div>
 
 

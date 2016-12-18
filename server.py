@@ -150,6 +150,8 @@ def initialize_database():
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS HOTTITLECAST CASCADE"""
         cursor.execute(query)
+        query = """DROP TABLE IF EXISTS FACULTYFEED CASCADE"""
+        cursor.execute(query)
         query = """DROP TABLE IF EXISTS DEPARTMENTS CASCADE"""
         cursor.execute(query)
 
@@ -261,6 +263,13 @@ def initialize_database():
         cursor.execute(query)
 
         query = """INSERT INTO FEED (USERNAME, POSTID) VALUES ('mcanyasakci', 25)"""
+        cursor.execute(query)
+
+        query = """CREATE TABLE FACULTYFEED (
+                    SENDER VARCHAR(20) REFERENCES USERS(USERNAME) ON DELETE CASCADE,
+                    READER VARCHAR(20) REFERENCES USERS(USERNAME) ON DELETE CASCADE,
+                    POSTID INTEGER REFERENCES POST(POSTID) ON DELETE CASCADE ,
+                    PRIMARY KEY(READER, POSTID))"""
         cursor.execute(query)
 
         query = """CREATE TABLE DEPARTMENTS (
