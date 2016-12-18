@@ -1,25 +1,6 @@
-{% extends "layout.html" %}
-{% block title %}Classes{% endblock %}
-{% block style %}<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">{% endblock %}
-{% block navbarlogin %}
-<div class="container">
-    <div class="navbar-left">
-	   	<a class="navbar-brand" href="{{url_for('site.profile_page')}}"><span class="glyphicon glyphicon-home"></span></a>
-	   	<a class="navbar-brand" href="{{url_for('site.search')}}"><span class="glyphicon glyphicon-search"></span></a>
-    </div>
-    <div class="navbar-default">
-	   	<a class="navbar-brand" href="{{url_for('site.classes')}}" style="margin-left: 50px"><span class="glyphicon glyphicon-book"></span> Lectures</a>
-	   	<a class="navbar-brand" href="{{url_for('site.student_branches')}}"><span class="glyphicon glyphicon-send"></span> Student Branches</a>
-	   	<a class="navbar-brand" href="{{url_for('site.faculty')}}"><span class="glyphicon glyphicon-briefcase"></span> Departments</a>
-	   	<a class="navbar-brand" href="{{url_for('lostfound_page')}}"><span class="glyphicon glyphicon-sort"></span> Lost/Found</a>
-    </div>
-   	<div class="navbar-right">
-	   	<a class="navbar-brand" href="{{url_for('settings_page')}}"><span class="glyphicon glyphicon-cog"></span> Settings</a>
-	   	<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-user"></span> Profile</a>
-	   	<a class="navbar-brand" href="{{url_for('logout')}}"><span class="glyphicon glyphicon-off"></span> Log out</a>
-	</div>
-</div>
-{% endblock %}
+{% extends "layout2.html" %}
+{% block title %}Lecture{% endblock %}
+{% block style %}{% endblock %}
 {% block content %}
 <br>
 <div class="container">
