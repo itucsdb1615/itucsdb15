@@ -39,10 +39,14 @@ def faculty():
 
                 query = """INSERT INTO FACULTYFEED VALUES(%s, %s, %s)"""
                 cursor.execute(query,(username,username, postid[0]))
+                query = """INSERT INTO FEED(USERNAME, POSTID) VALUES (%s, %s)"""
+                cursor.execute(query,(username, postid[0]))
 
                 for friend in departmentalFriends:
                     query = """INSERT INTO FACULTYFEED VALUES (%s, %s,%s)"""
                     cursor.execute(query,(username,friend[0], postid[0]))
+                    query = """INSERT INTO FEED(USERNAME, POSTID) VALUES (%s, %s)"""
+                    cursor.execute(query,(friend[0], postid[0]))
 
 
 
