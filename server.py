@@ -584,7 +584,7 @@ def lostfound_page():
             itemName=request.form['inputItemName']
             description=request.form['inputDescription']
 
-            go=0
+            go=3
             if len(itemName)==0 and len(description)==0:
                 go=0
             elif len(itemName)==0:
@@ -603,7 +603,7 @@ def lostfound_page():
                     print(str(go) + "girdi")
                     query = """UPDATE LOST SET NAME=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
                     cursor.execute(query, (itemName, username, value))
-                else:
+                elif go==3:
                     query = """UPDATE LOST SET NAME=%s, DESCRIPTION=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
                     cursor.execute(query, (itemName, description, username, value))
 
@@ -638,7 +638,7 @@ def lostfound_page():
             itemName=request.form['inputItemName']
             description=request.form['inputDescription']
 
-            go=0
+            go=3
             if len(itemName)==0 and len(description)==0:
                 go=0
             elif len(itemName)==0:
@@ -655,7 +655,7 @@ def lostfound_page():
                 elif go==2:
                     query = """UPDATE FOUND SET NAME=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
                     cursor.execute(query, (itemName, username, value))
-                else:
+                elif go==3:
                     query = """UPDATE FOUND SET NAME=%s, DESCRIPTION=%s WHERE (USERNAME=%s AND ITEMID=%s)"""
                     cursor.execute(query, (itemName, description, username, value))
 
