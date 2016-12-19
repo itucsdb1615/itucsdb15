@@ -211,7 +211,7 @@ def lecture_cfg(lectureid):
 
                 for friend in classFriends:
                     query = """INSERT INTO FEED(USERNAME, POSTID) VALUES (%s, %s)"""
-                    cursor.execute(query,(friend[0], pID))
+                    cursor.execute(query,(friend, pID))
                 connection.commit()
 
             return redirect(url_for('site.lecture_cfg', lectureid = lectureid))
