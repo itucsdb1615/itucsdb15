@@ -62,7 +62,6 @@
 			</div>
 		</div>
 
-
 		<div class="col-md-5" >
 		<div style="margin: 50px 40px">
 			<div id="classes-col" >
@@ -76,7 +75,21 @@
 					<br>
 				</div>
 			</div>
-		</div>
+
+		{% if message %}
+			<div style="text-align:center">
+				<font size="4" color=black face="verdana"><p>{{message}}</p></font>
+			</div>
+		{% endif %}
+
+		{% if lists %}
+		{% for list in lists %}
+			<div style="text-align:center">
+				<p>{{list[0]}} - {{list[1]}} - {{list[2]}}</p>
+			</div>
+			{% endfor %}
+		{% endif %}
+</div>
 
 		<div style="text-align:center">
 			<div class="col-md-3">
@@ -130,6 +143,23 @@
 						</div>
 				</form>
 
+
+			<form action="" method="post">
+			<div style="margin: 80px 10px 60px 10px">
+					<div style="margin: 10px 10px 10px 10px">
+						<div class="form-group" align="center">
+		    				<input type="number" name="CRN" placeholder="CRN" class="form-control" required autofocus>
+		    			</div>
+					</div>
+
+						<button class="glyphicon btn btn-success btn"
+							type="submit" name="action" value="listLectures" style= "margin: 2px 2px">List information of a lecture</button>
+				</form>
+				<form action="" method="post">
+					<button class="glyphicon btn btn-success btn"
+							type="submit" name="action" value="listAllLectures" style= "margin: 2px 2px">List information of all lectures</button>
+				</form>
+				</div>
 				</div>
 			</div>
 		</div>
@@ -137,13 +167,9 @@
 	</div>
 </div>
 
-				{% if message %}
-					{{message}}
-				{% endif %}
 
-<div style="text-align:center">
       <footer>
         <p>&copy; 2016 Company, Inc.</p>
       </footer>
-</div>
+
 {% endblock %}

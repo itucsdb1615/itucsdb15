@@ -127,7 +127,7 @@ def initialize_database():
 
         query = """CREATE TABLE CRNS (
                     CRN INTEGER PRIMARY KEY NOT NULL,
-                    LECTURENAME VARCHAR(150),
+                    LECTURENAME VARCHAR(150) NOT NULL,
                     LECTURERNAME VARCHAR(50))"""
         cursor.execute(query)
 
@@ -169,8 +169,8 @@ def initialize_database():
         cursor.execute(query)
 
         query = """CREATE TABLE CLASSES (
-                    CRN INTEGER REFERENCES CRNS(CRN),
-                    USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE,
+                    CRN INTEGER REFERENCES CRNS(CRN) ON DELETE CASCADE NOT NULL,
+                    USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE NOT NULL,
                     PRIMARY KEY(CRN, USERNAME))"""
         cursor.execute(query)
 
@@ -201,9 +201,9 @@ def initialize_database():
         cursor.execute(query)
 
         query = """CREATE TABLE CLASSPOSTS (
-                    GROUPID INTEGER REFERENCES CRNS(CRN),
-                    USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE,
-                    POSTID INTEGER PRIMARY KEY REFERENCES POST(POSTID))"""
+                    GROUPID INTEGER REFERENCES CRNS(CRN) ON DELETE CASCADE NOT NULL,
+                    USERNAME VARCHAR (20) REFERENCES USERS ON DELETE CASCADE NOT NULL,
+                    POSTID INTEGER PRIMARY KEY REFERENCES POST(POSTID) ON DELETE CASCADE NOT NULL)"""
         cursor.execute(query)
 
         query = """INSERT INTO CLASSPOSTS(GROUPID, USERNAME, POSTID) VALUES (11909, 'mcanyasakci', 10)"""

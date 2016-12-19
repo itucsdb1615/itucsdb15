@@ -36,7 +36,7 @@
 							<img src="http://www.freeiconspng.com/uploads/account-profile-user-icon--icon-search-engine-10.png" class=" img-responsive img-rounded" height="50px" width= "50px"/>
 						</div>
 						<div style=display:inline-block>
-							<font size="5"><b>#{{lectures[0][1]}}</b></font>
+							<font size="3"><b>#{{lecture[0][1]}}</b></font>
 							<p><em>@{{ post[0][1]}}</em></p>
 						</div>
 
@@ -60,27 +60,6 @@
 			 <!-- end of the post -->
 		</div>
 		</div>
-		<div class="col-md-3">
-			<br>
-			{% if lectures %}
-			{% for lecture in lectures %}
-			{% if user.userName == lecture[2] %}
-			<div id="profile-col">
-   				<div style="margin: 40px 10px 50px 10px">
-   					<h1 align="center">Update Title</h1>
-   					<form action="" method="post">
-   					<input type="text" name="titleUpdate" placeholder="Update the title..." class="form-control" required autofocus>
-					<br>
-					<button class="glyphicon glyphicon-upload pull-left btn btn-info btn"
-							type="submit" name="action" value="updateTitle"> Update</button>
-					</form>
-   				</div>
-   			</div>
-   			{% endif %}
-   			{% endfor %}
-   			{% endif %}
-			</div>
-
 			<div class="col-md-3">
 				<div id="profile-col" >
 					<h1 align="center">Class List</h1>
@@ -97,5 +76,7 @@
 	</div>
 </div>
 <br>
+
+
 
 {% endblock %}

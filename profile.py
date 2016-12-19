@@ -140,8 +140,18 @@ def post_cfg(postid):
             with dbapi2.connect(flask.current_app.config['dsn']) as connection:
                 cursor = connection.cursor()
 
-                query = """DELETE FROM POST WHERE (POSTID= %s)"""
+                query = """SELECT * FROM CLASSPOSTS WHERE POSTID = %s"""
                 cursor.execute(query, [postid])
+                result = cursor.fetchall()
+
+                if len(result) ==0:
+                    query = """DELETE FROM POST WHERE (POSTID= %s)"""
+                    cursor.execute(query, [postid])
+                else:
+                    query = """DELETE FROM CLASSPOSTS WHERE (POSTID= %s)"""
+                    cursor.execute(query, [postid])
+                    query = """DELETE FROM POST WHERE (POSTID= %s)"""
+                    cursor.execute(query, [postid])
 
                 connection.commit()
             return render_template('post_cfg.html', message = "Post is successfully deleted")
