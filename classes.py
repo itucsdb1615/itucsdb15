@@ -197,21 +197,19 @@ def lecture_cfg(lectureid):
                 cursor.execute(query,(username, postContent))
                 postid = cursor.fetchall()
 
-                pID=postid[0];
-
                 query = """INSERT INTO CLASSPOSTS(GROUPID, USERNAME, POSTID) VALUES (%s, %s, %s)"""
-                cursor.execute(query,(lectureid, username, pID))
+                cursor.execute(query,(lectureid, username, postid[0][0]))
 
                 query = """INSERT INTO FEED(USERNAME, POSTID) VALUES (%s, %s)"""
-                cursor.execute(query,(username, pID))
+                cursor.execute(query,(username, postid[0][0]))
 
                 query = """SELECT USERNAME FROM CLASSES WHERE CRN = %s AND USERNAME!= %s """
-                cursor.execute(query,(lectureid,username))
+                cursor.execute(query,(lectureid[0],username))
                 classFriends = cursor.fetchall()
 
                 for friend in classFriends:
                     query = """INSERT INTO FEED(USERNAME, POSTID) VALUES (%s, %s)"""
-                    cursor.execute(query,(friend, pID))
+                    cursor.execute(query,(friend[0], postid))
                 connection.commit()
 
             return redirect(url_for('site.lecture_cfg', lectureid = lectureid))
