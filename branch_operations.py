@@ -91,18 +91,20 @@ def student_branches():
                 branch_name = request.form['branch-name']
                 new_branch_name = request.form['new-branch-name']
                 branch_desc = request.form['branch-desc']
-                query = """ UPDATE STUDENTBRANCHES SET NAME = %s , DESCRIPTION='%s' WHERE (NAME = %s)"""#,(new_branch_name, branch_desc, branch_name,)
+                query = """ UPDATE STUDENTBRANCHES SET NAME = %s , DESCRIPTION=%s WHERE (NAME = %s)"""#,(new_branch_name, branch_desc, branch_name,)
                 cursor.execute(query,(new_branch_name, branch_desc, branch_name,))
-
+                return render_template('student_branches.html')
             elif request.form['action'] == 'delete':
                 branch_name = request.form['delete-branch-name']
                 query = """DELETE FROM STUDENTBRANCHES WHERE (NAME = %s)"""#,(branch_name,)
                 cursor.execute(query,(branch_name,))
+                return render_template('student_branches.html')
             elif request.form['action'] == 'add':
                 branch_name = request.form['add-branch-name']
                 new_branch_desc = request.form['add-branch-desc']
                 query = """INSERT INTO STUDENTBRANCHES(NAME, DESCRIPTION) VALUES (%s,%s) """#,(branch_name, new_branch_desc,)
                 cursor.execute(query,(branch_name, new_branch_desc,))
+                return render_template('student_branches.html')
             elif request.form['action'] == 'search':
                  branch_name = request.form['search-branch-name']
                  query = """SELECT * FROM STUDENTBRANCHES WHERE (NAME = %s)""" #,(branch_name)
@@ -113,7 +115,7 @@ def student_branches():
                  return render_template('student_branches.html', results=result)
     else:
         return render_template('student_branches.html')
-    
+
 @site.route('/branch/<int:branchID>', methods =['GET','POST'])
 #@login_required
 def show_branch(branchID):
