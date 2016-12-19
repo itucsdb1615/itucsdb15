@@ -90,8 +90,6 @@ def initialize_database():
     with dbapi2.connect(app.config['dsn']) as connection:
         cursor = connection.cursor()
 
-        query = """DROP TABLE IF EXISTS COUNTER CASCADE"""
-        cursor.execute(query)
         query=  """DROP TABLE IF EXISTS STUDENTBRANCHES_CASTING CASCADE """
         cursor.execute(query)
         query=  """DROP TABLE IF EXISTS STUDENTBRANCHES CASCADE"""
