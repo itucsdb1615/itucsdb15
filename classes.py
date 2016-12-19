@@ -200,11 +200,8 @@ def lecture_cfg(lectureid):
                 query = """INSERT INTO CLASSPOSTS(GROUPID, USERNAME, POSTID) VALUES (%s, %s, %s)"""
                 cursor.execute(query,(lectureid, username, postid[0][0]))
 
-                query = """INSERT INTO FEED(USERNAME, POSTID) VALUES (%s, %s)"""
-                cursor.execute(query,(username, postid[0][0]))
-
-                query = """SELECT USERNAME FROM CLASSES WHERE CRN = %s AND USERNAME!= %s """
-                cursor.execute(query,(lectureid[0],username))
+                query = """SELECT DISTINCT USERNAME FROM CLASSES WHERE CRN = %s"""
+                cursor.execute(query,(lectureid[0]))
                 classFriends = cursor.fetchall()
 
                 for friend in classFriends:
