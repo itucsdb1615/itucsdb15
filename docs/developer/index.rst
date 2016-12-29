@@ -4,23 +4,51 @@ Developer Guide
 Database Design
 ---------------
 
-**explain the database design of your project**
+This is our database design. You can see all of the tables in our database, their attributes and connections between tables.
 
-**include the E/R diagram(s)**
+.. figure:: images/tables.png
+     :scale: 100 %
+     :alt: all tables
+
+     This is the all tables in the database of beeHive
+
+Entity Distribution
+^^^^^^^^^^^^^^^^^^^
+
+:Mertcan Yasakçı:
+
+   * USERS
+   * LOST
+   * FOUND
+
+:İsmail Salih Namdar:
+
+   * POST
+   * FEED
+   * FOLLOW
+   * HOTTITLES
+   * HOTTITLESCAST
+
+:Pelin Hakverir:
+
+   * CRNS
+   * CLASSES
+   * CLASSPOSTS
+
+:Yunus Emre Pala:
+
+   * STUDENTBRANCHES
+   * STUDENTBRANCHES_CASTING
+   * BRANCHFEEDS
+
+:Berkan Öztekin:
+
+   * DEPARTMENTS
+   * DEPARTMENTLIST
+   * FACULTYFEED
 
 Code
 ----
-
-**explain the technical structure of your code**
-
-**to include a code listing, use the following example**::
-
-   .. code-block:: python
-
-      class Foo:
-
-         def __init__(self, x):
-            self.x = x
 
 .. toctree::
 

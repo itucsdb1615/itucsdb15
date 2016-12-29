@@ -1,22 +1,24 @@
-Welcome to itucsdb's documentation!
-===================================
+Welcome to itucsdb1615's documentation!
+=======================================
 
-:Team: Team Name
+:Team: beeHive
 
 :Members:
 
-   * Member 1
-   * Member 2
-   * Member 3
-   * Member 4
-   * Member 5
+   * Mertcan Yasakçı       150140051
+   * İsmail Salih Namdar   150140055
+   * Pelin Hakverir        150140031
+   * Yunus Emre Pala       150140046
+   * Berkan Öztekin        150130035
 
-**project description goes here (a few paragraphs)**
+beeHive is a social platform where students, student branches, departments and classes come together.
+beeHive brings together students and all of the information in the campus.
+Also beeHive can be used by students to get in touch with their classmates or by branches to reach more student.
 
 Contents:
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 4
 
    user/index
    developer/index
