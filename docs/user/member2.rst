@@ -1,9 +1,9 @@
-Parts Implemented by Ismail Salih Namdar
-====================================
+Parts Implemented by İsmail Salih Namdar
+========================================
 Profile, Hot Title, Post Configuration, Search and Follow pages are created by Ismail Salih Namdar. 
 
-Profile Page/ Home Page
------------------------
+Profile and Home Pages
+----------------------
 This is the home page with profile information of a signed up user. Profile information is located top left corner of the page. 
 Signed up user can reach his/her information, hot titles and new posts with this page. User can also create a title or a post in this page.
 

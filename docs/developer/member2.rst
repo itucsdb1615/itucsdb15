@@ -1,5 +1,5 @@
-Parts Implemented by Ismail Salih Namdar
-====================================
+Parts Implemented by İsmail Salih Namdar
+========================================
 POST, FEED, HOTTITLES, HOTTITLECAST and FOLLOW tables are implemented by Ismail Salih Namdar. E/R diagram of those tables shown below.
 
 .. figure:: images/ismail/i_er.png
@@ -207,6 +207,7 @@ Table can be shown below.
 Above codes is represent follow method.
 
 .. code-block:: python
+
 		username = request.form['foundUser']
 		flag = False
 		if current_user.userName == username:
