@@ -3,7 +3,7 @@ Parts Implemented by Yunus Emre Pala
 
 There are listed tables that Yunus Emre added to database
 
-.. figure:: images/yemre/yemre_tables.png
+.. figure:: images/yemre_tables.png
 	  :scale: 100 %
 	  :alt: Yunus Emre Pala's tables
 
