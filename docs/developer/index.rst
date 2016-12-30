@@ -4,7 +4,9 @@ Developer Guide
 Database Design
 ---------------
 
-This is our database design. You can see all of the tables in our database, their attributes and connections between tables.
+This is our database design.
+
+You can see all of the tables in our database, their attributes and connections between tables.
 
 .. figure:: images/tables.png
      :scale: 100 %
@@ -12,10 +14,7 @@ This is our database design. You can see all of the tables in our database, thei
 
      This is the all tables in the database of beeHive
 
-
-
-
-
+In the section below you will see distribution of entities.
 
 Entity Distribution
 ^^^^^^^^^^^^^^^^^^^
