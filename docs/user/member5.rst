@@ -21,6 +21,8 @@ You can see the general view of the faculty page below.
 
      Name of Faculties on ITU
 
+Faculty Name on Profile Page
+----------------------------
 
 After choosing  faculty, users can see their faculty name on their profile page.
 

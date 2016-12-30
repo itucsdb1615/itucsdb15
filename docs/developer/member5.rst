@@ -36,6 +36,30 @@ Contents of DEPARTMENTS table can be seen below
 
      How  DEPARTMENTS Table Looks Like
 
+
+We insert all information of faculty while initializing database.
+We can see the codes below.
+
+.. code-block:: python
+
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (01, 'Faculty of Civil Engineering')"""
+        cursor.execute(query)
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (15, 'Faculty of Computer and Informatics')"""
+        cursor.execute(query)
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (02, 'Faculty of Architecture')"""
+        cursor.execute(query)
+
+        ......
+        ......
+        ......
+
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (11, 'Turkish Music State Conservatory')"""
+        cursor.execute(query)
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (12, 'Maritime Faculty')"""
+        cursor.execute(query)
+        query = """INSERT INTO DEPARTMENTS (FACULTYNO, NAME) VALUES (13, 'Faculty of Textile Technologies and Design ')"""
+        cursor.execute(query)
+
 DEPARTMENTLIST Table
 --------------------
 
@@ -91,3 +115,38 @@ And, this table is connected with both USERS Table, and POST Table.
      :alt: Contents of Facultyfeed Table
 
      How Facultyfeed Table Looks Like
+
+
+.. code-block:: python
+
+
+          query = """INSERT INTO POST(USERNAME, CONTENT) VALUES(%s, %s)"""
+          cursor.execute(query,(username, postContent))
+
+          query = """SELECT POSTID FROM POST WHERE (USERNAME = %s and CONTENT = %s)"""
+          cursor.execute(query,(username, postContent))
+          postid = cursor.fetchall()
+
+          query = """SELECT USERNAME FROM DEPARTMENTLIST WHERE (FACULTYNO = ( SELECT FACULTYNO FROM DEPARTMENTLIST WHERE USERNAME=%s )) AND USERNAME!= %s """
+          cursor.execute(query,(username,username))
+          departmentalFriends = cursor.fetchall()
+
+          query = """INSERT INTO FACULTYFEED VALUES(%s, %s, %s)"""
+          cursor.execute(query,(username,username, postid[0]))
+          query = """INSERT INTO FEED(USERNAME, POSTID) VALUES (%s, %s)"""
+          cursor.execute(query,(username, postid[0]))
+
+          for friend in departmentalFriends:
+              query = """INSERT INTO FACULTYFEED VALUES (%s, %s,%s)"""
+              cursor.execute(query,(username,friend[0], postid[0]))
+              query = """INSERT INTO FEED(USERNAME, POSTID) VALUES (%s, %s)"""
+              cursor.execute(query,(friend[0], postid[0]))
+
+
+We can see the codes above how sending message by using faculty page works.
+Firstly, we insert the information of post to post table. And all post has a specific postid.
+We learn its postid and username.
+After that, we get the users who are in the same faculty with the post sender.
+And we insert this postid and users to FacultyFeed and Feed tables.
+Facultyfeed is to see the message on the faculty page.
+Feed tables is to see the message on the profile.
