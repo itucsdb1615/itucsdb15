@@ -12,6 +12,11 @@ This is our database design. You can see all of the tables in our database, thei
 
      This is the all tables in the database of beeHive
 
+
+
+
+
+
 Entity Distribution
 ^^^^^^^^^^^^^^^^^^^
 
