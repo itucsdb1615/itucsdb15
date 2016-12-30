@@ -20,6 +20,6 @@ Contents:
 .. toctree::
    :maxdepth: 4
 
-   installion/index
+   installation/index
    user/index
    developer/index
