@@ -3,7 +3,7 @@ Parts Implemented by Yunus Emre Pala
 
 There are listed tables that Yunus Emre added to database
 
-.. figure:: images/yemre_tables.png
+.. figure:: images/yemre/yemre_tables.png
 	  :scale: 100 %
 	  :alt: Yunus Emre Pala's tables
 
@@ -27,7 +27,7 @@ So that server file should contain these lines(registering for Blueprint)
     	app = Flask(__name__)
    		app.register_blueprint(site)
     	return app
-		
+
 and this is for branch_operations file
 
 .. code-block:: python
@@ -68,9 +68,9 @@ In initdb functions all necessary tables are initilizing including tables that r
 
 .. code-block:: python
 
-	query = """ 
+	query = """
         CREATE TABLE BRANCHFEEDS(
-        ID SERIAL PRIMARY KEY, 
+        ID SERIAL PRIMARY KEY,
         BRANCH_ID INTEGER REFERENCES STUDENTBRANCHES(ID),
 		USER_NAME VARCHAR(20) REFERENCES USERS(USERNAME),
 		CONTENT VARCHAR(200) NOT NULL
@@ -79,7 +79,7 @@ In initdb functions all necessary tables are initilizing including tables that r
     cursor.execute(query)
 
     query = """ INSERT INTO
-        BRANCHFEEDS (BRANCH_ID, USER_NAME,CONTENT) VALUES 
+        BRANCHFEEDS (BRANCH_ID, USER_NAME,CONTENT) VALUES
         (1,'namdar', 'This is awesome branch, keep in touch for news !!!') """
         cursor.execute(query)
 
@@ -115,9 +115,9 @@ if does not exist
 .. code-block:: python
 
 	if len(results) == 0:
-	    return render_template('show_branches.html',results = results) 
+	    return render_template('show_branches.html',results = results)
 
-program sends empty list to html file  for branch informations 
+program sends empty list to html file  for branch informations
 
 .. code-block:: html
 
@@ -128,7 +128,7 @@ program sends empty list to html file  for branch informations
 And in html file if there is no information about branch it shows proper message to user
 
 In some pages program behaves user by considering wheter request comes from anonymous or user of site
-to do this we are required to current_user of flask 
+to do this we are required to current_user of flask
 
 .. code-block:: python
 

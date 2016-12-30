@@ -14,7 +14,7 @@ Also there might be closed branch, then admins also delete that branch in this s
 For any new branch it should be added by admin manually again.
 
 
-.. figure:: images/yemre_manage_branches.png
+.. figure:: images/yemre/yemre_manage_branches.png
 	  :scale: 100 %
 	  :alt: manage branches page
 
@@ -27,7 +27,7 @@ Add Students to Branches
 Well although only admins can make CRUD operations on branches ,all branch members can post in their branch pages that they registered for it.
 So it is possible to add students to branches by using this page
 
-.. figure:: images/yemre_add_student.png
+.. figure:: images/yemre/yemre_add_student.png
 	  :scale: 100 %
 	  :alt: add student page
 
@@ -39,7 +39,7 @@ Brach Pages
 In beeHive it is possible to follow news from branches that you are interested in or to discover new ones.
 If you are already registered to branch you can post anything you want to branch feedç
 
-.. figure:: images/yemre_branch_page1.png
+.. figure:: images/yemre/yemre_branch_page1.png
 	  :scale: 100 %
 	  :alt: branch page1
 
@@ -49,7 +49,7 @@ If you are already registered to branch you can post anything you want to branch
 
 Or users are not seen as member of a branch they can see posts in those pages, but can not send post.
 
-.. figure:: images/yemre_branch_page2.png
+.. figure:: images/yemre/yemre_branch_page2.png
 	  :scale: 100 %
 	  :alt: branch page2
 
