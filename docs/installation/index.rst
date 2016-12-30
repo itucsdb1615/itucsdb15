@@ -9,7 +9,7 @@ Our project is Python based. So you have to have Python.
 
 We used Flask microframework for web developement.
 
-.. code-block:: bash
+.. code-block:: console
 
    pip3 install -U flask
 
@@ -17,7 +17,7 @@ We used Flask microframework for web developement.
 
 Our project needs Psycopg2 as a PostgreSQL adapter.
 
-.. code-block:: bash
+.. code-block:: console
 
    pip3 install -U psycopg2
 
@@ -25,7 +25,7 @@ Our project needs Psycopg2 as a PostgreSQL adapter.
 
 We used flask-login for login/session management.
 
-.. code-block:: bash
+.. code-block:: console
 
    pip3 install flask-login
 
@@ -33,7 +33,7 @@ We used flask-login for login/session management.
 
 We used passlib for hashing users' passwords.
 
-.. code-block:: bash
+.. code-block:: console
 
    pip3 install passlib
 
